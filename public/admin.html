@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>Admin Paneli</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        }
+
+        body {
+            margin: 0;
+            background: #f3f4f6;
+            color: #111827;
+        }
+
+        /* LOGIN EKRANI */
+
+        #login-view {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .login-card {
+            background: #ffffff;
+            border-radius: 16px;
+            padding: 24px 28px;
+            box-shadow: 0 20px 40px rgba(15, 23, 42, 0.15);
+            width: 100%;
+            max-width: 380px;
+        }
+
+        .login-card h1 {
+            margin: 0 0 8px;
+            font-size: 20px;
+        }
+
+        .login-card p {
+            margin: 0 0 16px;
+            font-size: 13px;
+            color: #6b7280;
+        }
+
+        .field {
+            margin-bottom: 12px;
+        }
+
+        .field label {
+            display: block;
+            font-size: 13px;
+            margin-bottom: 4px;
+        }
+
+        .field input {
+            width: 100%;
+            padding: 8px 10px;
+            border-radius: 8px;
+            border: 1px solid #d1d5db;
+            font-size: 14px;
+        }
+
+        .btn {
+            border-radius: 999px;
+            border: none;
+            padding: 8px 14px;
+            font-size: 14px;
+            cursor: pointer;
+            background: #111827;
+            color: #fff;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn.secondary {
+            background: #e5e7eb;
+            color: #111827;
+        }
+
+        .btn.danger {
+            background: #dc2626;
+            color: #fff;
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: default;
+        }
+
+        .message {
+            font-size: 13px;
+            margin-bottom: 8px;
+        }
+
+        .message.error {
+            color: #b91c1c;
+        }
+
+        .message.success {
+            color: #15803d;
+        }
+
+        /* ADMIN PANEL LAYOUT */
+
+        #admin-app {
+            display: none;
+            /* login başarılı olunca açacağız */
+            min-height: 100vh;
+        }
+
+        .layout {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            width: 240px;
+            background: #111827;
+            color: #e5e7eb;
+            display: flex;
+            flex-direction: column;
+            padding: 16px;
+        }
+
+        .sidebar-header {
+            margin-bottom: 16px;
+        }
+
+        .sidebar-title {
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .sidebar-sub {
+            font-size: 12px;
+            color: #9ca3af;
+        }
+
+        .sidebar-nav {
+            margin-top: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .nav-item {
+            padding: 8px 10px;
+            border-radius: 8px;
+            font-size: 14px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #e5e7eb;
+        }
+
+        .nav-item span.icon {
+            font-size: 16px;
+        }
+
+        .nav-item.active {
+            background: #1f2937;
+            font-weight: 600;
+        }
+
+        .sidebar-footer {
+            margin-top: auto;
+            font-size: 12px;
+            color: #9ca3af;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        /* CONTENT */
+
+        .content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .content-header {
+            padding: 12px 20px;
+            background: #ffffff;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .content-header-title {
+            font-size: 18px;
+            font-weight: 500;
+        }
+
+        .content-header-right {
+            font-size: 13px;
+            color: #6b7280;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .content-main {
+            padding: 16px 20px 24px;
+            max-width: 1100px;
+        }
+
+        .card {
+            background: #ffffff;
+            border-radius: 12px;
+            padding: 16px 18px;
+            box-shadow: 0 8px 16px rgba(15, 23, 42, 0.05);
+            margin-bottom: 16px;
+        }
+
+        .card h2 {
+            margin: 0 0 10px;
+            font-size: 17px;
+        }
+
+        .card h3 {
+            margin: 12px 0 8px;
+            font-size: 15px;
+        }
+
+        .small {
+            font-size: 12px;
+            color: #6b7280;
+        }
+
+        .row {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-bottom: 10px;
+        }
+
+        .row .field {
+            flex: 1 1 200px;
+            min-width: 200px;
+            margin-bottom: 0;
+        }
+
+        textarea,
+        select {
+            width: 100%;
+            padding: 8px 10px;
+            border-radius: 8px;
+            border: 1px solid #d1d5db;
+            font-size: 14px;
+        }
+
+        textarea {
+            min-height: 60px;
+            resize: vertical;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+
+        th,
+        td {
+            padding: 8px 6px;
+            border-bottom: 1px solid #e5e7eb;
+            text-align: left;
+        }
+
+        th {
+            font-size: 11px;
+            text-transform: uppercase;
+            color: #6b7280;
+        }
+
+        tr:hover {
+            background: #f3f4f6;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 999px;
+            font-size: 11px;
+            background: #e5f9e7;
+            color: #166534;
+        }
+
+        .badge.red {
+            background: #fee2e2;
+            color: #b91c1c;
+        }
+
+        .badge.gray {
+            background: #e5e7eb;
+            color: #374151;
+        }
+
+        .clickable {
+            cursor: pointer;
+        }
+
+        @media (max-width: 900px) {
+            .sidebar {
+                display: none;
+            }
+
+            .content {
+                margin-left: 0;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- LOGIN GÖRÜNÜMÜ -->
+    <section id="login-view">
+        <div class="login-card">
+            <h1>Admin Giriş</h1>
+            <p>Sisteme admin olarak giriş yapın.</p>
+            <div id="login-message" class="message"></div>
+            <form id="login-form">
+                <div class="field">
+                    <label for="login-identifier">E-posta</label>
+                    <input type="text" id="login-identifier" autocomplete="username" />
+                </div>
+                <div class="field">
+                    <label for="login-password">Şifre</label>
+                    <input type="password" id="login-password" autocomplete="current-password" />
+                </div>
+                <button type="submit" class="btn" id="login-btn">Giriş Yap</button>
+            </form>
+        </div>
+    </section>
+
+    <!-- ADMIN PANEL -->
+    <section id="admin-app">
+        <div class="layout">
+            <aside class="sidebar">
+                <div class="sidebar-header">
+                    <div class="sidebar-title">Admin Paneli</div>
+                    <div class="sidebar-sub">Yönetim alanı</div>
+                </div>
+                <nav class="sidebar-nav">
+                    <div class="nav-item active" data-view="dashboard">
+                        <span class="icon">📊</span><span>Dashboard</span>
+                    </div>
+                    <div class="nav-item" data-view="products">
+                        <span class="icon">📦</span><span>Ürünler</span>
+                    </div>
+                    <div class="nav-item" data-view="orders">
+                        <span class="icon">🧾</span><span>Siparişler</span>
+                    </div>
+                    <div class="nav-item" data-view="users">
+                        <span class="icon">👥</span><span>Üyeler</span>
+                    </div>
+                </nav>
+                <div class="sidebar-footer">
+                    <div id="admin-info"></div>
+                    <button class="btn secondary" id="logout-btn">Çıkış</button>
+                </div>
+            </aside>
+
+            <div class="content">
+                <header class="content-header">
+                    <div class="content-header-title" id="view-title">Dashboard</div>
+                    <div class="content-header-right">
+                        <span id="header-sub">Genel bakış</span>
+                    </div>
+                </header>
+                <main class="content-main">
+                    <!-- DASHBOARD -->
+                    <div class="card" id="view-dashboard">
+                        <h2>Genel Bakış</h2>
+                        <p class="small">Son durumu hızlıca gör.</p>
+                        <div class="row">
+                            <div class="card" style="flex:1; box-shadow:none; border:1px solid #e5e7eb;">
+                                <h3>Toplam Ürün</h3>
+                                <p><strong id="stat-products">-</strong></p>
+                            </div>
+                            <div class="card" style="flex:1; box-shadow:none; border:1px solid #e5e7eb;">
+                                <h3>Toplam Sipariş</h3>
+                                <p><strong id="stat-orders">-</strong></p>
+                            </div>
+                            <div class="card" style="flex:1; box-shadow:none; border:1px solid #e5e7eb;">
+                                <h3>Toplam Üye</h3>
+                                <p><strong id="stat-users">-</strong></p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ÜRÜNLER -->
+                    <div id="view-products" style="display:none;">
+                        <div class="card">
+                            <h2>Ürün Ekle / Düzenle</h2>
+                            <p class="small">Yeni ürün ekleyebilir veya listeden seçip düzenleyebilirsin.</p>
+                            <div id="product-message" class="message"></div>
+                            <form id="product-form">
+                                <input type="hidden" id="product-id" />
+
+                                <div class="row">
+                                    <div class="field">
+                                        <label for="product-name">Ad *</label>
+                                        <input id="product-name" type="text" />
+                                    </div>
+                                    <div class="field">
+                                        <label for="product-slug">Slug *</label>
+                                        <input id="product-slug" type="text" placeholder="ornek-urun" />
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="field">
+                                        <label for="product-price">Fiyat (TL) *</label>
+                                        <input id="product-price" type="number" step="0.01" />
+                                    </div>
+                                    <div class="field">
+                                        <label for="product-stock">Stok *</label>
+                                        <input id="product-stock" type="number" step="1" />
+                                    </div>
+                                    <div class="field">
+                                        <label for="product-category">Kategori</label>
+                                        <input id="product-category" type="text" />
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="field">
+                                        <label for="product-image">Görsel URL</label>
+                                        <input id="product-image" type="text"
+                                            placeholder="/uploads/products/urun1.jpg" />
+                                        <small class="small">
+                                            Dosya seçersen burası otomatik dolar.
+                                        </small>
+                                    </div>
+
+                                    <div class="field">
+                                        <label for="product-image-file">Bilgisayardan Görsel Seç</label>
+                                        <input id="product-image-file" type="file" accept="image/*" />
+                                        <small class="small" id="product-image-upload-status"></small>
+                                    </div>
+
+                                    <div class="field">
+                                        <label for="product-active">Durum</label>
+                                        <select id="product-active">
+                                            <option value="1" selected>Aktif</option>
+                                            <option value="0">Pasif</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="field" style="flex:1 1 100%;">
+                                        <label for="product-desc">Açıklama</label>
+                                        <textarea id="product-desc"></textarea>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <button type="submit" class="btn" id="product-submit-btn">Kaydet</button>
+                                    <button type="button" class="btn secondary" id="product-reset-btn">Formu
+                                        temizle</button>
+                                    <span class="small" id="product-form-mode">Mod: Yeni ürün</span>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="card" id="product-images-card" style="display:none;">
+                            <h2>Teknik / Ekstra Görseller</h2>
+                            <p class="small">
+                                Bu ürüne ait teknik görselleri buradan ekleyebilirsin. Önce ürünü kaydet,
+                                sonra listeden <strong>Düzenle</strong> ile seç.
+                            </p>
+
+                            <div class="row">
+                                <div class="field">
+                                    <label for="product-image-extra-file">Yeni teknik görsel ekle</label>
+                                    <input id="product-image-extra-file" type="file" accept="image/*" />
+                                    <small class="small" id="product-image-extra-status"></small>
+                                </div>
+                            </div>
+
+                            <div id="product-images-list" class="row" style="gap:8px; margin-top:12px;">
+                                <!-- thumbnails buraya gelecek -->
+                            </div>
+                        </div>
+                        <section id="techImagesAdmin">
+                            <h3>Teknik Özellik Görselleri</h3>
+
+                            <form id="techImageForm">
+                                <input type="file" name="image" accept="image/*" required />
+                                <input type="text" name="caption" placeholder="Açıklama (opsiyonel)" />
+                                <button type="submit">Ekle</button>
+                            </form>
+
+                            <div id="techImageList" class="thumb-list"></div>
+                        </section>
+
+                        <div class="card">
+                            <h2>Ürün Listesi</h2>
+                            <div id="products-table-wrapper">Yükleniyor...</div>
+                        </div>
+                    </div>
+
+                    <!-- SİPARİŞLER -->
+                    <div id="view-orders" style="display:none;">
+                        <div class="card">
+                            <h2>Siparişler</h2>
+                            <div id="orders-table-wrapper">Yükleniyor...</div>
+                        </div>
+                        <div class="card" id="order-detail-card" style="display:none;">
+                            <h2>Sipariş Detayı</h2>
+                            <div id="order-detail-content" class="small"></div>
+                        </div>
+                    </div>
+
+                    <!-- ÜYELER -->
+                    <div id="view-users" style="display:none;">
+                        <div class="card">
+                            <h2>Üyeler</h2>
+                            <div id="users-table-wrapper">Yükleniyor...</div>
+                        </div>
+                    </div>
+
+                </main>
+            </div>
+        </div>
+    </section>
+
+    <script src="js/admin.js" defer></script>
+</body>
+
+</html>

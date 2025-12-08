@@ -1,0 +1,71 @@
+/* ===== HERO BÖLÜMÜ ===== */
+.ti-hero {
+    position: relative;
+    height: 70vh;
+    background: url('assets/talasli-imalat/1.png') center/cover no-repeat;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+.ti-hero-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0,0,0,0.45);
+}
+
+.ti-hero-content {
+    position: relative;
+    z-index: 2;
+    max-width: 800px;
+    color: #fff;
+}
+
+.ti-hero-content h1 {
+    font-size: 3rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+}
+
+.ti-hero-content p {
+    font-size: 1.2rem;
+    line-height: 1.6;
+}
+
+/* ===== GENEL SECTION ===== */
+.ti-section {
+    padding: 80px 0;
+}
+
+.gray-bg {
+    background: #f7f7f7;
+}
+
+/* ===== 2 KOLONLU LAYOUT ===== */
+.two-column {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+    align-items: center;
+}
+
+.two-column img {
+    width: 100%;
+    border-radius: 10px;
+}
+
+/* Mobil */
+@media (max-width: 768px) {
+    .two-column {
+        grid-template-columns: 1fr;
+    }
+
+    .ti-hero-content h1 {
+        font-size: 2.2rem;
+    }
+
+    .ti-hero {
+        height: 55vh;
+    }
+}

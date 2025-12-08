@@ -1,0 +1,332 @@
+/* ============== ÜRÜN DETAY ============== */
+
+.product-page { padding: 24px 0 80px; background: #fff; }
+
+.pd-wrap{
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 16px;
+  display: grid;
+  grid-template-columns: 1.1fr .9fr;
+  gap: 40px;
+}
+
+
+.pd-main{
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  object-fit: contain;
+  background: #fff;
+  border: 1px solid #eef0f3;
+  border-radius: 14px;
+  box-shadow: 0 6px 24px rgba(0,0,0,.06);
+}
+
+.pd-thumbs{
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 16px;
+}
+.pd-thumbs img{
+  width: 88px;
+  height: 88px;
+  object-fit: cover;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: transform .15s ease, box-shadow .15s ease;
+}
+.pd-thumbs img:hover{
+  transform: translateY(-2px);
+  box-shadow: 0 8px 16px rgba(0,0,0,.10);
+}
+
+
+.pd-title{
+  font-size: 28px;
+  font-weight: 800;
+  margin: 0 0 8px;
+}
+
+.pd-cat{
+  color: #6b7280;
+  font-size: 13px;
+  margin-bottom: 6px;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+}
+
+.pd-price{
+  font-size: 22px;
+  font-weight: 700;
+  margin: 6px 0 16px;
+}
+
+.pd-actions{
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  margin-top: 10px;
+}
+
+.btn-primary{
+  padding: 12px 18px;
+  border-radius: 12px;
+  border: 1px solid #0a0a0a;
+  background: #0a0a0a;
+  color: #fff;
+  font-weight: 800;
+  cursor: pointer;
+}
+.btn-primary:hover{ filter: brightness(1.05); }
+
+.pd-desc{ margin-top: 16px; line-height: 1.6; color: #111827; }
+
+.pd-specs-title{ margin-top: 22px; font-size: 18px; font-weight: 700; }
+.pd-specs{ list-style: none; padding: 0; margin: 0; }
+.pd-specs li{
+  display: flex;
+  gap: 8px;
+  padding: 6px 0;
+  border-bottom: 1px dashed #eee;
+}
+.pd-specs li strong{ min-width: 160px; font-weight: 700; }
+
+@media (max-width: 900px){
+  .pd-wrap{ grid-template-columns: 1fr; gap: 24px; }
+  .pd-main{ aspect-ratio: auto; }
+}
+
+/* ====== Adet seçici ====== */
+.qty{
+  display: inline-flex;
+  height: 42px;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  overflow: hidden;
+  background: #fff;
+}
+
+#pdQtyInput{
+  width: 50px;
+  padding: 0 12px;
+  border: 0;
+  outline: none;
+  text-align: center;
+  font-weight: 700;
+
+}
+#pdQtyInput::-webkit-outer-spin-button,
+#pdQtyInput::-webkit-inner-spin-button{ -webkit-appearance: none; margin: 0; }
+
+.qty-ctrls{
+  display: flex;
+  flex-direction: column;
+  border-radius: 6px;
+  background: #111111;
+}
+.qty-btn{
+  width: 36px;
+  height: 20px;
+  line-height: 10px;
+  border: 0;
+  color: #fff;
+  font-weight: 800;
+  cursor: pointer;
+  background: transparent;
+}
+.qty-btn:first-child{ border-bottom: 1px solid rgba(255,255,255,.12); }
+.qty-btn:active{ filter: brightness(1.2); }
+
+@media (max-width: 480px){
+  #pdQtyInput{ width: 56px; }
+  .qty-btn{ width: 32px; }
+}
+
+/* ====== Slider ====== */
+.pd-main-wrap{ position: relative; }
+.pd-nav{
+  position: absolute; top: 50%; transform: translateY(-50%);
+  width: 40px; height: 40px; border: 0; border-radius: 10px;
+  background: rgba(0,0,0,.6); color:#fff; font-size: 22px; font-weight: 700;
+  display: grid; place-items: center; cursor: pointer;
+}
+.pd-prev{ left: 14px; }
+.pd-next{ right: 14px; }
+.pd-nav:hover{ filter: brightness(1.15); }
+
+.pd-zoom{
+  position: absolute; right: 14px; top: 14px;
+  width: 36px; height: 36px; border-radius: 10px;
+  background: rgba(0,0,0,.6); color:#fff; border:0; cursor:pointer;
+}
+
+/* thumbs */
+.pd-thumbs img{ outline: 2px solid transparent; }
+.pd-thumbs img.is-active{
+  outline-color: hsl(0, 6%, 97%); box-shadow: 0 0 0 2px rgba(59,130,246,.25);
+}
+
+/* tek görselde okları gizle */
+.pd-main-wrap.is-single .pd-nav{ display: none; }
+
+/* ====== Lightbox ====== */
+.pd-lightbox{
+  position: fixed; inset: 0; background: rgba(0,0,0,.8);
+  display: none; align-items: center; justify-content: center; z-index: 60;
+}
+.pd-lightbox.show{ display: flex; }
+.pd-lightbox img{ max-width: 92vw; max-height: 92vh; border-radius: 12px; }
+.pd-lightbox-close{
+  position: absolute; top: 24px; right: 24px;
+  width: 44px; height: 44px; border:0; border-radius: 12px;
+  background:#111; color:#ffffffaf; font-size: 24px; cursor: pointer;
+}
+/* ==== Hover Zoom ==== */
+.pd-main-wrap.zoomable { overflow: hidden; }
+.pd-main {
+  transition: transform .18s ease, transform-origin .05s ease;
+  will-change: transform;
+}
+
+/* ===== Slider altı: Teknik Özellikler / uzun anlatım ===== */
+.pd-sec-title{
+  margin-top: 20px;
+  margin-bottom: 12px;
+  font-size: 20px;
+  font-weight: 400;
+}
+
+/* Dikey görsel akışı – artık tam genişlik */
+.pd-long{
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 24px;               /* arayı biraz açtık */
+}
+
+/* tek tek görseller + isteğe bağlı açıklama */
+.pd-fig{
+  margin: 0;
+  background: #fff;
+  border: 1px solid #44474d;
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 6px 24px rgba(0,0,0,.06);
+}
+.pd-fig img{
+  display: block;
+  width: 100%;
+  height: auto;
+}
+.pd-fig figcaption{
+  padding: 10px 12px;
+  font-size: 13px;
+  color: #44474d;
+  text-align: center;
+}
+
+/* üçlü küçük görsel şeritleri için (opsiyonel) */
+.pd-long-row{
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+.pd-long-row .pd-fig{ box-shadow: none; }
+@media (max-width: 640px){
+  .pd-long-row{ grid-template-columns: 1fr; }
+}
+/* Alt bölümün iki sütunu kaplaması */
+.pd-long-wrap{ grid-column: 1 / -1; }
+
+/* Başlık */
+.pd-sec-title{
+  margin-top: 28px;
+  margin-bottom: 16px;
+  font-size: 20px; /* istersen 22 yap */
+  font-weight: 700; /* vurguyu artırdım */
+}
+
+/* Büyük kartlar */
+.pd-fig{
+  margin: 0;
+  background: #fff;
+  border: 1px solid #1f54a3;
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 8px 28px rgba(0,0,0,.08);
+}
+.pd-fig img{
+  display: block;
+  width: 100%;
+  height: auto;
+}
+.pd-fig figcaption{
+  padding: 12px 14px;
+  font-size: 13px;
+  color: #44474d;
+  text-align: center;
+}
+
+/* Üçlü şerit (varsa) */
+.pd-long-row{
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+}
+.pd-long-row .pd-fig{ box-shadow: none; }
+
+@media (max-width: 900px){
+  .pd-long-wrap{ grid-column: 1 / -1; } /* zaten tek sütun */
+}
+@media (max-width: 640px){
+  .pd-long-row{ grid-template-columns: 1fr; }
+}
+
+.pd-tech-gallery {
+  margin-top: 24px;
+  display: grid;
+  gap: 16px;
+}
+
+.pd-tech-gallery img {
+  width: 100%;
+  max-width: 900px;
+  border-radius: 8px;
+  display: block;
+}
+.tech-detail-gallery {
+  margin-top: 2rem;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 1.5rem;
+}
+
+.tech-detail-item img {
+  width: 100%;
+  border-radius: 8px;
+  display: block;
+}
+
+.tech-detail-caption {
+  margin-top: .5rem;
+  font-size: 0.9rem;
+  color: #555;
+}
+
+.scroll-top{
+  position:fixed; bottom:100px; right:180px;
+  width:48px; height:48px; border:none; border-radius:50%;
+  background:transparent; color:#3b3b3b; font-size:22px; line-height:1;
+  cursor:pointer; box-shadow:0 4px 10px #3b3b3b;;
+  opacity:0; visibility:hidden; transition:opacity .3s, transform .3s;
+  z-index:9998;
+}
+@media (max-width: 640px){
+  .scroll-top{
+    right: 26px;
+    bottom: 80px;
+  }
+}
+.scroll-top:hover{ transform:translateY(-3px); background:transparent; color:#3b3b3b; font-size:22px; line-height:1; }
+.scroll-top.show{ opacity:1; visibility:visible; }

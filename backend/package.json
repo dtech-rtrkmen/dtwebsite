@@ -1,0 +1,22 @@
+{
+  "name": "drone-tech-backend",
+  "version": "1.0.0",
+  "type": "module",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "bcrypt": "^5.1.1",
+    "cookie-parser": "^1.4.7",
+    "dotenv": "^16.6.1",
+    "express": "^4.19.2",
+    "helmet": "^7.1.0",
+    "iyzipay": "^2.0.64",
+    "mssql": "^12.1.0",
+    "multer": "^2.0.2",
+    "nodemailer": "^7.0.11",
+    "soap": "^1.6.0",
+    "validator": "^13.11.0"
+  }
+}

@@ -1,0 +1,195 @@
+/* CART PAGE GENEL */
+.cart-page {
+  padding: 60px 0 80px;
+}
+
+.cart-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 2.2fr) 320px;
+  gap: 40px;
+}
+
+@media (max-width: 960px) {
+  .cart-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* TABLO BAŞLIK SATIRI */
+.cart-table-head {
+  display: grid;
+  grid-template-columns: 40px minmax(0, 3fr) minmax(0, 1fr) minmax(0, 1.4fr) minmax(0, 1fr);
+  padding: 0 1rem 0.75rem;
+  border-bottom: 1px solid #eee;
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  color: #777;
+}
+
+.cart-table-head span {
+  display: inline-block;
+}
+
+/*
+.cart-table-head .head-empty {
+  /* boş hücre (remove kolonu) 
+}*/
+
+/* ÜRÜN SATIRLARI */
+.cart-items {
+  border-bottom: 1px solid #eee;
+}
+
+.cart-item-row {
+  display: grid;
+  grid-template-columns: 40px minmax(0, 3fr) minmax(0, 1fr) minmax(0, 1.4fr) minmax(0, 1fr);
+  gap: 1.5rem;
+  align-items: center;
+  padding: 1rem 1rem;
+  border-bottom: 1px solid #f1f1f1;
+}
+@media (max-width: 480px) {
+  .cart-table-head {
+    display: none; /* başlığı gizle */
+  }
+
+  .cart-item-row {
+    grid-template-columns: 1fr 1fr;
+    grid-template-areas:
+      "product remove"
+      "qty qty"
+      "subtotal subtotal";
+    row-gap: 8px;
+  }
+
+  .cart-col.cart-product { grid-area: product; }
+  .cart-col.cart-qty     { grid-area: qty; }
+  .cart-col.cart-subtotal{ grid-area: subtotal; }
+  .cart-remove           { grid-area: remove; justify-self: end; }
+}
+
+.cart-item-row:last-child {
+  border-bottom: none;
+}
+
+/* Sil butonu */
+.cart-remove {
+  border: none;
+  background: none;
+  font-size: 18px;
+  cursor: pointer;
+  color: #999;
+}
+
+.cart-remove:hover {
+  color: #e53935;
+}
+
+/* Ürün kolonu */
+.cart-col.cart-product {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.cart-thumb {
+  width: 110px;
+  height: auto;
+  object-fit: contain;
+}
+
+.cart-product-name {
+  font-size: 0.95rem;
+}
+
+/* Fiyat / Subtotal kolonları */
+.cart-col.cart-price,
+.cart-col.cart-subtotal {
+  font-size: 0.95rem;
+  white-space: nowrap;
+}
+
+/* Adet alanı */
+.cart-col.cart-qty {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.qty-btn {
+  width: 26px;
+  height: 26px;
+  border: 1px solid #ccc;
+  background: #fafafa;
+  cursor: pointer;
+  font-size: 14px;
+  line-height: 1;
+}
+
+.qty-btn:hover {
+  background: #f0f0f0;
+}
+
+.qty-input {
+  width: 50px;
+  height: 26px;
+  border: 1px solid #ccc;
+  text-align: center;
+  font-size: 0.9rem;
+}
+
+/* SAĞ TARAF ÖZET */
+.cart-summary {
+  border: 1px solid #eee;
+  padding: 20px 24px;
+  border-radius: 6px;
+  background: #fafafa;
+  align-self: flex-start;
+}
+
+.cart-summary h2 {
+  font-size: 1.2rem;
+  margin-bottom: 1rem;
+}
+
+.summary-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.95rem;
+  padding: 6px 0;
+}
+
+.summary-total {
+  font-weight: 700;
+  margin-top: 6px;
+}
+
+.btn-full {
+  width: 100%;
+  margin-top: 12px;
+}
+
+/* Basit buton stilleri – kendi tasarımına göre değiştirebilirsin */
+.btn {
+  padding: 10px 18px;
+  border-radius: 4px;
+  font-size: 0.95rem;
+  cursor: pointer;
+  border: 1px solid transparent;
+}
+
+.btn-primary {
+  background: #111827;
+  color: #fff;
+}
+
+.btn-primary:hover {
+  background: #0b1220;
+}
+
+.btn-outline {
+  background: #fff;
+  border-color: #d1d5db;
+}

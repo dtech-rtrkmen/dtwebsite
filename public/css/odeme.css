@@ -1,0 +1,299 @@
+/* GENEL LAYOUT */
+.checkout-steps {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  margin: 32px auto 20px;
+  max-width: 900px;
+}
+
+.checkout-step {
+  flex: 1;
+  position: relative;
+  cursor: default;
+}
+
+.checkout-step-inner {
+  border-radius: 999px;
+  background: #f1f2ff;
+  padding: 10px 14px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  justify-content: center;
+  border: 1px solid transparent;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.checkout-step-num {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: #d5dbff;
+  color: #1b2559;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.checkout-step-label {
+  font-size: 13px;
+  color: #444;
+}
+
+/* ACTIVE / COMPLETED STATE */
+.checkout-step.active .checkout-step-inner {
+  background: #4a5cff;
+  color: #fff;
+  border-color: #4a5cff;
+}
+
+.checkout-step.active .checkout-step-num {
+  background: #fff;
+  color: #4a5cff;
+}
+
+.checkout-step.completed .checkout-step-inner {
+  background: #e2f7e3;
+  border-color: #28a745;
+}
+
+.checkout-step.completed .checkout-step-num {
+  background: #28a745;
+  color: #fff;
+}
+
+/* CONTENT LAYOUT */
+.checkout-layout {
+  display: grid;
+  grid-template-columns: 2fr 1.2fr;
+  gap: 24px;
+  margin: 0 auto 40px;
+}
+
+.checkout-left {
+  min-width: 0;
+}
+
+.checkout-right {
+  min-width: 0;
+}
+
+/* STEP PANELS */
+.step-panel {
+  display: none;
+}
+
+.step-panel.is-active {
+  display: block;
+}
+
+/* KART / FORM KUTUSU */
+.payment-card,
+.review-card {
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 6px 18px rgba(15, 23, 42, 0.06);
+  padding: 20px 22px;
+}
+
+/* FORM GENEL */
+.section-title {
+  font-weight: 600;
+  font-size: 18px;
+  margin-bottom: 16px;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.form-group {
+  margin-bottom: 14px;
+}
+
+.form-group label {
+  display: block;
+  font-size: 13px;
+  margin-bottom: 4px;
+  color: #333;
+}
+
+.form-group input,
+.form-group textarea,
+.form-group select {
+  width: 100%;
+  padding: 9px 11px;
+  border-radius: 6px;
+  border: 1px solid #ccd0ff;
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  resize: vertical;
+}
+
+.form-group input:focus,
+.form-group textarea:focus,
+.form-group select:focus {
+  border-color: #4a5cff;
+  box-shadow: 0 0 0 2px rgba(74, 92, 255, 0.15);
+}
+
+.req {
+  color: #e53935;
+}
+
+/* PAYMENT METHODS */
+.payment-methods {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+
+.payment-methods label {
+  font-size: 13px;
+  background: #f2f3ff;
+  padding: 8px 12px;
+  border-radius: 999px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.payment-methods input {
+  accent-color: #4a5cff;
+}
+
+/* SUMMARY BOX (SAĞ TARAF) */
+.summary-box {
+  border-radius: 8px;
+  border: 1px solid #e0e0eb;
+  padding: 16px 18px;
+  background: #fafafa;
+  margin-bottom: 18px;
+}
+
+.summary-title {
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+
+.summary-item {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  font-size: 14px;
+}
+
+.summary-item:last-child {
+  margin-bottom: 0;
+}
+
+.summary-total {
+  border-top: 1px solid #ddd;
+  margin-top: 10px;
+  padding-top: 10px;
+  font-weight: 600;
+}
+
+/* REVIEW CARD (ADIM 2) */
+.review-heading {
+  font-size: 15px;
+  font-weight: 600;
+  margin: 18px 0 8px;
+}
+
+.review-heading:first-of-type {
+  margin-top: 0;
+}
+
+.review-block {
+  font-size: 13px;
+  line-height: 1.5;
+  color: #444;
+}
+
+.review-block p {
+  margin: 2px 0;
+}
+
+.review-totals {
+  margin-top: 16px;
+}
+
+/* INFO BOX */
+.info-box {
+  padding: 12px 14px;
+  background: #f3f7ff;
+  border-radius: 8px;
+  border: 1px solid #d0ddff;
+  font-size: 13px;
+  color: #334;
+}
+
+.iyzico-badge {
+  margin-top: 10px;
+  max-width: 120px;
+  background-color: #1b2559;
+}
+
+/* BUTTONLAR */
+.actions {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+  gap: 12px;
+}
+
+.btn {
+  border: none;
+  padding: 9px 18px;
+  border-radius: 6px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background 0.15s ease, box-shadow 0.15s ease, transform 0.05s ease;
+}
+
+.btn:active {
+  transform: translateY(1px);
+}
+
+.btn-primary {
+  background: #4a5cff;
+  color: #fff;
+  box-shadow: 0 4px 10px rgba(74, 92, 255, 0.35);
+}
+
+.btn-primary:hover {
+  background: #3b4ae0;
+}
+
+.btn-secondary {
+  background: #e4e4f0;
+  color: #333;
+}
+
+.btn-secondary:hover {
+  background: #d5d5eb;
+}
+
+/* RESPONSIVE */
+@media (max-width: 900px) {
+  .checkout-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .checkout-right {
+    order: -1;
+  }
+
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+}

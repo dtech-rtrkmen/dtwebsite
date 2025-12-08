@@ -1,0 +1,834 @@
+:root {
+  --ti-bg: #050814;
+  --ti-bg-alt: #0d111f;
+  --ti-surface: #e9e27f;
+  --ti-primary: #ebb134;
+  --ti-text: #f9fafb;
+  --ti-text-muted: #9ca3af;
+  --ti-border: #1f2933;
+  --ti-radius-lg: 18px;
+  --ti-shadow-soft: 0 18px 40px rgba(0, 0, 0, 0.45);
+  --ti-max-width: 1120px;
+  --ti-header-height: 70px;
+  --ti-transition: 0.3s ease;
+  --ti-font-main: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+    sans-serif;
+}
+
+/* Genel yapı */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: var(--ti-font-main);
+  background: var(--ti-bg);
+  color: var(--ti-text);
+}
+
+/* Kapsayıcı */
+
+.ti-container {
+  width: 100%;
+  max-width: var(--ti-max-width);
+  margin: 0 auto;
+  padding: 0 1.5rem;
+}
+
+/* HEADER */
+
+.ti-logo img {
+  height: 55px;
+  width: auto;
+  object-fit: contain;
+}
+
+.ti-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: var(--ti-header-height);
+  z-index: 20;
+  background: rgba(5, 8, 20, 0.55);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+  height: 80px;
+  /* header zaten bu civarsa dokunma */
+}
+
+.page-main--job-application {
+  margin-top: 120px;
+}
+
+.ti-header-inner {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.ti-logo {
+  display: flex;
+  flex-direction: column;
+  line-height: 1;
+  text-decoration: none;
+  color: var(--ti-text);
+}
+
+.ti-logo-main {
+  letter-spacing: 0.35em;
+  font-weight: 700;
+  font-size: 1.1rem;
+}
+
+.ti-logo-sub {
+  margin-top: 0.1rem;
+  font-size: 0.7rem;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: var(--ti-primary);
+}
+
+/* HAMBURGER BUTON - DESKTOPTA GİZLİ */
+
+.ti-nav-toggle {
+  display: none;
+  /* Desktop görünümde gizle */
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+}
+
+.ti-nav-toggle span {
+  display: block;
+  width: 24px;
+  height: 2px;
+  margin: 4px 0;
+  background: #ffffff;
+  transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+/* NAV */
+
+.ti-nav ul {
+  list-style: none;
+  display: flex;
+  gap: 1.5rem;
+  margin: 0;
+  padding: 0;
+}
+
+.ti-nav a {
+  text-decoration: none;
+  color: var(--ti-text-muted);
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  padding-bottom: 3px;
+  border-bottom: 2px solid transparent;
+  transition: color var(--ti-transition), border-color var(--ti-transition);
+}
+
+.ti-nav a:hover {
+  color: var(--ti-text);
+  border-color: var(--ti-primary);
+}
+
+/* NAV DROPDOWN */
+
+.ti-nav li {
+  position: relative;
+  /* dropdown için referans */
+}
+
+.ti-has-dropdown>a::after {
+  content: "▾";
+  font-size: 0.6rem;
+  margin-left: 0.35rem;
+}
+
+/* Dropdown kutusu */
+.ti-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  margin-top: 0.5rem;
+  list-style: none;
+  padding: 0.6rem 0;
+  min-width: 190px;
+  background: rgba(15, 23, 42, 0.98);
+  border-radius: 10px;
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.45);
+  border: 1px solid rgba(148, 163, 184, 0.35);
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(6px);
+  transition: opacity 0.2s ease, transform 0.2s ease;
+  z-index: 30;
+}
+
+/* SADECE DESKTOPTA HOVER İLE AÇILSIN */
+@media (min-width: 769px) {
+  .ti-has-dropdown:hover>.ti-dropdown {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateY(0);
+  }
+}
+
+/* Hem desktop hem mobil için JS'in eklediği class */
+.ti-has-dropdown.is-open>.ti-dropdown {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0);
+}
+
+/* Dropdown linkleri */
+.ti-dropdown a {
+  display: block;
+  padding: 0.45rem 1rem;
+  font-size: 0.8rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ti-text-muted);
+  border-bottom: none;
+}
+
+.ti-dropdown a:hover {
+  background: rgba(148, 163, 184, 0.12);
+  color: var(--ti-text);
+}
+
+/* HERO SLIDER */
+
+.ti-hero {
+  position: relative;
+  height: calc(100vh - var(--ti-header-height));
+  margin-top: var(--ti-header-height);
+  overflow: hidden;
+}
+
+.ti-hero-overlay {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at top, rgba(255, 138, 0, 0.15), transparent),
+    radial-gradient(circle at bottom, rgba(0, 0, 0, 0.25), transparent);
+  ;
+  z-index: 1;
+}
+
+.ti-slider {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.ti-slide {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  opacity: 0;
+  transform: scale(1.05);
+  transition: opacity 0.7s ease, transform 1.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ti-slide.active {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.ti-slide::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(120deg,
+      rgba(0, 0, 0, 0.65),
+      rgba(0, 0, 0, 0.35));
+  z-index: 1;
+}
+
+.ti-slide-content {
+  position: relative;
+  z-index: 2;
+  max-width: 680px;
+  padding: 1.5rem 2rem;
+  background: rgba(15, 23, 42, 0.75);
+  border-radius: 18px;
+  border: 1px solid rgba(148, 163, 184, 0.25);
+  backdrop-filter: blur(6px);
+}
+
+.ti-slide-content h1 {
+  font-size: clamp(2.1rem, 4vw, 3rem);
+  margin-bottom: 0.75rem;
+  color: #ffffff;
+  text-shadow: 0 4px 12px rgba(0, 0, 0, 0.6);
+}
+
+.ti-slide-content p {
+  font-size: 1.05rem;
+  color: #e5e5e5;
+}
+
+/* Slider butonları */
+
+.ti-slider-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  border: none;
+  background: rgba(15, 23, 42, 0.7);
+  width: 42px;
+  height: 42px;
+  border-radius: 999px;
+  cursor: pointer;
+  z-index: 3;
+  font-size: 1.2rem;
+  color: #e5e7eb;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background var(--ti-transition), transform var(--ti-transition);
+}
+
+.ti-prev {
+  left: 1.5rem;
+}
+
+.ti-next {
+  right: 1.5rem;
+}
+
+.ti-slider-btn:hover {
+  background: rgba(15, 23, 42, 0.95);
+  transform: translateY(-50%) scale(1.05);
+}
+
+/* Slider noktaları */
+
+.ti-slider-dots {
+  position: absolute;
+  left: 50%;
+  bottom: 1.8rem;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 0.6rem;
+  z-index: 3;
+}
+
+.ti-slider-dots .dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 999px;
+  background: rgba(148, 163, 184, 0.7);
+  cursor: pointer;
+  transition: width var(--ti-transition), background var(--ti-transition);
+}
+
+.ti-slider-dots .dot.active {
+  width: 24px;
+  background: var(--ti-primary);
+}
+
+/* ANA İÇERİK */
+
+.ti-main {
+  background: radial-gradient(circle at top, #020617, #020617);
+}
+
+.ti-section {
+  padding: 4rem 0;
+}
+
+.ti-section-alt {
+  background: var(--ti-bg-alt);
+}
+
+.ti-section h2 {
+  font-size: 1.6rem;
+  margin-bottom: 0.75rem;
+}
+
+.ti-section-intro {
+  max-width: 640px;
+  color: var(--ti-text-muted);
+  margin-bottom: 2rem;
+}
+
+/* Grid & kartlar */
+
+.ti-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 1.5rem;
+}
+
+.ti-grid-2 {
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+}
+
+.ti-card {
+  background: var(--ti-surface);
+  border-radius: var(--ti-radius-lg);
+  padding: 1.5rem 1.6rem;
+  box-shadow: var(--ti-shadow-soft);
+  border: 1px solid var(--ti-border);
+}
+
+.ti-card h3 {
+  margin-top: 0;
+  margin-bottom: 0.6rem;
+  font-size: 1.05rem;
+}
+
+.ti-card p {
+  margin: 0;
+  color: var(--ti-text-muted);
+}
+
+/* Makine listeleri */
+
+.ti-list {
+  margin: 0;
+  padding-left: 1.1rem;
+  color: var(--ti-text-muted);
+}
+
+.ti-list li+li {
+  margin-top: 0.4rem;
+}
+
+/* İletişim */
+
+.ti-contact {
+  display: grid;
+  gap: 1.5rem;
+}
+
+.ti-contact-note {
+  align-self: center;
+  background: rgba(42, 36, 15, 0.7);
+  border-radius: var(--ti-radius-lg);
+  padding: 1.5rem 1.6rem;
+  border: 1px dashed rgba(148, 163, 184, 0.4);
+  color: var(--ti-text-muted);
+}
+
+/* FOOTER */
+
+.ti-footer {
+  border-top: 1px solid rgba(148, 163, 184, 0.2);
+  padding: 1.5rem 0 2rem;
+  background: #020617;
+}
+
+.ti-footer-inner {
+  text-align: center;
+  font-size: 0.85rem;
+  color: var(--ti-text-muted);
+}
+
+.ti-footer-sub {
+  margin-top: 0.25rem;
+}
+
+/* Responsive */
+
+@media (max-width: 768px) {
+  .ti-header-inner {
+    gap: 1.2rem;
+  }
+
+  /* MOBİLDE HAMBURGER GÖRÜNSÜN, MENÜ AŞAĞI AÇILAN OLSUN */
+
+  .ti-nav-toggle {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+
+  /* Menü mobilde üstten açılan panel olsun */
+  .ti-nav {
+    position: absolute;
+    top: var(--ti-header-height);
+    left: 0;
+    right: 0;
+    background: rgba(5, 8, 20, 0.96);
+    padding: 1rem 1.5rem 1.5rem;
+    display: none;
+    /* varsayılan: kapalı */
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  }
+
+  .ti-nav ul {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .ti-dropdown {
+    position: static;
+    box-shadow: none;
+    border: none;
+    background: transparent;
+    padding: 0.2rem 0 0.4rem;
+    margin-top: 0;
+    opacity: 0;
+    pointer-events: none;
+    transform: none;
+    display: block;
+    /* yer kaplasın ama görünmesin */
+  }
+
+  .ti-has-dropdown.is-open>.ti-dropdown {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .ti-dropdown a {
+    padding-left: 1.5rem;
+    /* alt menü gibi içeri girsin */
+    font-size: 0.8rem;
+  }
+
+  .ti-nav a {
+    font-size: 0.85rem;
+    letter-spacing: 0.12em;
+  }
+
+
+  /* JS ile .open class'ı eklendiğinde menü açılsın */
+  .ti-nav.open {
+    display: block;
+  }
+
+  .ti-slider-btn {
+    display: none;
+  }
+
+  .ti-section {
+    padding: 3rem 0;
+  }
+}
+
+@media (max-width: 520px) {
+  /* Bu kısımda daha önce .ti-nav display:none idi;
+     artık .ti-nav.open ile açtığımız için ekstra bir şey yapmaya gerek yok.
+     Menü kontrolünü yukarıdaki 768px bloğu yönetiyor. */
+
+  .ti-logo-main {
+    letter-spacing: 0.2em;
+  }
+}
+
+/* ÜRETİM BÖLÜMÜ – light section */
+
+.ti-section-light {
+  background: #f4f5f7;
+  color: #111827;
+}
+
+.ti-product-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.4fr);
+  gap: 3rem;
+  align-items: flex-start;
+}
+
+/* Sol taraf */
+
+.ti-product-intro h2 {
+  font-size: 2rem;
+  margin: 0 0 1rem;
+}
+
+.ti-product-text {
+  color: #4b5563;
+  max-width: 420px;
+}
+
+.ti-eyebrow {
+  display: inline-block;
+  margin-bottom: 0.4rem;
+  font-size: 0.8rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #9ca3af;
+}
+
+/* Sağ taraf – kartlar */
+
+.ti-product-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  gap: 1.5rem 1.8rem;
+}
+
+.ti-product-card {
+  background: #ffffff;
+  border-radius: 18px;
+  padding: 1.4rem 1.5rem 1.5rem;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 18px 40px rgba(15, 23, 42, 0.08);
+}
+
+.ti-product-card h3 {
+  margin-top: 0.2rem;
+  margin-bottom: 0.55rem;
+  font-size: 1.02rem;
+  color: #111827;
+}
+
+.ti-product-card p {
+  margin: 0;
+  font-size: 0.93rem;
+  color: #4b5563;
+}
+
+/* Basit ikon stili */
+
+.ti-product-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.8rem;
+  background: rgba(255, 138, 0, 0.08);
+  color: #f97316;
+  margin-bottom: 0.5rem;
+}
+
+/* Responsive */
+
+@media (max-width: 900px) {
+  .ti-product-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .ti-product-intro {
+    max-width: 540px;
+  }
+}
+
+/* MAKİNE PARKURU - MODERN CARD GRID */
+
+.ti-machines-section {
+  background: #f4f5f7;
+  color: #111827;
+  text-align: center;
+}
+
+.ti-machines-title {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+}
+
+.ti-machines-grid {
+  margin-top: 2.5rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 1.5rem;
+}
+
+.ti-machines-card {
+  position: relative;
+  height: 480px;
+  border-radius: 25px;
+  background-size: cover;
+  background-position: center;
+  overflow: hidden;
+  cursor: pointer;
+  transition: transform 0.4s ease, box-shadow 0.3s ease;
+}
+
+.ti-machines-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.25);
+}
+
+.ti-machines-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(rgba(0, 0, 0, 0.1),
+      rgba(0, 0, 0, 0.65));
+  z-index: 1;
+}
+
+.ti-machines-content {
+  position: absolute;
+  bottom: 1.2rem;
+  left: 1.2rem;
+  z-index: 2;
+  color: white;
+  text-align: left;
+}
+
+.ti-machines-content h3 {
+  margin: 0;
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+
+.ti-machines-content span {
+  font-size: 0.8rem;
+  opacity: 0.85;
+}
+
+/* Button */
+
+.ti-machines-btn-wrap {
+  margin-top: 2rem;
+}
+
+.ti-machines-btn {
+  display: inline-block;
+  background: var(--ti-primary);
+  padding: 0.7rem 1.6rem;
+  border-radius: 8px;
+  color: white;
+  font-weight: 600;
+  text-decoration: none;
+  transition: 0.3s;
+}
+
+.ti-machines-btn:hover {
+  background: #ff9f33;
+}
+
+/* Responsive */
+
+@media (max-width: 600px) {
+  .ti-machines-content {
+    left: 0.8rem;
+    bottom: 0.8rem;
+  }
+}
+
+/* FOOTER */
+
+.site-footer {
+  background: #020617;
+  /* sitenin koyu tonu */
+  color: #cbd5e1;
+  padding: 3rem 0 1rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  font-size: 0.95rem;
+}
+
+.footer-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  gap: 3rem;
+}
+
+.footer-contact h3 {
+  margin-top: 0;
+  margin-bottom: 1rem;
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #fff;
+  letter-spacing: 0.05em;
+}
+
+.footer-contact p {
+  margin: 0 0 1rem;
+  line-height: 1.5;
+}
+
+.footer-contact strong {
+  color: var(--ti-primary);
+  font-weight: 600;
+}
+
+.footer-bottom {
+  margin-top: 2rem;
+  text-align: center;
+  padding-top: rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  font-size: 0.85rem;
+  color: #64748b;
+}
+
+.footer-bottom p {
+  margin: 0;
+}
+
+/* Responsive */
+
+@media (max-width: 768px) {
+  .footer-inner {
+    flex-direction: column;
+    text-align: center;
+    align-items: center;
+  }
+
+  .footer-contact {
+    max-width: 400px;
+  }
+}
+
+.footer-contact {
+  display: flex;
+  justify-content: space-between;
+  gap: 3rem;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.footer-contact p {
+  width: 100%;
+}
+
+.footer-contact p:last-child {
+  width: 100%;
+  text-align: center;
+  margin-top: 1rem;
+}
+
+/* Mobil görünüm */
+@media (max-width: 768px) {
+  .footer-contact {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .footer-contact p {
+    text-align: center;
+  }
+}
+
+.is-basvuru-page .ti-main {
+  margin-top: 80px !important;
+  /* Test amaçlı olarak !important ekleyin */
+  backdrop-filter: blur(10px);
+}
+
+@media (max-width: 768px) {
+  /* Diğer mobil kuralların arasına ekleyin */
+  .ti-main {
+    /* Header yüksekliği mobilde de 80px ise */
+    margin-top: 80px; 
+  }
+
+  /* Eğer mobil menü açıldığında daha fazla boşluk gerekiyorsa
+     (bu sayfada header mobil menü açıldığında sabitleniyor olmalı)
+     yüksekliği tarayıcıda kontrol edip buraya yazabilirsiniz. */
+}

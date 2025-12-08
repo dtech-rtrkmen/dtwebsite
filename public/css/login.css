@@ -1,0 +1,173 @@
+/* ========== ACCOUNT / AUTH STYLES ========== */
+
+:root{
+  --acc-bg: #fff;
+  --acc-text: #111;
+  --acc-muted: #6b7280;         /* gri metin */
+  --acc-line: #e5e7eb;          /* ince çizgi */
+  --acc-primary: #000;          /* buton ve aktif sekme (siyah) */
+  --acc-primary-text: #fff;
+  --acc-focus: 2px solid #111;  /* odak çerçevesi */
+  --acc-radius: 16px;
+  --acc-shadow: 0 10px 30px rgba(0,0,0,.08);
+}
+
+.account{
+  padding: 48px 0 72px;
+}
+
+.account-card{
+  max-width: 720px;
+  margin: 0 auto;
+  background: var(--acc-bg);
+  color: var(--acc-text);
+  border-radius: var(--acc-radius);
+  box-shadow: var(--acc-shadow);
+  overflow: hidden;
+  border: 1px solid var(--acc-line);
+}
+
+/* Sekme başlıkları */
+.account-tabs{
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  background: #f6f7f9;
+  border-bottom: 1px solid var(--acc-line);
+}
+.tab-btn{
+  appearance: none;
+  border: 0;
+  background: transparent;
+  padding: 18px 16px;
+  font-weight: 600;
+  letter-spacing: .2px;
+  cursor: pointer;
+  transition: background .2s ease, color .2s ease;
+}
+.tab-btn:is(:hover,:focus-visible){
+  background: #eef0f3;
+  outline: none;
+}
+.tab-btn.is-active{
+  background: var(--acc-primary);
+  color: var(--acc-primary-text);
+}
+
+/* Paneller */
+.tab-panel{
+  padding: 28px clamp(16px, 3vw, 40px) 36px;
+}
+.tab-panel.is-hidden{ display: none; }
+
+/* Form genel */
+.auth-form{
+  display: grid;
+  gap: 18px;
+}
+.field{ display: grid; gap: 8px; }
+.field-label{
+  font-size: .9rem;
+  color: var(--acc-muted);
+}
+
+/* Input + ikon kutusu */
+.field-input{
+  display: grid;
+  grid-template-columns: 44px 1fr auto;
+  align-items: center;
+  border: 1px solid var(--acc-line);
+  border-radius: 12px;
+  overflow: hidden;
+  background: #fff;
+}
+.field-input:focus-within{
+  border-color: #cbd5e1;
+  box-shadow: 0 0 0 3px rgba(0,0,0,.05);
+}
+.fi{
+  display: grid;
+  place-items: center;
+  font-size: 18px;
+  opacity: .65;
+}
+.field-input input{
+  border: 0;
+  outline: none;
+  padding: 14px 14px;
+  width: 100%;
+  font-size: 15px;
+  color: var(--acc-text);
+  background: transparent;
+}
+.field-input input::placeholder{ color: #9aa2ac; }
+
+/* Şifreyi göster/gizle butonu */
+.reveal{
+  appearance: none;
+  border: 0;
+  background: transparent;
+  padding: 0 14px;
+  cursor: pointer;
+  opacity: .7;
+}
+.reveal:is(:hover,:focus-visible){ opacity: 1; outline: none; }
+
+/* Checkbox ve alt satır */
+.form-row.between{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.checkbox{
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: .95rem;
+  color: var(--acc-text);
+}
+.checkbox input{
+  width: 18px; height: 18px;
+  accent-color: #111; /* modern tarayıcılar */
+}
+
+/* Linkler */
+.link-small{
+  font-size: .92rem;
+  color: #5662f6;
+  text-decoration: none;
+}
+.link-small:hover{ text-decoration: underline; }
+
+/* Butonlar */
+.btn-primary{
+  background: var(--acc-primary);
+  color: var(--acc-primary-text);
+  border: 0;
+  border-radius: 12px;
+  padding: 14px 18px;
+  font-weight: 700;
+  letter-spacing: .3px;
+  cursor: pointer;
+  transition: transform .06s ease, opacity .2s ease;
+}
+.btn-primary:hover{ opacity: .92; }
+.btn-primary:active{ transform: translateY(1px); }
+.btn-block{ width: 100%; }
+
+.field.is-error .field-input{ border-color:#ef4444; box-shadow:0 0 0 3px rgba(239,68,68,.12); }
+.field .field-msg{ font-size:.88rem; color:#ef4444; margin-top:6px; }
+.btn-primary.is-loading{ opacity:.7; pointer-events:none; }
+
+/* Yardımcılar */
+[role="tab"]:focus-visible{ outline: var(--acc-focus); outline-offset: -4px; }
+
+/* ---- Responsive ---- */
+@media (max-width: 540px){
+  .tab-panel{ padding: 22px 14px 28px; }
+  .field-input{
+    grid-template-columns: 40px 1fr auto;
+    border-radius: 10px;
+  }
+  .btn-primary{ border-radius: 10px; }
+}

@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Talaşlı İmalat — DRONE TECH</title>
+  <!-- Talaşlı imalat sayfasına özel stiller -->
+  <link rel="stylesheet" href="css/iletisim.css" />
+  <link rel="stylesheet" href="css/talasli-imalat.css" />
+</head>
+
+<body class="contact-page">
+  <!-- HEADER -->
+  <header class="ti-header">
+    <div class="ti-container ti-header-inner">
+      <a href="index.html" class="ti-logo">
+        <img src="assets/logo-white.png" alt="Drone Tech">
+      </a>
+
+      <!-- MOBİL HAMBURGER BUTONU -->
+      <button class="ti-nav-toggle" aria-label="Menüyü Aç/Kapat">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+      <nav class="ti-nav">
+        <ul>
+          <li><a href="talasli-imalat.html">Ana Sayfa</a></li>
+          <li><a href="uretim.html">Üretim</a></li>
+          <li><a href="makine.html">Makine Parkuru</a></li>
+          <li><a href="kalite.html">Kalite</a></li>
+          <li class="ti-has-dropdown">
+            <a href="#  ">İletişim</a>
+            <ul class="ti-dropdown">
+              <li><a href="is-basvuru-formu.html">İş Başvuru Formu</a></li>
+              <li><a href="talasli-imalat-iletisim.html">İletişim</a></li>
+            </ul>
+          </li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+  <!-- ======= İLETİŞİM SAYFASI ======= -->
+  <main class="page-main page-main--contact">
+    <section class="contact-section">
+      <h1>İLETİŞİM</h1>
+      <section class="contact-form-wrapper">
+        <form id="contactForm" class="contact-form" method="post" action="/api/contact" novalidate>
+          <div class="form-field">
+            <label for="firstName">Adınız <span class="required">*</span></label>
+            <input type="text" id="firstName" name="firstName" required />
+          </div>
+
+          <div class="form-field">
+            <label for="lastName">Soyadınız <span class="required">*</span></label>
+            <input type="text" id="lastName" name="lastName" required />
+          </div>
+
+          <div class="form-field">
+            <label for="email">Email <span class="required">*</span></label>
+            <input type="email" id="email" name="email" required />
+          </div>
+
+          <div class="form-field">
+            <label for="subject">Konu <span class="required">*</span></label>
+            <input type="text" id="subject" name="subject" required />
+          </div>
+
+          <div class="form-field">
+            <label for="message">Mesajınız <span class="required">*</span></label>
+            <textarea id="message" name="message" rows="4" required></textarea>
+          </div>
+
+          <div id="contactFormMessage" class="form-message" aria-live="polite"></div>
+
+          <button type="submit" class="btn btn-primary">Gönder</button>
+        </form>
+      </section>
+    </section>
+  </main>
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <div class="footer-contact">
+        <h3>İLETİŞİM</h3>
+        <p><strong>İSTANBUL ADRES</strong><br>
+          Teknopark İstanbul<br>
+          Sanayi, 34906 Pendik/İstanbul<br>
+          <strong>Telefon:</strong> 0 530 000 00 00
+        </p>
+        <p><strong>GİRESUN ADRES</strong><br>
+          II.OSB Caddesi, Maden, 28340 Piraziz/Giresun<br>
+          BULANCAK / GİRESUN<br>
+          <strong>Telefon:</strong> 0 530 000 00 00
+        </p>
+        <p><strong>Mail:</strong> info@dronetech.com.tr</p>
+
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <p>DRONE TECH © 2025, HER HAKKI SAKLIDIR </p>
+    </div>
+  </footer>
+
+  <script src="js/iletisim.js"></script>
+</body>
+
+</html>

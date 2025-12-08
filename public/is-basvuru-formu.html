@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Talaşlı İmalat — DRONE TECH</title>
+    <!-- Talaşlı imalat sayfasına özel stiller -->
+    <link rel="stylesheet" href="css/is-basvuru.css" />
+    <link rel="stylesheet" href="css/talasli-imalat.css" />
+</head>
+
+<body class="is-basvuru-page">
+    <!-- HEADER -->
+    <header class="ti-header">
+        <div class="ti-container ti-header-inner">
+            <a href="index.html" class="ti-logo">
+                <img src="assets/logo-white.png" alt="Drone Tech">
+            </a>
+
+            <!-- MOBİL HAMBURGER BUTONU -->
+            <button class="ti-nav-toggle" aria-label="Menüyü Aç/Kapat">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <nav class="ti-nav">
+                <ul>
+                    <li><a href="talasli-imalat.html">Ana Sayfa</a></li>
+                    <li><a href="uretim.html">Üretim</a></li>
+                    <li><a href="makine.html">Makine Parkuru</a></li>
+                    <li><a href="kalite.html">Kalite</a></li>
+                    <li class="ti-has-dropdown">
+                        <a href="#  ">İletişim</a>
+                        <ul class="ti-dropdown">
+                            <li><a href="is-basvuru-formu.html">İş Başvuru Formu</a></li>
+                            <li><a href="talasli-imalat-iletisim.html">İletişim</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+    <main class="page-main page-main--job-application">
+        <section class="job-intro">
+            <h1>İş Başvurusu Formu</h1>
+            <p>
+                Alttaki nitelikleri karşılayabilen kişiler öncelikli olarak değerlendirilecektir.
+            </p>
+
+            <div class="job-positions">
+                <article class="job-position">
+                    <h2>Kalite Kontrol Personeli</h2>
+                    <ul>
+                        <li>En az lise mezunu</li>
+                        <li>Askerliğini tamamlamış</li>
+                        <li>Teknik resim bilgisine sahip</li>
+                        <li>Tercihen kalite kontrol alanında iş tecrübesine sahip</li>
+                        <li>Kumpas, mihengir gibi ölçüm araçlarını kullanabilen</li>
+                        <li>Tercihen iyi derecede İngilizce bilen</li>
+                    </ul>
+                </article>
+
+                <article class="job-position">
+                    <h2>İmalat Operatörü</h2>
+                    <ul>
+                        <li>Meslek lisesi mezunu</li>
+                        <li>Askerliğini tamamlamış</li>
+                        <li>Tercihen CNC operatörü olarak çalışmış</li>
+                        <li>Tercihen teknik resim okuma becerisine sahip</li>
+                    </ul>
+                </article>
+
+                <article class="job-position">
+                    <h2>Teknik Ressam</h2>
+                    <ul>
+                        <li>En az meslek lisesi mezunu, tercihen teknik üniversite mezunu</li>
+                        <li>Askerliğini tamamlamış</li>
+                        <li>Teknik resim kurallarını bilen ve çizebilen</li>
+                        <li>Tercihen imalat bilgisine sahip</li>
+                        <li>Tercihen iyi derecede İngilizce bilen</li>
+                    </ul>
+                </article>
+
+                <article class="job-position">
+                    <h2>Elektrik ve Elektronik Mühendisi</h2>
+                    <ul>
+                        <li>Gömülü mimaride yazılım geliştirebilen</li>
+                        <li>C ve C++ dillerine iyi derecede hakim</li>
+                        <li>Devre çizimi ve analizi üzerine tecrübeli</li>
+                        <li>Laboratuvar ekipmanları konusunda tecrübeli</li>
+                        <li>Tercihen ST ürün yelpazesi üzerinde tecrübeli</li>
+                        <li>Piezo ve MEMS tabanlı sensörler konusunda bilgili</li>
+                        <li>İyi derecede İngilizce bilen</li>
+                    </ul>
+                </article>
+            </div>
+        </section>
+
+        <section class="job-form-section" aria-labelledby="job-form-title">
+            <h2 id="job-form-title">Başvuru Formu</h2>
+            <p><small><span class="required">*</span> ile işaretli alanlar zorunludur.</small></p>
+
+            <form id="jobApplicationForm" class="job-form" method="post" action="/api/job-application"
+                enctype="multipart/form-data" novalidate>
+                <!-- Kişisel Bilgiler -->
+                <fieldset class="form-group">
+                    <legend>Kişisel Bilgiler</legend>
+
+                    <div class="form-row form-row--two-cols">
+                        <div class="form-field">
+                            <label for="firstName">Adınız <span class="required">*</span></label>
+                            <input type="text" id="firstName" name="firstName" placeholder="Ad" required>
+                        </div>
+
+                        <div class="form-field">
+                            <label for="lastName">Soyadınız <span class="required">*</span></label>
+                            <input type="text" id="lastName" name="lastName" placeholder="Soyad" required>
+                        </div>
+                    </div>
+
+                    <div class="form-field">
+                        <label for="email">E-Posta Adresiniz <span class="required">*</span></label>
+                        <input type="email" id="email" name="email" placeholder="ornek@eposta.com" required>
+                    </div>
+
+                    <div class="form-row form-row--two-cols">
+                        <div class="form-field">
+                            <label for="birthDate">Doğum Tarihiniz <span class="required">*</span></label>
+                            <input type="date" id="birthDate" name="birthDate" required>
+                        </div>
+
+                        <div class="form-field">
+                            <label for="phone">Telefon Numaranız <span class="required">*</span></label>
+                            <input type="tel" id="phone" name="phone" placeholder="+90 5__ ___ __ __" required>
+                        </div>
+                    </div>
+
+                    <div class="form-field">
+                        <label for="address">Adresiniz <span class="required">*</span></label>
+                        <textarea id="address" name="address" rows="3" required></textarea>
+                    </div>
+                </fieldset>
+
+                <!-- Eğitim ve Özgeçmiş -->
+                <fieldset class="form-group">
+                    <legend>Eğitim ve Özgeçmiş</legend>
+
+                    <div class="form-row">
+                        <div class="form-field">
+                            <label for="educationLevel">Öğrenim Durumu</label>
+                            <select id="educationLevel" name="educationLevel">
+                                <option value="">Seçiniz</option>
+                                <option value="ilkogretim">İlköğretim</option>
+                                <option value="lise">Lise</option>
+                                <option value="onlisans">Ön Lisans</option>
+                                <option value="lisans">Lisans</option>
+                                <option value="yukseklisans">Yüksek Lisans</option>
+                                <option value="doktora">Doktora</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-field">
+                        <label for="lastSchool">Son Mezun Olunan Okul ve Bölüm <span class="required">*</span></label>
+                        <input type="text" id="lastSchool" name="lastSchool" required>
+                    </div>
+
+                    <div class="form-field">
+                        <label for="cvFile">Öz Geçmiş (CV) <span class="required">*</span></label>
+                        <input type="file" id="cvFile" name="cvFile" accept=".pdf,.doc,.docx" required>
+                        <small>PDF veya Word formatında yükleyiniz.</small>
+                    </div>
+                </fieldset>
+
+                <!-- Diğer Bilgiler -->
+                <fieldset class="form-group">
+                    <legend>Diğer Bilgiler</legend>
+
+                    <div class="form-row form-row--two-cols">
+                        <div class="form-field">
+                            <label for="militaryStatus">Askerlik Durumu (Erkek adaylar için)</label>
+                            <select id="militaryStatus" name="militaryStatus">
+                                <option value="">Seçiniz</option>
+                                <option value="yapti">Yaptı</option>
+                                <option value="yapmadi">Yapmadı</option>
+                                <option value="tecilli">Tecilli</option>
+                                <option value="muaf">Muaf</option>
+                            </select>
+                        </div>
+
+                        <div class="form-field">
+                            <label for="drivingLicense">Ehliyet (Sınıfıyla Birlikte)</label>
+                            <input type="text" id="drivingLicense" name="drivingLicense" placeholder="Örn: B, B+E">
+                        </div>
+                    </div>
+
+                    <div class="form-field">
+                        <label for="languages">Yabancı Diller <span class="required">*</span></label>
+                        <textarea id="languages" name="languages" rows="2" placeholder="Dil ve seviye belirtiniz"
+                            required></textarea>
+                    </div>
+
+                    <div class="form-row form-row--two-cols">
+                        <div class="form-field">
+                            <label for="desiredDepartment">Çalışmak İstediğiniz Bölüm <span
+                                    class="required">*</span></label>
+                            <select id="desiredDepartment" name="desiredDepartment" required>
+                                <option value="">Seçiniz</option>
+                                <option value="kalite-kontrol">Kalite Kontrol Personeli</option>
+                                <option value="imalat-operatoru">İmalat Operatörü</option>
+                                <option value="teknik-ressam">Teknik Ressam</option>
+                                <option value="elektrik-elektronik-muhendisi">Elektrik ve Elektronik Mühendisi</option>
+                                <option value="bakim-onarim">Bakım ve Onarım</option>
+                                <option value="diger">Diğer</option>
+                            </select>
+                        </div>
+
+                        <div class="form-field">
+                            <label for="desiredDepartmentOther">Diğer Çalışmak İstediğiniz Bölüm</label>
+                            <input type="text" id="desiredDepartmentOther" name="desiredDepartmentOther"
+                                placeholder="Diğer ise belirtiniz">
+                        </div>
+                    </div>
+
+                    <div class="form-field">
+                        <span class="form-label">Adli Sicil Kaydı</span>
+                        <div class="form-options">
+                            <label>
+                                <input type="radio" name="criminalRecord" value="yok" checked>
+                                Yok
+                            </label>
+                            <label>
+                                <input type="radio" name="criminalRecord" value="var">
+                                Var
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="form-field">
+                        <label for="references">Referanslarınız (İletişim Bilgileriyle Birlikte)</label>
+                        <textarea id="references" name="references" rows="3"></textarea>
+                    </div>
+
+                    <div class="form-field">
+                        <label for="otherNotes">Belirtmek İstediğiniz Diğer Konular</label>
+                        <textarea id="otherNotes" name="otherNotes" rows="3"></textarea>
+                    </div>
+                </fieldset>
+
+                <!-- Onay ve Gönder -->
+                <fieldset class="form-group form-group--submit">
+                    <div class="form-field form-field--checkbox">
+                        <label>
+                            <input type="checkbox" id="approval" name="approval" required>
+                            Beyan ettiğim bilgilerin doğruluğunu onaylıyorum <span class="required">*</span>
+                        </label>
+                    </div>
+                    <div id="jobFormMessage" class="form-message" aria-live="polite"></div>
+                    <button type="submit" class="btn btn-primary">Başvuruyu Gönder</button>
+                </fieldset>
+            </form>
+        </section>
+    </main>
+
+    <footer class="site-footer">
+        <div class="container footer-inner">
+            <div class="footer-contact">
+                <h3>İLETİŞİM</h3>
+                <p><strong>İSTANBUL ADRES</strong><br>
+                    Teknopark İstanbul<br>
+                    Sanayi, 34906 Pendik/İstanbul<br>
+                    <strong>Telefon:</strong> 0 530 000 00 00
+                </p>
+                <p><strong>GİRESUN ADRES</strong><br>
+                    II.OSB Caddesi, Maden, 28340 Piraziz/Giresun<br>
+                    BULANCAK / GİRESUN<br>
+                    <strong>Telefon:</strong> 0 530 000 00 00
+                </p>
+                <p><strong>Mail:</strong> info@dronetech.com.tr</p>
+
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            <p>DRONE TECH © 2025, HER HAKKI SAKLIDIR </p>
+        </div>
+    </footer>
+    <script src="/js/is-basvuru.js"></script>
+</body>
+
+</html>
