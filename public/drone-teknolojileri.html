@@ -4,7 +4,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Drone Teknolojileri — DRONE TECH</title>
+  <title>Drone Teknolojileri — DRONE TECH</title>
   <meta name="description" content="Drone Tech ürün kategorileri" />
   <link rel="stylesheet" href="css/styles.css" />
 </head>
@@ -15,8 +15,10 @@
     <a href="index.html" class="brand-link">
       <img src="assets/logo.png" alt="Drone Tech logosu" class="brand-logo-anasayfa">
     </a>
-
-    <button class="nav-toggle" aria-label="Menüyü aç/kapat" aria-expanded="false" onclick="toggleMenu()">☰</button>
+    <!-- ✅ MOBİL MENÜ BUTONU (HAMBURGER) -->
+    <button class="nav-toggle" type="button" aria-label="Menüyü aç/kapat" aria-controls="topNav" aria-expanded="false">
+      ☰
+    </button>
     <nav class="top-nav" id="topNav">
       <a href="drone-teknolojileri.html" aria-current="page">Anasayfa</a>
       <a href="drone-hakkimizda.html">Hakkımızda</a>
@@ -24,11 +26,12 @@
         <a href="urunler.html" id="urunlerLink">Ürünler</a>
         <div class="dropdown" role="menu">
           <a href="fixed-wing-plane-vtol.html" class="dropdown-item">Fixed Wing Plane Vtol</a>
-          <a href="gimbal.html" class="dropdown-item">Gimbal Camera</a>
-          <a href="datalink.html" class="dropdown-item">Video & Datalink</a>
-          <a href="fc.html" class="dropdown-item">Flight Controller</a>
-          <a href="battery.html" class="dropdown-item">Battery & Charger</a>
-          <a href="ground.html" class="dropdown-item">Ground Station</a>
+          <a href="multicopter.html" class="dropdown-item">Multicopter</a>
+          <a href="gimbal-camera.html" class="dropdown-item">Gimbal Camera</a>
+          <a href="video-datalink.html" class="dropdown-item">Video & Datalink</a>
+          <a href="flight-controller.html" class="dropdown-item">Flight Controller</a>
+          <a href="battery-charger.html" class="dropdown-item">Battery & Charger</a>
+          <a href="ground-station.html" class="dropdown-item">Ground Station</a>
           <a href="uav-parts.html" class="dropdown-item">UAV Parts</a>
         </div>
       </div>
@@ -47,49 +50,49 @@
   <!-- KATEGORİ GRID -->
   <main class="container categories">
     <section class="cat-grid" aria-label="Ürün Kategorileri">
-      <a class="cat-card" href="#vtol">
+      <a class="cat-card" href="fixed-wing-plane-vtol.html">
         <div class="card-inner">
           <img src="assets/drone-2.png" alt="" class="cat-icon" />
           <h3 class="cat-title">Fixed Wing Plane Vtol</h3>
         </div>
       </a>
-      <a class="cat-card" href="#multikopter">
+      <a class="cat-card" href="multicopter.html">
         <div class="card-inner">
           <img src="assets/drone-4.png" alt="" class="cat-icon" />
           <h3 class="cat-title">Multicopter</h3>
         </div>
       </a>
-      <a class="cat-card" href="#gimbal">
+      <a class="cat-card" href="gimbal-camera.html">
         <div class="card-inner">
           <img src="assets/drone.png" alt="" class="cat-icon" />
           <h3 class="cat-title">Gimbal Camera</h3>
         </div>
       </a>
-      <a class="cat-card" href="#video">
+      <a class="cat-card" href="video-datalink.html">
         <div class="card-inner">
           <img src="assets/video.png" alt="" class="cat-icon" />
           <h3 class="cat-title">Video &amp; Datalink</h3>
         </div>
       </a>
-      <a class="cat-card" href="#fc">
+      <a class="cat-card" href="flight-controller.html">
         <div class="card-inner">
           <img src="assets/drone-1.png" alt="" class="cat-icon" />
           <h3 class="cat-title">Flight Controller</h3>
         </div>
       </a>
-      <a class="cat-card" href="#battery">
+      <a class="cat-card" href="battery-charger.html">
         <div class="card-inner">
           <img src="assets/battery-1.png" alt="" class="cat-icon" />
           <h3 class="cat-title">Battery &amp; Charge</h3>
         </div>
       </a>
-      <a class="cat-card" href="#ground">
+      <a class="cat-card" href="ground-station.html">
         <div class="card-inner">
           <img src="assets/satellite.png" alt="" class="cat-icon" />
           <h3 class="cat-title">Ground Station</h3>
         </div>
       </a>
-      <a class="cat-card" href="#uav-parts">
+      <a class="cat-card" href="uav-parts.html">
         <div class="card-inner">
           <img src="assets/car-parts.png" alt="" class="cat-icon" />
           <h3 class="cat-title">UAV Parts</h3>
@@ -114,15 +117,9 @@
     <div class="container footer-inner">
       <div class="footer-contact">
         <h3>İLETİŞİM</h3>
-        <p><strong>İSTANBUL ADRES</strong><br>
-          Teknopark İstanbul<br>
-          Sanayi, 34906 Pendik/İstanbul<br>
-          <strong>Telefon:</strong> 0 530 000 00 00
-        </p>
         <p><strong>GİRESUN ADRES</strong><br>
-          II.OSB Caddesi, Maden, 28340 Piraziz/Giresun<br>
-          BULANCAK / GİRESUN<br>
-          <strong>Telefon:</strong> 0 530 000 00 00
+          Pazarsuyu Köyü II. OSB Mevki 5. Cadde No:12, 28300 Bulancak/Giresun<br>
+          <strong>Telefon:</strong> (0454) 333 20 20
         </p>
         <p><strong>Mail:</strong> info@dronetech.com.tr</p>
       </div>
@@ -148,7 +145,7 @@
   <button id="scrollTopBtn" class="scroll-top" aria-label="Yukarı Çık">↑</button>
   <!-- WhatsApp Floating Button -->
   <!-- WhatsApp Floating Button -->
-  <a href="https://wa.me/905445318825?text=Merhaba%20bilgi%20almak%20istiyorum" class="whatsapp-float" target="_blank"
+  <a href="https://wa.me/905528786230?text=Merhaba%20bilgi%20almak%20istiyorum" class="whatsapp-float" target="_blank"
     aria-label="WhatsApp ile iletişime geç">
     <svg viewBox="0 0 32 32" width="28" height="28" fill="#fff" aria-hidden="true">
       <path

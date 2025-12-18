@@ -7,6 +7,7 @@
     <title>Talaşlı İmalat — DRONE TECH</title>
     <!-- Talaşlı imalat sayfasına özel stiller -->
     <link rel="stylesheet" href="css/talasli-imalat.css" />
+    <link rel="stylesheet" href="css/kalite.css" />
 </head>
 
 <body class="is-basvuru-page">
@@ -27,10 +28,10 @@
                 <ul>
                     <li><a href="talasli-imalat.html">Ana Sayfa</a></li>
                     <li><a href="uretim.html">Üretim</a></li>
-                    <li><a href="makine.html">Makine Parkuru</a></li>
                     <li><a href="kalite.html">Kalite</a></li>
+                    <li><a href="talasli-imalat-hakkimizda.html">Hakkımızda</a></li>
                     <li class="ti-has-dropdown">
-                        <a href="#  ">İletişim</a>
+                        <a href="talasli-imalat-iletisim.html">İletişim</a>
                         <ul class="ti-dropdown">
                             <li><a href="is-basvuru-formu.html">İş Başvuru Formu</a></li>
                             <li><a href="talasli-imalat-iletisim.html">İletişim</a></li>
@@ -40,172 +41,192 @@
             </nav>
         </div>
     </header>
-    <!-- ANA İÇERİK -->
-    <main class="ti-main">
-        <section id="product" class="ti-section ti-section-light">
-            <div class="ti-container ti-product-layout">
-                <!-- Sol taraf: başlık + açıklama -->
-                <div class="ti-product-intro">
-                    <span class="ti-eyebrow">DRONE TECH</span>
-                    <h2>Talaşlı İmalat ve CNC İşleme Hizmetleri</h2>
-                    <p class="ti-product-text">
-                        Talaşlı imalat bölümümüz; hassas CNC işleme, torna, freze ve özel aparat imalatı için
-                        kritik parçalar üretmektedir. Uzun yıllara dayanan tecrübemiz ve ileri teknoloji CNC
-                        ekipmanlarımızla projelerinize güvenilir bir çözüm ortağı sunuyoruz.
-                    </p>
+
+    <main class="kalite-main">
+        <!-- HERO -->
+        <section class="kalite-hero">
+            <div class="kalite-wrap">
+                <div class="kalite-hero-grid">
+                    <!-- Sol: Metin -->
+                    <div class="kalite-hero-text">
+                        <span class="kalite-badge">Talaşlı İmalat • Kalite</span>
+                        <h1>Kalite Kontrol</h1>
+                        <p>
+                            Her parçayı; ölçü, tolerans ve yüzey kriterlerine göre doğrular,
+                            izlenebilir raporlama ile sonuçları analiz ederiz
+                        </p>
+
+                        <div class="kalite-stats">
+                            <div class="kalite-stat">
+                                <div class="kalite-stat-num">Süreç</div>
+                                <div class="kalite-stat-label">Giriş → Proses → Son Kontrol</div>
+                            </div>
+                            <div class="kalite-stat">
+                                <div class="kalite-stat-num">Hassasiyet</div>
+                                <div class="kalite-stat-label">Tolerans odaklı doğrulama</div>
+                            </div>
+                            <div class="kalite-stat">
+                                <div class="kalite-stat-num">Rapor</div>
+                                <div class="kalite-stat-label">İzlenebilir kayıt / ölçüm raporu</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Sağ: Görsel + Özet Kart -->
+                    <div class="kalite-hero-side">
+                        <div class="kalite-hero-card">
+                            <ul class="kalite-checklist">
+                                <li>Giriş kalite kontrol</li>
+                                <li>Proses içi ölçüm / doğrulama</li>
+                                <li>Son kontrol ve raporlama</li>
+                                <li>Kalibrasyonlu ekipman kullanımı</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <!-- FOTO -->
+                    <div class="kalite-hero-image">
+                        <img src="assets/talasli-imalat/4.png" alt="Kalite Kontrol Süreci">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- BÖLÜM: Kalite Yaklaşımı -->
+        <section class="kalite-section">
+            <div class="kalite-wrapp">
+                <div class="kalite-section-head">
+                    <h2>Kalite Yaklaşımımız</h2>
+                    <p>Üretimin her adımında ölçülebilir hedefler, net kriterler ve kayıtlı sonuçlar.</p>
                 </div>
 
-                <!-- Sağ taraf: kutular -->
-                <div class="ti-product-grid">
-                    <article class="ti-product-card">
-                        <div class="ti-product-icon">▣</div>
-                        <h3>CNC Talaşlı İmalat</h3>
-                        <p>
-                            Modern CNC freze ve CNC torna makinelerimizle, çeşitli malzemelerden hassas ve
-                            kompleks parçalar üretiyoruz. Metal ve kompozit malzemeler üzerinde uzmanlaşmış
-                            ekibimizle ihtiyaçlarınıza çözüm sunuyoruz.
-                        </p>
+                <div class="kalite-cards">
+                    <article class="kalite-card">
+                        <div class="kalite-card-top">
+                            <span class="kalite-pill">01</span>
+                            <h3>Ölçüm & Doğrulama</h3>
+                        </div>
+                        <p>Kritik ölçüler proses boyunca kontrol edilerek sapmalar erken yakalanır.</p>
                     </article>
 
-                    <article class="ti-product-card">
-                        <div class="ti-product-icon">▣</div>
-                        <h3>Hassas İşleme</h3>
-                        <p>
-                            Milimetrenin altında tolerans gerektiren kritik parçalar için proses kontrollü
-                            hassas işleme teknikleri kullanıyor, her parçayı kayıt altına alarak izlenebilirlik
-                            sağlıyoruz.
-                        </p>
+                    <article class="kalite-card">
+                        <div class="kalite-card-top">
+                            <span class="kalite-pill">02</span>
+                            <h3>Yüzey & Görsel Kontrol</h3>
+                        </div>
+                        <p>Yüzey kalitesi, çapak kontrolü ve görsel kriterler standartlara göre doğrulanır.</p>
                     </article>
 
-                    <article class="ti-product-card">
-                        <div class="ti-product-icon">▣</div>
-                        <h3>Metal İşleme</h3>
-                        <p>
-                            Alüminyum, paslanmaz çelik, takım çeliği ve özel alaşımlarda talaşlı imalat yaparak
-                            havacılık ve savunma sanayii için güvenilir parçalar üretiyoruz.
-                        </p>
+                    <article class="kalite-card">
+                        <div class="kalite-card-top">
+                            <span class="kalite-pill">03</span>
+                            <h3>Dokümantasyon</h3>
+                        </div>
+                        <p>Kontrol sonuçları kayıt altına alınır; gerektiğinde müşteri bazlı raporlanır.</p>
                     </article>
 
-                    <article class="ti-product-card">
-                        <div class="ti-product-icon">▣</div>
-                        <h3>Özel Parça & Aparat Üretimi</h3>
-                        <p>
-                            Seri üretimi hızlandıran özel aparat ve fikstür tasarımı/imalatı ile birlikte
-                            projelerinize özel parça çözümleri geliştiriyoruz.
-                        </p>
+                    <article class="kalite-card">
+                        <div class="kalite-card-top">
+                            <span class="kalite-pill">04</span>
+                            <h3>İzlenebilirlik</h3>
+                        </div>
+                        <p>Parti/iş emri bazlı takip ile geriye dönük doğrulama yapılabilir.</p>
                     </article>
                 </div>
             </div>
         </section>
 
-        <section id="machines" class="ti-section ti-machines-section">
-            <div class="ti-container">
+        <!-- GALERİ SLIDER (Kalite Yaklaşımımız ile Kontrol Akışı arasına) -->
+        <section class="kalite-galeri">
+            <div class="kalite-wrap">
+                <div class="kalite-galeri-head">
+                    <h2>Kalite Kontrol</h2>
+                    <p>Ölçüm, doğrulama ve raporlamada üstün hassasiyet</p>
+                </div>
+                <div class="kalite-galeri-slider" data-slider>
+                    <button class="kalite-galeri-btn prev" type="button" aria-label="Önceki" data-prev>‹</button>
+                    <div class="kalite-galeri-viewport" data-viewport>
+                        <div class="kalite-galeri-track" data-track>
+                            <figure class="kalite-galeri-item">
+                                <img src="assets/talasli-imalat/4.png" alt="Hassas ölçüm kontrolü">
+                                <figcaption>Hassas ölçüm ve tolerans kontrolü</figcaption>
+                            </figure>
 
-                <span class="ti-eyebrow">Makine Parkurumuz</span>
-                <h2 class="ti-machines-title">İleri Teknoloji CNC Parkuru</h2>
-                <p class="ti-section-intro">
-                    Güvenilir üretim için düzenli bakımı yapılan modern CNC tezgahları ve ölçüm ekipmanları
-                    kullanıyoruz.
-                </p>
+                            <figure class="kalite-galeri-item">
+                                <img src="assets/talasli-imalat/6.jpeg" alt="Proses içi kontrol">
+                                <figcaption>Proses içi ölçüm / doğrulama</figcaption>
+                            </figure>
 
-                <div class="ti-machines-grid">
-                    <article class="ti-machines-card" style="background-image: url('assets/talasli-imalat/1.png')">
-                        <div class="ti-machines-overlay"></div>
-                        <div class="ti-machines-content">
-                            <h3>3 & 4 Eksen CNC Freze</h3>
-                            <span>Hassas İşleme</span>
+                            <figure class="kalite-galeri-item">
+                                <img src="assets/talasli-imalat/16.jpeg" alt="Son kontrol ve raporlama">
+                                <figcaption>Son kontrol ve raporlama</figcaption>
+                            </figure>
+
+                            <figure class="kalite-galeri-item">
+                                <img src="assets/talasli-imalat/17.jpeg" alt="Yüzey ve görsel kontrol">
+                                <figcaption>Yüzey ve görsel kontrol</figcaption>
+                            </figure>
                         </div>
-                    </article>
+                    </div>
 
-                    <article class="ti-machines-card" style="background-image: url('assets/talasli-imalat/5.png')">
-                        <div class="ti-machines-overlay"></div>
-                        <div class="ti-machines-content">
-                            <h3>CNC Torna Tezgahları</h3>
-                            <span>Seri Üretim</span>
-                        </div>
-                    </article>
-
-                    <article class="ti-machines-card" style="background-image: url('assets/talasli-imalat/3.png')">
-                        <div class="ti-machines-overlay"></div>
-                        <div class="ti-machines-content">
-                            <h3>Ölçüm & Kontrol</h3>
-                            <span>Kalite Güvencesi</span>
-                        </div>
-                    </article>
-
-                    <article class="ti-machines-card" style="background-image: url('assets/talasli-imalat/4.png')">
-                        <div class="ti-machines-overlay"></div>
-                        <div class="ti-machines-content">
-                            <h3>5 Eksen CNC İşleme</h3>
-                            <span>Karmaşık Geometriler</span>
-                        </div>
-                    </article>
-
-                    <article class="ti-machines-card" style="background-image: url('assets/talasli-imalat/2.png')">
-                        <div class="ti-machines-overlay"></div>
-                        <div class="ti-machines-content">
-                            <h3>Tel Erozyon / Taşlama</h3>
-                            <span>İnce Detaylar</span>
-                        </div>
-                    </article>
-
-                    <article class="ti-machines-card" style="background-image: url('assets/WFL-1000E.jpeg')">
-                        <div class="ti-machines-overlay"></div>
-                        <div class="ti-machines-content">
-                            <h3>CMM & Ölçüm Laboratuvarı</h3>
-                            <span>Raporlanabilir Kalite</span>
-                        </div>
-                    </article>
+                    <button class="kalite-galeri-btn next" type="button" aria-label="Sonraki" data-next>›</button>
                 </div>
 
-                <div class="ti-machines-btn-wrap">
-                    <a href="#" class="ti-machines-btn">Makine Listesi</a>
-                </div>
-
+                <div class="kalite-galeri-dots" data-dots></div>
             </div>
         </section>
 
+        <!-- BÖLÜM: Kontrol Akışı -->
+        <section class="kalite-section kalite-section-alt">
+            <div class="kalite-wrapppp">
+                <div class="kalite-section-head">
+                    <h2>Kontrol Akışı</h2>
+                    <p>Basit, şeffaf ve izlenebilir bir kontrol zinciri.</p>
+                </div>
 
-        <section id="quality" class="ti-section">
-            <div class="ti-container">
-                <h2>Kalite Anlayışımız</h2>
-                <p class="ti-section-intro">
-                    Ürettiğimiz her parça, işlevi gereği kritik olduğu bilinciyle kontrol edilir.
-                    Tüm süreçlerimizi izlenebilir ve dokümante olacak şekilde yönetiyoruz.
-                </p>
+                <div class="kalite-steps">
+                    <div class="kalite-step">
+                        <div class="kalite-step-no">01</div>
+                        <div class="kalite-step-body">
+                            <h3>Giriş Kontrol</h3>
+                            <p>Hammadde / yarı mamul uygunluğu doğrulanır, kayıt altına alınır.</p>
+                        </div>
+                    </div>
 
-                <div class="ti-grid ti-grid-2">
-                    <article class="ti-card">
-                        <h3>Dokümantasyon & İzlenebilirlik</h3>
-                        <p>
-                            Her parçaya ait iş emirleri, ölçüm raporları ve kullanılan malzeme
-                            sertifikaları kayıt altında tutulur.
-                        </p>
-                    </article>
-                    <article class="ti-card">
-                        <h3>Proses Kontrol</h3>
-                        <p>
-                            Kritik ölçüler için ara kontrol süreçleriyle seri üretimde dahi stabil ve
-                            tekrarlanabilir kalite sunuyoruz.
-                        </p>
-                    </article>
+                    <div class="kalite-step">
+                        <div class="kalite-step-no">02</div>
+                        <div class="kalite-step-body">
+                            <h3>Proses İçi Kontrol</h3>
+                            <p>Kritik ölçüler operasyonlar arasında kontrol edilerek hatalar erkenden önlenir.</p>
+                        </div>
+                    </div>
+
+                    <div class="kalite-step">
+                        <div class="kalite-step-no">03</div>
+                        <div class="kalite-step-body">
+                            <h3>Son Kontrol</h3>
+                            <p>Parça, teknik resim ve tolerans kriterlerine göre son kez doğrulanır.</p>
+                        </div>
+                    </div>
+
+                    <div class="kalite-step">
+                        <div class="kalite-step-no">04</div>
+                        <div class="kalite-step-body">
+                            <h3>Raporlama</h3>
+                            <p>İzlenebilir kayıtlar ve istenirse ölçüm raporu hazırlanır.</p>
+                        </div>
+                    </div>
                 </div>
             </div>
         </section>
     </main>
+
     <footer class="site-footer">
         <div class="container footer-inner">
             <div class="footer-contact">
                 <h3>İLETİŞİM</h3>
-                <p><strong>İSTANBUL ADRES</strong><br>
-                    Teknopark İstanbul<br>
-                    Sanayi, 34906 Pendik/İstanbul<br>
-                    <strong>Telefon:</strong> 0 530 000 00 00
-                </p>
                 <p><strong>GİRESUN ADRES</strong><br>
-                    II.OSB Caddesi, Maden, 28340 Piraziz/Giresun<br>
-                    BULANCAK / GİRESUN<br>
-                    <strong>Telefon:</strong> 0 530 000 00 00
+                    Pazarsuyu Köyü II. OSB Mevki 5. Cadde No:12, 28300 Bulancak/Giresun<br>
+                    <strong>Telefon:</strong> (0454) 333 20 20
                 </p>
                 <p><strong>Mail:</strong> info@dronetech.com.tr</p>
 
@@ -216,8 +237,10 @@
             <p>DRONE TECH © 2025, HER HAKKI SAKLIDIR </p>
         </div>
     </footer>
-
-    <script src="js/talasli-imalat.js"></script>
+    <script src="js/talasli-imalat-kalite.js"></script>
+    <button id="scrollTopBtn" aria-label="Yukarı çık">
+        ↑
+    </button>
 </body>
 
 </html>

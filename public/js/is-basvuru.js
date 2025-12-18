@@ -97,4 +97,63 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     }
   });
+
+  const scrollBtn = document.getElementById("scrollTopBtn");
+
+  if (scrollBtn) {
+    window.addEventListener("scroll", () => {
+      if (window.scrollY > 300) {
+        scrollBtn.classList.add("show");
+      } else {
+        scrollBtn.classList.remove("show");
+      }
+    });
+
+    scrollBtn.addEventListener("click", () => {
+      window.scrollTo({
+        top: 0,
+        behavior: "smooth"
+      });
+    });
+  }
+
+  // NAV TOGGLE (MOBİL MENÜ)
+  const nav = document.querySelector(".ti-nav");
+  const navToggle = document.querySelector(".ti-nav-toggle");
+
+  if (nav && navToggle) {
+    navToggle.addEventListener("click", e => {
+      e.stopPropagation();
+      nav.classList.toggle("open");
+      navToggle.classList.toggle("open");
+    });
+  }
+
+  // MOBİL DROPDOWN: İLETİŞİM'e tıklayınca aç/kapa
+  const dropdownLinks = document.querySelectorAll(".ti-has-dropdown > a");
+
+  function isMobile() {
+    return window.matchMedia("(max-width: 768px)").matches;
+  }
+
+  dropdownLinks.forEach(link => {
+    link.addEventListener("click", function (e) {
+      if (isMobile()) {
+        e.preventDefault();
+
+        const parentLi = this.parentElement;
+        const alreadyOpen = parentLi.classList.contains("is-open");
+
+        // önce tüm dropdownları kapat
+        document
+          .querySelectorAll(".ti-has-dropdown.is-open")
+          .forEach(li => li.classList.remove("is-open"));
+
+        // eğer bu zaten açıksa, kapalı bırak (toggle)
+        if (!alreadyOpen) {
+          parentLi.classList.add("is-open");
+        }
+      }
+    });
+  });
 });

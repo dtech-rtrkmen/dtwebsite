@@ -317,6 +317,162 @@
                 margin-left: 0;
             }
         }
+
+        /* --- ÜRÜN FORMU: yeni .form-row alanları için --- */
+
+        .row {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-bottom: 10px;
+            align-items: flex-start;
+        }
+
+        /* .field nasıl görünüyorsa .form-row da öyle görünsün */
+        .row .form-row {
+            flex: 1 1 200px;
+            min-width: 200px;
+            margin-bottom: 0;
+        }
+
+        .form-row label {
+            display: block;
+            font-size: 13px;
+            margin-bottom: 4px;
+        }
+
+        /* text + file input’lar */
+        .form-row input[type="text"],
+        .form-row input[type="file"],
+        .form-row .input {
+            width: 100%;
+            padding: 8px 10px;
+            border-radius: 8px;
+            border: 1px solid #d1d5db;
+            font-size: 14px;
+            background: #fff;
+        }
+
+        /* küçük açıklama yazıları */
+        .form-row small {
+            display: block;
+            margin-top: 4px;
+            font-size: 11px;
+            color: #6b7280;
+        }
+
+        /* Galeri önizleme kutusu */
+        #productGalleryPreview {
+            margin-top: 4px;
+            padding: 6px 8px;
+            border-radius: 8px;
+            border: 1px dashed #e5e7eb;
+            background: #f9fafb;
+            font-size: 12px;
+            color: #4b5563;
+        }
+
+        /* form içindeki hr’lar satırı bölsün */
+        .row hr {
+            flex-basis: 100%;
+            border: none;
+            border-top: 1px solid #e5e7eb;
+            margin: 8px 0;
+        }
+
+        /* --- ÜRÜN FORMU: yeni .form-row alanları için --- */
+
+        .row {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-bottom: 10px;
+            align-items: flex-start;
+        }
+
+        .row .form-row {
+            flex: 1 1 200px;
+            min-width: 200px;
+            margin-bottom: 0;
+        }
+
+        .form-row label {
+            display: block;
+            font-size: 13px;
+            margin-bottom: 4px;
+        }
+
+        .form-row input[type="text"],
+        .form-row input[type="file"],
+        .form-row .input {
+            width: 100%;
+            padding: 8px 10px;
+            border-radius: 8px;
+            border: 1px solid #d1d5db;
+            font-size: 14px;
+            background: #fff;
+        }
+
+        .form-row small {
+            display: block;
+            margin-top: 4px;
+            font-size: 11px;
+            color: #6b7280;
+        }
+
+        /* Tanıtım galerisi önizleme */
+        .gallery-preview {
+            margin-top: 6px;
+            padding: 6px 8px;
+            border-radius: 8px;
+            border: 1px dashed #e5e7eb;
+            background: #f9fafb;
+            color: #4b5563;
+        }
+
+        /* Form içi bölücü çizgi */
+        .section-divider {
+            border: none;
+            border-top: 1px solid #e5e7eb;
+            margin: 10px 0 14px;
+        }
+
+        /* Teknik görseller bloğu */
+        .tech-block {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .tech-upload-row {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .tech-upload-row input[type="file"] {
+            flex: 1 1 180px;
+        }
+
+        .tech-upload-row input[type="text"] {
+            flex: 2 1 200px;
+        }
+
+        .tech-image-list {
+            margin-top: 4px;
+            padding: 6px 8px;
+            border-radius: 8px;
+            border: 1px dashed #e5e7eb;
+            background: #f9fafb;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .tech-image-list img {
+            max-width: 120px;
+            border-radius: 8px;
+            margin-right: 6px;
+        }
     </style>
 </head>
 
@@ -398,22 +554,25 @@
                         </div>
                     </div>
 
-                    <!-- ÜRÜNLER -->
+                    <!-- ÜRÜNLER GÖRÜNÜMÜ -->
                     <div id="view-products" style="display:none;">
+                        <!-- ÜRÜN EKLE / DÜZENLE + TEKNİK GÖRSELLER -->
                         <div class="card">
                             <h2>Ürün Ekle / Düzenle</h2>
-                            <p class="small">Yeni ürün ekleyebilir veya listeden seçip düzenleyebilirsin.</p>
+                            <p class="small">Yeni ürün ekleyebilir veya listeden seçip düzenleyebilirsiniz.</p>
+                            <!-- BURAYA EKLE -->
                             <div id="product-message" class="message"></div>
                             <form id="product-form">
                                 <input type="hidden" id="product-id" />
 
+                                <!-- TEMEL BİLGİLER -->
                                 <div class="row">
                                     <div class="field">
                                         <label for="product-name">Ad *</label>
                                         <input id="product-name" type="text" />
                                     </div>
                                     <div class="field">
-                                        <label for="product-slug">Slug *</label>
+                                        <label for="product-slug">Kod *</label>
                                         <input id="product-slug" type="text" placeholder="ornek-urun" />
                                     </div>
                                 </div>
@@ -424,29 +583,65 @@
                                         <input id="product-price" type="number" step="0.01" />
                                     </div>
                                     <div class="field">
+                                        <label for="weightKg">Ağırlık (kg)</label>
+                                        <input type="number" step="0.01" id="weightKg" class="form-control">
+                                    </div>
+                                    <div class="field">
                                         <label for="product-stock">Stok *</label>
                                         <input id="product-stock" type="number" step="1" />
                                     </div>
                                     <div class="field">
                                         <label for="product-category">Kategori</label>
-                                        <input id="product-category" type="text" />
+                                        <select id="product-category">
+                                            <option value="">Kategori seçin</option>
+                                            <option value="vtol-drones">VTOL Drones</option>
+                                            <option value="vtol-airframe">VTOL Airframe</option>
+                                            <option value="vtol-cargo-delivery-box">VTOL Cargo Delivery Box</option>
+                                            <option value="heavy-lift-drone">Heavy Lift Drone</option>
+                                            <option value="agricultural-drone">Agricultural Drone</option>
+                                            <option value="drone-thermal-camera">Drone Thermal Camera</option>
+                                            <option value="sensor-tracking-series">Sensor Tracking Series</option>
+                                            <option value="multispectral-camera">Multispectral Camera</option>
+                                            <option value="mapping-camera">Mapping Camera</option>
+                                            <option value="ir-laser-lumination-series">IR Laser lumination Series
+                                            </option>
+                                            <option value="gps-location-resolving-series">GPS Location Resolving Series
+                                            </option>
+                                            <option value="dual-sensor-tracking-series">Dual-Sensor Tracking Series
+                                            </option>
+                                            <option value="video-datalink">Video & Datalink</option>
+                                            <option value="aheadx">AheadX</option>
+                                            <option value="dji">DJI</option>
+                                            <option value="pixhawk">Pixhawk</option>
+                                            <option value="cuav">CUAV</option>
+                                            <option value="micropilot">Micropilot</option>
+                                            <option value="2S">2S</option>
+                                            <option value="3S">3S</option>
+                                            <option value="4S">4S</option>
+                                            <option value="6S">6S</option>
+                                            <option value="12S">12S</option>
+                                            <option value="charger">Charger</option>
+                                            <option value="ground-station">Ground Station</option>
+                                            <option value="radio-control">Radio Control</option>
+                                            <option value="motors">Motors</option>
+                                            <option value="esc">ESC</option>
+                                            <option value="propellers">Propellers</option>
+                                        </select>
                                     </div>
                                 </div>
 
+                                <!-- ANA GÖRSEL + GALERİ -->
                                 <div class="row">
-                                    <div class="field">
-                                        <label for="product-image">Görsel URL</label>
-                                        <input id="product-image" type="text"
-                                            placeholder="/uploads/products/urun1.jpg" />
-                                        <small class="small">
-                                            Dosya seçersen burası otomatik dolar.
-                                        </small>
+                                    <div class="form-row">
+                                        <label for="productMainFile">Bilgisayardan Ana Görsel Seç</label>
+                                        <input type="file" id="productMainFile" accept="image/*" />
                                     </div>
 
-                                    <div class="field">
-                                        <label for="product-image-file">Bilgisayardan Görsel Seç</label>
-                                        <input id="product-image-file" type="file" accept="image/*" />
-                                        <small class="small" id="product-image-upload-status"></small>
+                                    <div class="form-row">
+                                        <label for="productImageUrl">Görsel URL</label>
+                                        <input type="text" id="productImageUrl" class="input"
+                                            placeholder="/uploads/products/urun1.jpg" />
+                                        <small>Dosya seçersen burası otomatik dolar.</small>
                                     </div>
 
                                     <div class="field">
@@ -455,6 +650,42 @@
                                             <option value="1" selected>Aktif</option>
                                             <option value="0">Pasif</option>
                                         </select>
+                                    </div>
+                                </div>
+
+                                <hr class="section-divider" />
+                                <div class="row">
+                                    <!-- TANITIM GALERİSİ -->
+                                    <div class="form-row" style="flex: 2 1 260px;">
+                                        <label for="productGalleryInput">Tanıtım Galerisi (en fazla 4 görsel)</label>
+                                        <input type="file" id="productGalleryInput" accept="image/*" multiple />
+                                        <small>Ürün detay sayfasındaki slider için. İlk 4 görsel kullanılır.</small>
+                                        <div id="productGalleryPreview" class="gallery-preview small">
+                                            Henüz galeri görseli seçmediniz.
+                                        </div>
+                                    </div>
+
+                                    <!-- TEKNİK ÖZELLİK GÖRSELLERİ -->
+                                    <div class="form-row tech-block" style="flex: 3 1 320px;">
+                                        <label>Teknik Özellik Görselleri</label>
+
+                                        <div class="tech-upload-row">
+                                            <input type="file" id="techImageFile" accept="image/*" />
+                                            <input type="text" id="techImageCaption"
+                                                placeholder="Açıklama (opsiyonel)" />
+                                            <button type="button" class="btn secondary" id="techImageAddBtn">
+                                                Ekle
+                                            </button>
+                                        </div>
+
+                                        <div class="small" id="techImageStatus">
+                                            Henüz teknik görsel eklenmedi. Dosya seçip "Ekle" diyerek sıraya
+                                            alabilirsiniz.
+                                        </div>
+
+                                        <div id="techImageList" class="tech-image-list small">
+                                            <!-- JS ile doldurulacak -->
+                                        </div>
                                     </div>
                                 </div>
 
@@ -467,46 +698,20 @@
 
                                 <div class="row">
                                     <button type="submit" class="btn" id="product-submit-btn">Kaydet</button>
-                                    <button type="button" class="btn secondary" id="product-reset-btn">Formu
-                                        temizle</button>
+                                    <button type="button" class="btn secondary" id="product-reset-btn">
+                                        Formu temizle
+                                    </button>
                                     <span class="small" id="product-form-mode">Mod: Yeni ürün</span>
                                 </div>
                             </form>
                         </div>
-                        <div class="card" id="product-images-card" style="display:none;">
-                            <h2>Teknik / Ekstra Görseller</h2>
-                            <p class="small">
-                                Bu ürüne ait teknik görselleri buradan ekleyebilirsin. Önce ürünü kaydet,
-                                sonra listeden <strong>Düzenle</strong> ile seç.
-                            </p>
 
-                            <div class="row">
-                                <div class="field">
-                                    <label for="product-image-extra-file">Yeni teknik görsel ekle</label>
-                                    <input id="product-image-extra-file" type="file" accept="image/*" />
-                                    <small class="small" id="product-image-extra-status"></small>
-                                </div>
-                            </div>
-
-                            <div id="product-images-list" class="row" style="gap:8px; margin-top:12px;">
-                                <!-- thumbnails buraya gelecek -->
-                            </div>
-                        </div>
-                        <section id="techImagesAdmin">
-                            <h3>Teknik Özellik Görselleri</h3>
-
-                            <form id="techImageForm">
-                                <input type="file" name="image" accept="image/*" required />
-                                <input type="text" name="caption" placeholder="Açıklama (opsiyonel)" />
-                                <button type="submit">Ekle</button>
-                            </form>
-
-                            <div id="techImageList" class="thumb-list"></div>
-                        </section>
-
+                        <!-- ÜRÜN LİSTESİ -->
                         <div class="card">
                             <h2>Ürün Listesi</h2>
-                            <div id="products-table-wrapper">Yükleniyor...</div>
+                            <div id="products-table-wrapper" class="small">
+                                Henüz ürün yok.
+                            </div>
                         </div>
                     </div>
 

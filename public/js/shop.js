@@ -20,6 +20,74 @@
   const checkoutBtn = $("#checkoutBtn");
   const continueBtn = document.querySelector("#continueBtn");
 
+  let ALL_PRODUCTS = [];
+  // grid varsa, en yakın main'den data-category oku
+  const pageRoot = grid ? grid.closest("main") : null;
+  const PAGE_CATEGORY = pageRoot ? (pageRoot.dataset.category || null) : null;
+  console.log("PAGE_CATEGORY =", PAGE_CATEGORY);
+
+  const POSTA_HIZMET_ORAN = 0.0235; // %2.35
+  const KDV_ORAN = 0.20;           // %20
+
+  function addFeesAndVat(netPrice) {
+    const n = Number(netPrice || 0);
+    if (n <= 0) return 0;
+
+    const withService = n * (1 + POSTA_HIZMET_ORAN);
+    const gross = withService * (1 + KDV_ORAN);
+
+    // istersen 2 hane yuvarla:
+    return Math.round(gross * 100) / 100;
+  }
+
+  const SHIPPING_RULES = [
+    { min: 0, max: 1, type: "fixed", price: 111.86 },
+    { min: 1, max: 4, type: "fixed", price: 134.20 },
+    { min: 4, max: 6, type: "fixed", price: 163.53 },
+    { min: 6, max: 10, type: "fixed", price: 177.25 },
+    { min: 10, max: 15, type: "fixed", price: 200.48 },
+    { min: 15, max: 20, type: "fixed", price: 249.10 },
+    { min: 20, max: 25, type: "fixed", price: 309.55 },
+    { min: 25, max: 30, type: "fixed", price: 374.23 },
+
+    // 31 kg ve üzeri
+    {
+      min: 30,
+      max: Infinity,
+      type: "incremental",
+      basePrice: 374.23,
+      perKg: 12.324
+    }
+  ];
+
+  function calcShippingByKg(totalKg) {
+    const kg = Number(totalKg || 0);
+    if (kg <= 0) return 0;
+
+    const rule = SHIPPING_RULES.find(r => kg > r.min && kg <= r.max);
+    if (!rule) return 0;
+
+    let net = 0;
+
+    if (rule.type === "fixed") {
+      net = rule.price;
+    } else if (rule.type === "incremental") {
+      const extraKg = kg - rule.min;
+      net = rule.basePrice + extraKg * rule.perKg;
+    }
+
+    // ✅ burada hizmet bedeli + KDV ekle
+    return addFeesAndVat(net);
+  }
+
+  function cartTotalKg() {
+    return cart.reduce((t, it) => {
+      const w = Number(it.weightKg ?? it.weight_kg ?? 0);
+      const q = Number(it.qty || 0);
+      return t + (w * q);
+    }, 0);
+  }
+
   // ---------- SEPET (LS) ----------
   const CART_KEY = "cart_v1";
   let cart = readCart();
@@ -45,7 +113,7 @@
   // ---------- API'DEN ÜRÜN ÇEKME ----------
   async function loadProductsFromApi() {
     if (!grid) {
-      // ürün listesi olmayan sayfa (ör: product.html) → sadece sepet için js gerekiyor
+      // ürün listesi olmayan sayfa (ör: product.html)
       return;
     }
 
@@ -62,24 +130,35 @@
         return;
       }
 
-      PRODUCTS = (data.products || []).map((p) => ({
-        id: String(p.Id),
-        name: p.Name,
-        price: Number(p.Price),
-        cat: p.Category || "",
-        img: p.ImageUrl || "assets/placeholder.png",
-        description: p.Description || "",
+      // 1) Tüm ürünleri normalize et
+      ALL_PRODUCTS = (data.products || []).map((p) => ({
+        id: String(p.id),
+        name: p.name,
+        price: Number(p.price),
+        cat: p.category || "",                 // <-- slug burada
+        img: p.imageurl || "assets/placeholder.png",
+        description: p.description || "",
+        weightKg: Number(p.weight_kg || 0), // ✅ ekle
       }));
 
-      window.PRODUCTS = PRODUCTS; // güncel referansı paylaş
-      applyFilters(); // filtre + liste
+      // 2) Sayfanın kategorisine göre filtrele
+      let list = ALL_PRODUCTS;
+      if (PAGE_CATEGORY) {
+        list = list.filter(p => p.cat === PAGE_CATEGORY);
+      }
+
+      // 3) Filtrelenmiş listeyi PRODUCTS olarak kullan
+      PRODUCTS = list;
+      window.PRODUCTS = PRODUCTS;
+
+      // 4) Var olan arama/sıralama filtreleri ne yapıyorsa yapsın
+      applyFilters();
     } catch (err) {
       console.error("loadProductsFromApi error:", err);
       grid.innerHTML =
         '<p style="color:#b91c1c;">Ürünler alınırken bir hata oluştu.</p>';
     }
   }
-
   // ---------- ÜRÜN LİSTESİ ----------
   function renderProducts(list = PRODUCTS) {
     if (!grid) return;
@@ -99,15 +178,13 @@
         <div class="product-title">${p.name}</div>
         <div class="product-meta">${p.cat?.toUpperCase() || ""}</div>
         <div class="product-price">
-          ${
-            p.price != null
-              ? TRY.format(p.price)
-              : "Fiyat için iletişime geçin"
+          ${p.price != null
+            ? TRY.format(p.price)
+            : "Fiyat için iletişime geçin"
           }
         </div>
-        <button class="btn-add" data-add="${p.id}" ${
-          p.price == null ? "disabled" : ""
-        }>
+        <button class="btn-add" data-add="${p.id}" ${p.price == null ? "disabled" : ""
+          }>
           Sepete Ekle
         </button>
       </article>
@@ -117,19 +194,37 @@
   }
 
   // ---------- SEPET AKSİYONLARI ----------
+  // BUNU ESKİ addToCart YERİNE KOY
   function addToCart(id, qty = 1) {
-    const p = PRODUCTS.find((x) => x.id === id);
+    // Ürünü önce ALL_PRODUCTS'ta, yoksa PRODUCTS'ta ara
+    const p =
+      (ALL_PRODUCTS && ALL_PRODUCTS.find((x) => x.id === id)) ||
+      PRODUCTS.find((x) => x.id === id);
+
     if (!p) {
       console.warn("addToCart: ürün bulunamadı", id);
       return;
     }
 
     const ex = cart.find((x) => x.id === id);
-    if (ex) ex.qty += qty;
-    else cart.push({ ...p, qty });
+    if (ex) {
+      ex.qty += qty;
+    } else {
+      cart.push({
+        id: p.id,
+        name: p.name,
+        price: p.price || 0,
+        qty,
+        img: p.img,
+        cat: p.cat,
+        description: p.description || "",
+        weightKg: Number(p.weightKg || 0),   // ✅ BUNU EKLE
+      });
+    }
 
     writeCart();
     updateCartUI();
+    alert("Ürün sepetinize eklendi.");
   }
 
   function removeFromCart(id) {
@@ -145,13 +240,37 @@
     writeCart();
     updateCartUI();
   }
+  // Sepet içi butonlar (silme + adet değiştirme)
+  if (cartItemsEl) {
+    cartItemsEl.addEventListener("click", (e) => {
+      const target = e.target;
+
+      // Adet değiştirme (+ / -)
+      const qtyBtn = target.closest(".qty-btn");
+      if (qtyBtn) {
+        const id = qtyBtn.dataset.qty;
+        const delta = parseInt(qtyBtn.dataset.delta, 10) || 0;
+        changeQty(id, delta);
+        return;
+      }
+
+      // Ürün silme (x butonu)
+      const rmBtn = target.closest(".cart-remove");
+      if (rmBtn) {
+        const id = rmBtn.dataset.remove;
+        removeFromCart(id);
+        return;
+      }
+    });
+  }
 
   function updateCartUI() {
     const cartNow = readCart();
     cart = cartNow;
 
     const subtotal = cart.reduce((t, i) => t + i.price * i.qty, 0);
-    let shipping = cart.length > 0 ? 99 : 0;
+    const totalKg = cartTotalKg();
+    let shipping = calcShippingByKg(totalKg);
     const total = subtotal + shipping;
 
     if (cartBadge) cartBadge.textContent = cartQty();
@@ -214,33 +333,13 @@
     grid.addEventListener("click", (e) => {
       const addId = e.target?.dataset?.add;
       if (addId) {
-        addToCart(addId, 1);
+        addToCart(addId, 1);   // <-- artık yukarıdaki fonksiyon çalışıyor
         return;
       }
       const card = e.target.closest(".product-card");
       if (card && !e.target.classList.contains("btn-add")) {
         const productId = card.dataset.id;
         window.location.href = `product.html?id=${productId}`;
-      }
-    });
-  }
-
-  // Sepet satırları için tıklama (x, +, -)
-  if (cartItemsEl) {
-    cartItemsEl.addEventListener("click", (e) => {
-      const btn = e.target.closest("button");
-      if (!btn) return;
-
-      const removeId = btn.dataset.remove;
-      if (removeId) {
-        removeFromCart(removeId);
-        return;
-      }
-
-      const qtyId = btn.dataset.qty;
-      if (qtyId) {
-        const delta = parseInt(btn.dataset.delta, 10) || 0;
-        changeQty(qtyId, delta);
       }
     });
   }

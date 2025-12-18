@@ -133,45 +133,51 @@
 
       listEl.innerHTML = orders
         .map(o => {
-          const created = o.CreatedAt
-            ? new Date(o.CreatedAt).toLocaleDateString("tr-TR") // Sadece tarih gösterelim
+          const created = o.createdat
+            ? new Date(o.createdat).toLocaleDateString("tr-TR")
             : "";
 
-          const total = o.PaidPrice != null
-            ? Number(o.PaidPrice)
-            : Number(o.TotalPrice || 0);
+          const total = o.paidprice != null
+            ? Number(o.paidprice)
+            : Number(o.totalprice || 0);
 
-          // Durum basitçe takip numarasına göre belirlenebilir:
-          const statusText = o.TrackingNumber ? "Kargoya Verildi" : "Hazırlanıyor";
-          const tracking = o.TrackingNumber || "-";
+          const statusText =
+            o.status === "shipped" ? "Kargoya Verildi" :
+              o.status === "delivered" ? "Teslim Edildi" :
+                "Hazırlanıyor";
+          const tracking = o.trackingnumber || "-";
 
           const detailUrl =
             "odeme-basarili.html?orderId=" +
-            encodeURIComponent(o.Id) +
+            encodeURIComponent(o.id) +
             "&tracking=" +
             encodeURIComponent(tracking) +
             "&total=" +
             encodeURIComponent(total);
 
-          // 🔥 YENİ HTML YAPISI BURADA 🔥
+          const statusSlug =
+            o.status === "shipped" ? "kargoya-verildi" :
+              o.status === "delivered" ? "teslim-edildi" :
+                "hazirlaniyor";
+
           return `
-            <div class="order-row">
-                <div class="order-col order-id" data-label="Sipariş No">#${o.Id}</div>
-                <div class="order-col order-date" data-label="Tarih">${created}</div>
-                <div class="order-col order-status" data-label="Durum">
-                    <span class="status-badge status-${statusText.toLowerCase().replace(/\s/g, '-')}">
-                        ${statusText}
-                    </span>
-                </div>
-                <div class="order-col order-tracking" data-label="Kargo Takip No">${tracking}</div>
-                <div class="order-col order-total text-right" data-label="Tutar">
-                    <strong>${TRY_FMT.format(total)}</strong>
-                </div>
-                <div class="order-col order-actions text-center">
-                    <a href="${detailUrl}" class="btn btn-sm btn-outline-primary">Detay</a>
-                </div>
-            </div>
-          `;
+      <div class="order-row">
+        <div class="order-col order-id" data-label="Sipariş No">#${o.id}</div>
+        <div class="order-col order-date" data-label="Tarih">${created}</div>
+        <div class="order-col order-status" data-label="Durum">
+          <span class="status-badge status-${statusSlug}">
+            ${statusText}
+          </span>
+        </div>
+        <div class="order-col order-tracking" data-label="Kargo Takip No">${tracking}</div>
+        <div class="order-col order-total text-right" data-label="Tutar">
+          <strong>${TRY_FMT.format(total)}</strong>
+        </div>
+        <div class="order-col order-actions text-center">
+          <a href="${detailUrl}" class="btn btn-sm btn-outline-primary">Detay</a>
+        </div>
+      </div>
+    `;
         })
         .join("");
     } catch (err) {
@@ -196,7 +202,7 @@
       })
       .then(d => {
         const u = d?.user || {};
-        const name = u.full_name || "Kullanıcı";
+        const name = u.fullname || u.full_name || "Kullanıcı"; // <- burayı değiştirdik
         const email = u.email || "—";
 
         const nameEl = document.getElementById("welcomeName");

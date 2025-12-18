@@ -282,6 +282,10 @@ body {
     flex: 1 1 100%;
   }
 
+    .form-row--two-cols .form-field {
+    flex: 1 1 100%;
+  }
+
   .job-intro h1 {
     font-size: 1.6rem;
   }
@@ -311,4 +315,35 @@ body.is-basvuru-page .page-main--job-application {
 .field-error {
   font-size: 0.8rem;
   color: #b91c1c;
+}
+
+/* ✅ Sadece MOBİLDE taşmayı engelle */
+@media (max-width: 768px) {
+
+  .page-main.page-main--job-application,
+  .job-form-section,
+  .form-group,
+  .form-row,
+  .form-field {
+    max-width: 100%;
+    min-width: 0;
+  }
+
+  .form-field input,
+  .form-field select,
+  .form-field textarea {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  /* file input mobilde taşma yapar */
+  .form-field input[type="file"] {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  /* son çare: 1-2px taşma */
+  html, body {
+    overflow-x: hidden;
+  }
 }

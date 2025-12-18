@@ -23,6 +23,13 @@ function showMessage(el, text, type) {
     }
 }
 
+// ---- SİPARİŞLER ----
+let currentProductId = null;
+var ordersTableWrapper = document.getElementById("orders-table-wrapper");
+var orderDetailCard = document.getElementById("order-detail-card");
+var orderDetailContent = document.getElementById("order-detail-content");
+var usersTableWrapper = document.getElementById("users-table-wrapper");
+
 // ---- Login / Admin görünümü ----
 const loginView = document.getElementById("login-view");
 const adminApp = document.getElementById("admin-app");
@@ -167,6 +174,203 @@ if (productImageFileInput) {
     });
 }
 
+function statusLabel(s) {
+    if (s === "preparing") return "Hazırlanıyor";
+    if (s === "shipped") return "Kargoya Verildi";
+    if (s === "delivered") return "Teslim Edildi";
+    if (s === "cancelled") return "İptal";
+    return "Hazırlanıyor";
+}
+
+function statusSlug(s) {
+    if (s === "shipped") return "blue";
+    if (s === "delivered") return "green";
+    if (s === "cancelled") return "red";
+    return "gray";
+}
+
+async function loadOrders() {
+    if (!ordersTableWrapper) return;
+
+    ordersTableWrapper.textContent = "Yükleniyor...";
+    if (orderDetailCard) orderDetailCard.style.display = "none";
+
+    try {
+        const res = await fetch("/api/admin/orders", { credentials: "include" });
+        const data = await res.json().catch(() => ({}));
+
+        if (!res.ok || !data.ok) {
+            ordersTableWrapper.innerHTML =
+                '<div class="message error">' +
+                (data.error || "Siparişler alınamadı.") +
+                "</div>";
+            return;
+        }
+
+        const orders = data.orders || [];
+        if (!orders.length) {
+            ordersTableWrapper.innerHTML =
+                '<div class="small">Henüz sipariş yok.</div>';
+            const stat = document.getElementById("stat-orders");
+            if (stat) stat.textContent = "0";
+            return;
+        }
+
+        const stat = document.getElementById("stat-orders");
+        if (stat) stat.textContent = orders.length;
+
+        const rows = orders
+            .map(
+                (o) => `
+        <tr class="clickable" data-id="${o.id}">
+          <td>${o.id}</td>
+          <td>${formatDate(o.createdat)}</td>
+          <td>${formatPrice(o.totalprice)} TL</td>
+          <td>${o.itemcount || 0}</td>
+          <td>${o.trackingnumber || "-"}</td>
+        <td>
+        <span class="badge ${statusSlug(o.status)}">
+            ${statusLabel(o.status)}
+        </span>
+        </td>
+        </tr>
+      `
+            )
+            .join("");
+
+        ordersTableWrapper.innerHTML = `
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Tarih</th>
+            <th>Tutar</th>
+            <th>Ürün Adedi</th>
+            <th>Kargo Takip</th>
+            <th>Durum</th>
+          </tr>
+        </thead>
+        <tbody>${rows}</tbody>
+      </table>
+    `;
+
+        ordersTableWrapper.querySelectorAll("tr[data-id]").forEach((row) => {
+            row.addEventListener("click", () =>
+                loadOrderDetail(row.dataset.id)
+            );
+        });
+    } catch (e) {
+        console.error(e);
+        ordersTableWrapper.innerHTML =
+            '<div class="message error">Siparişler alınırken hata oluştu.</div>';
+    }
+}
+
+async function loadOrderDetail(id) {
+    if (!orderDetailCard || !orderDetailContent) return;
+
+    orderDetailCard.style.display = "block";
+    orderDetailContent.textContent = "Yükleniyor...";
+
+    try {
+        const res = await fetch(`/api/admin/orders/${id}`, { credentials: "include" });
+        const data = await res.json().catch(() => ({}));
+
+        if (!res.ok || !data.ok) {
+            orderDetailContent.innerHTML =
+                '<div class="message error">' + (data.error || "Sipariş detayı alınamadı.") + "</div>";
+            return;
+        }
+
+        const o = data.order;
+        const items = data.items || [];
+
+        const itemsHtml = !items.length
+            ? "<div class='small'>Bu siparişte ürün yok.</div>"
+            : `
+        <table>
+          <thead>
+            <tr>
+              <th>Ürün</th>
+              <th>Adet</th>
+              <th>Birim Fiyat</th>
+              <th>Toplam</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${items.map(it => `
+              <tr>
+                <td>${it.productname || it.productid}</td>
+                <td>${it.quantity}</td>
+                <td>${formatPrice(it.unitprice)} TL</td>
+                <td>${formatPrice(it.totalprice)} TL</td>
+              </tr>
+            `).join("")}
+          </tbody>
+        </table>
+      `;
+
+        orderDetailContent.innerHTML = `
+      <p><strong>Sipariş ID:</strong> ${o.id}</p>
+      <p><strong>Kullanıcı ID:</strong> ${o.userid}</p>
+      <p><strong>Tarih:</strong> ${formatDate(o.createdat)}</p>
+      <p><strong>Toplam:</strong> ${formatPrice(o.totalprice)} TL</p>
+      <p><strong>Ödenen:</strong> ${formatPrice(o.paidprice)} TL</p>
+      <p><strong>Durum:</strong> ${o.status || "-"}</p>
+      <p><strong>Kargo Takip:</strong> <span id="trkNo">${o.trackingnumber || "-"}</span></p>
+
+      <div style="margin:10px 0;">
+        ${o.trackingnumber
+                ? `<button class="btn btn-sm btn-secondary" disabled>Kargoya Verildi</button>`
+                : `<button class="btn btn-primary" id="btnShipOrder">Kargoya Ver</button>`
+            }
+      </div>
+
+      <hr />
+      <h3>Ürünler</h3>
+      ${itemsHtml}
+    `;
+
+        // ✅ CSP’ye takılmayan doğru yöntem: event listener
+        const btn = document.getElementById("btnShipOrder");
+        if (btn) {
+            btn.addEventListener("click", () => shipOrder(o.id));
+        }
+
+    } catch (e) {
+        console.error(e);
+        orderDetailContent.innerHTML =
+            '<div class="message error">Sipariş detayı alınırken hata oluştu.</div>';
+    }
+}
+
+
+async function shipOrder(orderId) {
+    if (!confirm(`#${orderId} siparişi kargoya vermek istiyor musunuz?`)) return;
+
+    try {
+        const res = await fetch(`/api/admin/orders/${orderId}/ship`, {
+            method: "POST",
+            credentials: "include",
+        });
+
+        const data = await res.json().catch(() => ({}));
+
+        if (!res.ok || !data.ok) {
+            alert(data.error || "Kargoya verme başarısız");
+            return;
+        }
+
+        alert(`Kargoya verildi ✅ Takip No: ${data.trackingNumber}`);
+
+        // detay ekranını yenile
+        loadOrderDetail(orderId);
+    } catch (err) {
+        console.error(err);
+        alert("Sunucu hatası.");
+    }
+}
+
 // ---- Navigation ----
 const navItems = document.querySelectorAll(".nav-item");
 const viewTitle = document.getElementById("view-title");
@@ -212,134 +416,383 @@ navItems.forEach((item) => {
         if (v === "dashboard") refreshDashboard();
     });
 });
-
 // ---- ÜRÜNLER ----
+
+// FORM ALANLARI
 const productMessage = document.getElementById("product-message");
 const productsTableWrapper = document.getElementById("products-table-wrapper");
+const productForm = document.getElementById("product-form");
 const productIdInput = document.getElementById("product-id");
 const productNameInput = document.getElementById("product-name");
 const productSlugInput = document.getElementById("product-slug");
 const productPriceInput = document.getElementById("product-price");
 const productStockInput = document.getElementById("product-stock");
 const productCategoryInput = document.getElementById("product-category");
-const productImageInput = document.getElementById("product-image");
+const productWeightInput = document.getElementById("weightKg"); // 🔹 yeni
 const productActiveSelect = document.getElementById("product-active");
 const productDescInput = document.getElementById("product-desc");
 const productSubmitBtn = document.getElementById("product-submit-btn");
 const productResetBtn = document.getElementById("product-reset-btn");
 const productFormMode = document.getElementById("product-form-mode");
-const productForm = document.getElementById("product-form");
+
+// ANA GÖRSEL + GALERİ
+const productMainFile = document.getElementById("productMainFile");
+const productImageUrlInput = document.getElementById("productImageUrl");
+const productGalleryInput = document.getElementById("productGalleryInput");
+const productGalleryPreview = document.getElementById("productGalleryPreview");
+
+// TEKNİK GÖRSELLER
+const techImageFile = document.getElementById("techImageFile");
+const techImageCaption = document.getElementById("techImageCaption");
+const techImageAddBtn = document.getElementById("techImageAddBtn");
+const techImageStatus = document.getElementById("techImageStatus");
+const techImageList = document.getElementById("techImageList");
+
+// DURUM
+let pendingTechImages = [];           // Yeni ürün için sıraya alınan teknik görseller
+
+/* ---------------- GALERİ ÖNİZLEME ---------------- */
+
+if (productGalleryInput && productGalleryPreview) {
+    productGalleryInput.addEventListener("change", () => {
+        const files = Array.from(productGalleryInput.files || []);
+        if (!files.length) {
+            productGalleryPreview.textContent = "Henüz galeri görseli seçmediniz.";
+            return;
+        }
+
+        const limited = files.slice(0, 4);
+        productGalleryPreview.innerHTML =
+            limited
+                .map(
+                    (f) =>
+                        `<div>- ${f.name} (${(f.size / 1024).toFixed(1)} KB)</div>`
+                )
+                .join("") +
+            `<div class="small">* En fazla 4 görsel kullanılacaktır.</div>`;
+    });
+}
+
+/* ---------------- TEKNİK GÖRSEL KUYRUĞU ---------------- */
+
+function renderPendingTechImages() {
+    if (!techImageList || !techImageStatus) return;
+
+    if (!pendingTechImages.length && !currentProductId) {
+        techImageList.innerHTML =
+            "<div>Henüz teknik görsel eklenmedi.</div>";
+        techImageStatus.textContent =
+            'Henüz teknik görsel eklenmedi. Dosya seçip "Ekle" diyerek sıraya alabilirsiniz.';
+        return;
+    }
+
+    if (currentProductId && !pendingTechImages.length) {
+        // Düzenleme modunda, mevcut görseller loadTechImages ile listeleniyor
+        techImageStatus.textContent =
+            "Bu ürün için teknik görselleri görüntüleyip yeni görsel ekleyebilirsiniz.";
+        return;
+    }
+
+    // Yeni ürün modunda sıraya alınanlar
+    techImageList.innerHTML = pendingTechImages
+        .map(
+            (it, i) =>
+                `<div>${i + 1}. ${it.file.name} ${it.caption ? "(" + it.caption + ")" : ""
+                }</div>`
+        )
+        .join("");
+
+    techImageStatus.textContent =
+        `${pendingTechImages.length} teknik görsel sıraya alındı. Ürün kaydedilince yüklenecek.`;
+}
+
+/* ---------------- TEK TEKNİK GÖRSEL UPLOAD (MEVCUT ÜRÜN) ---------------- */
+
+async function uploadSingleTechImage(productId, file, caption) {
+    const fd = new FormData();
+    fd.append("image", file);
+    if (caption) fd.append("caption", caption);
+
+    const res = await fetch(`/api/admin/products/${productId}/detail-images`, {
+        method: "POST",
+        credentials: "include",
+        body: fd,
+    });
+
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok || !data.ok) {
+        console.error("Teknik görsel yüklenemedi:", data.error || res.status);
+    }
+}
+
+/* ---------------- TEKNİK GÖRSEL EKLE BUTONU ---------------- */
+
+// Teknik görsel kuyruğu (yeni + düzenleme için ortak
+function renderPendingTechImages() {
+    if (!techImageList) return;
+
+    if (!pendingTechImages.length) {
+        techImageList.textContent = "Henüz teknik görsel eklenmedi.";
+        techImageStatus.textContent =
+            "Bu ürün için teknik görsel görüntüleyip yeni görsel ekleyebilirsiniz.";
+        return;
+    }
+
+    techImageStatus.textContent =
+        pendingTechImages.length +
+        " teknik görsel sıraya alındı. Ürün kaydedilince yüklenecek.";
+
+    techImageList.innerHTML = pendingTechImages
+        .map(
+            (img, idx) => `${idx + 1}. ${img.file.name} ${img.caption ? `- ${img.caption}` : ""
+                }`
+        )
+        .join("<br>");
+}
+
+function renderPendingTechImages() {
+    if (!techImageList) return;
+
+    if (!pendingTechImages.length) {
+        techImageList.textContent = "Henüz teknik görsel eklenmedi.";
+        if (techImageStatus) {
+            techImageStatus.textContent =
+                "Bu ürün için teknik görsel eklemedi. Dosya seçip \"Ekle\" diyerek sıraya alabilirsiniz.";
+        }
+        return;
+    }
+
+    if (techImageStatus) {
+        techImageStatus.textContent =
+            pendingTechImages.length +
+            " teknik görsel sıraya alındı. Ürün kaydedilince yüklenecek.";
+    }
+
+    techImageList.innerHTML = pendingTechImages
+        .map(
+            (img, idx) =>
+                `${idx + 1}. ${img.file.name}${img.caption ? " - " + img.caption : ""
+                }`
+        )
+        .join("<br>");
+}
+
+if (techImageAddBtn) {
+    techImageAddBtn.addEventListener("click", () => {
+        if (!techImageFile || !techImageFile.files.length) {
+            alert("Lütfen bir teknik görsel seçin.");
+            return;
+        }
+
+        const file = techImageFile.files[0];
+        const caption = techImageCaption.value.trim() || null;
+
+        // Her zaman sadece sıraya al
+        pendingTechImages.push({ file, caption });
+        renderPendingTechImages();
+
+        techImageFile.value = "";
+        techImageCaption.value = "";
+    });
+}
+
+/* ---------------- GALERİ GÖRSELLERİNİ YÜKLE (MAX 4) ---------------- */
+
+async function uploadGalleryImages(productId) {
+    if (!productGalleryInput) return;
+
+    const files = Array.from(productGalleryInput.files || []).slice(0, 4);
+    for (const file of files) {
+        const fd = new FormData();
+        fd.append("image", file);
+
+        try {
+            const res = await fetch(`/api/admin/products/${productId}/images`, {
+                method: "POST",
+                credentials: "include",
+                body: fd,
+            });
+            const data = await res.json().catch(() => ({}));
+            if (!res.ok || !data.ok) {
+                console.error("Galeri görseli yüklenemedi:", data.error || res.status);
+            }
+        } catch (err) {
+            console.error("uploadGalleryImages error:", err);
+        }
+    }
+}
+
+/* ---------------- FORM RESET ---------------- */
 
 function resetProductForm() {
+    currentProductId = null;
     productIdInput.value = "";
     productNameInput.value = "";
     productSlugInput.value = "";
     productPriceInput.value = "";
     productStockInput.value = "";
+    if (productWeightInput) productWeightInput.value = "";   // 🔹 yeni
     productCategoryInput.value = "";
-    productImageInput.value = "";
     productActiveSelect.value = "1";
     productDescInput.value = "";
+    if (productImageUrlInput) productImageUrlInput.value = "";
+    if (productMainFile) productMainFile.value = "";
+    if (productGalleryInput) productGalleryInput.value = "";
+    if (productGalleryPreview)
+        productGalleryPreview.textContent = "Henüz galeri görseli seçmediniz.";
+
+    pendingTechImages = [];
+    renderPendingTechImages();
+
     productFormMode.textContent = "Mod: Yeni ürün";
     productSubmitBtn.textContent = "Kaydet";
-    if (productImagesCard) {
-        productImagesCard.style.display = "none";
-        if (productImagesList) productImagesList.innerHTML = "";
-    }
-    if (techImagesSection) {
-        techImagesSection.style.display = "none";
-        if (techImageList) techImageList.innerHTML = "";
-    }
+    showMessage(productMessage, "", "");
 }
+
+if (productResetBtn) {
+    productResetBtn.addEventListener("click", resetProductForm);
+}
+
+/* ---------------- FORM SUBMIT (YENİ ÜRÜN + DÜZENLEME) ---------------- */
+
+if (productForm) {
+    productForm.addEventListener("submit", async (e) => {
+        e.preventDefault();
+
+        const payload = {
+            name: productNameInput.value.trim(),
+            slug: productSlugInput.value.trim(),
+            price: Number(productPriceInput.value),
+            weight_kg: productWeightInput
+                ? parseFloat(productWeightInput.value) || 0
+                : 0,
+            stock: Number(productStockInput.value),
+            category: productCategoryInput.value.trim() || null,
+            imageUrl: productImageUrlInput ? productImageUrlInput.value.trim() : null,
+            description: productDescInput.value.trim() || null,
+            isActive: productActiveSelect.value === "1",
+        };
+
+        if (!payload.name || !payload.slug) {
+            showMessage(productMessage, "Ad ve kod (slug) zorunludur.", "error");
+            return;
+        }
+
+        const id = productIdInput.value;
+        const isEdit = !!id;
+
+        productSubmitBtn.disabled = true;
+        productSubmitBtn.textContent = isEdit
+            ? "Güncelleniyor..."
+            : "Kaydediliyor...";
+        showMessage(productMessage, "", "");
+
+        try {
+            const res = await fetch(
+                isEdit ? `/api/admin/products/${id}` : "/api/admin/products",
+                {
+                    method: isEdit ? "PUT" : "POST",
+                    headers: { "Content-Type": "application/json" },
+                    credentials: "include",
+                    body: JSON.stringify(payload),
+                }
+            );
+
+            const data = await res.json().catch(() => ({}));
+            if (!res.ok || !data.ok) {
+                showMessage(
+                    productMessage,
+                    data.error || "Ürün kaydedilemedi.",
+                    "error"
+                );
+                return;
+            }
+
+            const saved = data.product || {};
+            const productId = isEdit ? Number(id) : Number(saved.id || saved.Id);
+
+            // 1) ANA GÖRSEL
+            if (productMainFile && productMainFile.files.length && productId) {
+                const fd = new FormData();
+                fd.append("image", productMainFile.files[0]);
+                await fetch(`/api/admin/products/${productId}/images`, {
+                    method: "POST",
+                    credentials: "include",
+                    body: fd,
+                });
+            }
+
+            // 2) TANITIM GALERİSİ
+            if (productId) {
+                await uploadGalleryImages(productId);
+            }
+
+            // 3) YENİ ÜRÜN MODUNDA SIRADAKİ TEKNİK GÖRSELLER
+            if (productId && pendingTechImages.length) {
+                for (const item of pendingTechImages) {
+                    await uploadSingleTechImage(productId, item.file, item.caption);
+                }
+                pendingTechImages = [];
+            }
+
+            renderPendingTechImages();
+            showMessage(productMessage, "Ürün kaydedildi.", "success");
+
+            resetProductForm();
+            await loadProducts();
+            if (typeof refreshDashboard === "function") {
+                refreshDashboard();
+            }
+        } catch (err) {
+            console.error(err);
+            showMessage(productMessage, "Sunucu hatası.", "error");
+        } finally {
+            productSubmitBtn.disabled = false;
+            productSubmitBtn.textContent = isEdit ? "Güncelle" : "Kaydet";
+        }
+    });
+}
+
+/* ---------------- ÜRÜN FORMUNU DOLDUR (DÜZENLEME) ---------------- */
 
 function fillProductForm(p) {
-    productIdInput.value = p.Id;
-    productNameInput.value = p.Name || "";
-    productSlugInput.value = p.Slug || "";
-    productPriceInput.value = p.Price || "";
-    productStockInput.value = p.Stock || "";
-    productCategoryInput.value = p.Category || "";
-    productImageInput.value = p.ImageUrl || "";
-    productActiveSelect.value = p.IsActive ? "1" : "0";
-    productDescInput.value = p.Description || "";
-    productFormMode.textContent = "Mod: Düzenleme (" + p.Id + ")";
-    productSubmitBtn.textContent = "Güncelle";
-    if (productImagesCard) {
-        productImagesCard.style.display = "block";
-        if (p.Id) {
-            loadProductImages(p.Id);
-        }
-    }
-    if (techImagesSection) {
-        techImagesSection.style.display = "block";
-        if (p.Id) {
-            loadTechImages(p.Id);
-        }
-    }
+    currentProductId = p.id;
 
+    productIdInput.value = p.id;
+    productNameInput.value = p.name || "";
+    productSlugInput.value = p.slug || "";
+    productPriceInput.value = p.price || "";
+    productStockInput.value = p.stock || "";
+    if (productWeightInput) {
+        productWeightInput.value =
+            p.weight_kg ?? p.weightkg ?? "";   // 🔹 API’de hangi isim geliyorsa onu yakalar
+    }
+    productCategoryInput.value = p.category || "";
+    productActiveSelect.value = p.isactive ? "1" : "0";
+    productDescInput.value = p.description || "";
+    if (productImageUrlInput) productImageUrlInput.value = p.imageurl || "";
+
+    productFormMode.textContent = "Mod: Düzenleme (" + p.id + ")";
+    productSubmitBtn.textContent = "Güncelle";
+
+    // Yeni ürün kuyruğunu temizle
+    pendingTechImages = [];
+    renderPendingTechImages();
+
+    // Eğer loadTechImages tanımlıysa, mevcut teknik görselleri de çek
+    if (typeof loadTechImages === "function") {
+        loadTechImages(p.id);
+    }
 }
 
-productResetBtn.addEventListener("click", resetProductForm);
-
-productForm.addEventListener("submit", async (e) => {
-    e.preventDefault();
-    showMessage(productMessage, "", "");
-    const payload = {
-        name: productNameInput.value.trim(),
-        slug: productSlugInput.value.trim(),
-        price: productPriceInput.value,
-        stock: productStockInput.value,
-        category: productCategoryInput.value.trim(),
-        imageUrl: productImageInput.value.trim(),
-        description: productDescInput.value.trim(),
-        isActive: productActiveSelect.value === "1",
-    };
-    if (!payload.name || !payload.slug) {
-        showMessage(productMessage, "Ad ve slug zorunludur.", "error");
-        return;
-    }
-    const id = productIdInput.value;
-    const isEdit = !!id;
-    productSubmitBtn.disabled = true;
-    productSubmitBtn.textContent = isEdit ? "Güncelleniyor..." : "Kaydediliyor...";
-
-    try {
-        const res = await fetch(isEdit ? `/api/admin/products/${id}` : "/api/admin/products", {
-            method: isEdit ? "PUT" : "POST",
-            headers: { "Content-Type": "application/json" },
-            credentials: "include",
-            body: JSON.stringify(payload),
-        });
-        const data = await res.json().catch(() => ({}));
-        if (!res.ok || !data.ok) {
-            showMessage(
-                productMessage,
-                data.error || "Ürün kaydedilirken hata oluştu.",
-                "error"
-            );
-        } else {
-            showMessage(
-                productMessage,
-                isEdit ? "Ürün güncellendi." : "Ürün eklendi.",
-                "success"
-            );
-            resetProductForm();
-            loadProducts();
-            refreshDashboard();
-        }
-    } catch (e) {
-        console.error(e);
-        showMessage(productMessage, "Sunucu hatası.", "error");
-    } finally {
-        productSubmitBtn.disabled = false;
-        productSubmitBtn.textContent = isEdit ? "Güncelle" : "Kaydet";
-    }
-});
+/* ---------------- ÜRÜN LİSTESİ ---------------- */
 
 async function loadProducts() {
     productsTableWrapper.textContent = "Yükleniyor...";
     try {
-        const res = await fetch("/api/admin/products", { credentials: "include" });
+        const res = await fetch("/api/admin/products", {
+            credentials: "include",
+        });
         const data = await res.json().catch(() => ({}));
         if (!res.ok || !data.ok) {
             productsTableWrapper.innerHTML =
@@ -348,54 +801,69 @@ async function loadProducts() {
                 "</div>";
             return;
         }
+
         const products = data.products || [];
         if (!products.length) {
             productsTableWrapper.innerHTML =
                 '<div class="small">Henüz ürün yok.</div>';
+            document.getElementById("stat-products").textContent = "0";
             return;
         }
-        const rows = products.map(p => `
+
+        const rows = products
+            .map(
+                (p) => `
         <tr>
-          <td>${p.Id}</td>
-          <td>${p.Name}</td>
-          <td>${p.Slug}</td>
-          <td>${formatPrice(p.Price)} TL</td>
-          <td>${p.Stock}</td>
-          <td>${p.Category || ""}</td>
-          <td>${p.IsActive ? '<span class="badge">Aktif</span>' : '<span class="badge gray">Pasif</span>'}</td>
+          <td>${p.id}</td>
+          <td>${p.name}</td>
+          <td>${p.slug}</td>
+          <td>${formatPrice(p.price)} TL</td>
+          <td>${p.stock}</td>
+          <td>${p.category || ""}</td>
+          <td>${Number(p.weight_kg || 0).toFixed(2)}</td>
+          <td>${p.isactive
+                        ? '<span class="badge">Aktif</span>'
+                        : '<span class="badge gray">Pasif</span>'
+                    }</td>
           <td>
-            <button type="button" class="btn secondary btn-edit" data-id="${p.Id}">Düzenle</button>
-            <button type="button" class="btn danger btn-delete" data-id="${p.Id}">Sil</button>
+            <button type="button" class="btn secondary btn-edit" data-id="${p.id}">Düzenle</button>
+            <button type="button" class="btn danger btn-delete" data-id="${p.id}">Sil</button>
           </td>
         </tr>
-      `).join("");
+      `
+            )
+            .join("");
 
         productsTableWrapper.innerHTML = `
-        <table>
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>Ad</th>
-              <th>Slug</th>
-              <th>Fiyat</th>
-              <th>Stok</th>
-              <th>Kategori</th>
-              <th>Durum</th>
-              <th>İşlemler</th>
-            </tr>
-          </thead>
-          <tbody>${rows}</tbody>
-        </table>
-      `;
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Ad</th>
+            <th>Slug</th>
+            <th>Fiyat</th>
+            <th>Stok</th>
+            <th>Kategori</th>
+            <th>Ağırlık (kg)</th>
+            <th>Durum</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>${rows}</tbody>
+      </table>
+    `;
 
-        productsTableWrapper.querySelectorAll(".btn-edit").forEach(btn => {
+        // Düzenle
+        productsTableWrapper.querySelectorAll(".btn-edit").forEach((btn) => {
             btn.addEventListener("click", () => {
-                const p = products.find(x => String(x.Id) === btn.dataset.id);
+                const id = btn.dataset.id;
+                const p = products.find((x) => String(x.id) === String(id));
                 if (p) fillProductForm(p);
             });
         });
 
-        productsTableWrapper.querySelectorAll(".btn-delete").forEach(btn => {
+        // Sil
+        productsTableWrapper.querySelectorAll(".btn-delete").forEach((btn) => {
             btn.addEventListener("click", async () => {
                 if (!confirm("Bu ürünü silmek istediğine emin misin?")) return;
                 try {
@@ -408,8 +876,10 @@ async function loadProducts() {
                         alert(data.error || "Ürün silinemedi.");
                         return;
                     }
-                    loadProducts();
-                    refreshDashboard();
+                    await loadProducts();
+                    if (typeof refreshDashboard === "function") {
+                        refreshDashboard();
+                    }
                 } catch (e) {
                     console.error(e);
                     alert("Sunucu hatası.");
@@ -417,7 +887,7 @@ async function loadProducts() {
             });
         });
 
-        // dashboard için küçük stat
+        // dashboard için stat
         document.getElementById("stat-products").textContent = products.length;
     } catch (e) {
         console.error(e);
@@ -425,424 +895,9 @@ async function loadProducts() {
             '<div class="message error">Ürünler alınırken hata oluştu.</div>';
     }
 }
-const productImagesCard = document.getElementById("product-images-card");
-const productImageExtraFileInput = document.getElementById(
-    "product-image-extra-file"
-);
-const productImageExtraStatus = document.getElementById(
-    "product-image-extra-status"
-);
-const productImagesList = document.getElementById("product-images-list");
 
-async function loadProductImages(productId) {
-    if (!productImagesList) return;
-    productImagesList.textContent = "Yükleniyor...";
-
-    try {
-        const res = await fetch(`/api/admin/products/${productId}/images`, {
-            credentials: "include",
-        });
-        const data = await res.json().catch(() => ({}));
-
-        if (!res.ok || !data.ok) {
-            productImagesList.innerHTML =
-                '<div class="message error">' +
-                (data.error || "Görseller alınamadı.") +
-                "</div>";
-            return;
-        }
-
-        const images = data.images || [];
-        if (!images.length) {
-            productImagesList.innerHTML =
-                '<div class="small">Bu ürüne ait teknik görsel yok.</div>';
-            return;
-        }
-
-        productImagesList.innerHTML = images
-            .map(
-                (img) => `
-        <div style="display:flex; flex-direction:column; align-items:center; gap:4px;">
-          <img src="${img.ImageUrl}" 
-               style="width:120px; height:80px; object-fit:cover; border-radius:8px; border:1px solid #e5e7eb;"
-               alt="Tech image ${img.Id}">
-          <button type="button" class="btn secondary btn-tech-del" data-id="${img.Id}" data-pid="${productId}">
-            Sil
-          </button>
-        </div>
-      `
-            )
-            .join("");
-
-        productImagesList.querySelectorAll(".btn-tech-del").forEach((btn) => {
-            btn.addEventListener("click", async () => {
-                if (!confirm("Bu görseli silmek istediğine emin misin?")) return;
-                try {
-                    const res = await fetch(
-                        `/api/admin/products/${btn.dataset.pid}/images/${btn.dataset.id}`,
-                        {
-                            method: "DELETE",
-                            credentials: "include",
-                        }
-                    );
-                    const d = await res.json().catch(() => ({}));
-                    if (!res.ok || !d.ok) {
-                        alert(d.error || "Görsel silinemedi.");
-                        return;
-                    }
-                    loadProductImages(btn.dataset.pid);
-                } catch (e) {
-                    console.error(e);
-                    alert("Sunucu hatası.");
-                }
-            });
-        });
-    } catch (e) {
-        console.error(e);
-        productImagesList.innerHTML =
-            '<div class="message error">Görseller alınırken hata oluştu.</div>';
-    }
-}
-if (productImageExtraFileInput) {
-    productImageExtraFileInput.addEventListener("change", async () => {
-        const file = productImageExtraFileInput.files?.[0];
-        if (!file) return;
-
-        const productId = productIdInput.value;
-        if (!productId) {
-            productImageExtraStatus.textContent =
-                "Önce ürünü kaydet ve listeden 'Düzenle' ile aç.";
-            productImageExtraStatus.className = "small error";
-            productImageExtraFileInput.value = "";
-            return;
-        }
-
-        productImageExtraStatus.textContent = "Yükleniyor...";
-        productImageExtraStatus.className = "small";
-
-        const fd = new FormData();
-        fd.append("image", file);
-
-        try {
-            const res = await fetch(`/api/admin/products/${productId}/images`, {
-                method: "POST",
-                body: fd,
-                credentials: "include",
-            });
-            const data = await res.json().catch(() => ({}));
-
-            if (!res.ok || !data.ok || !data.url) {
-                productImageExtraStatus.textContent =
-                    data.error || "Yükleme başarısız.";
-                productImageExtraStatus.className = "small error";
-                return;
-            }
-
-            productImageExtraStatus.textContent = "Yüklendi ✔";
-            productImageExtraStatus.className = "small success";
-            productImageExtraFileInput.value = "";
-            loadProductImages(productId);
-        } catch (e) {
-            console.error(e);
-            productImageExtraStatus.textContent = "Sunucu hatası.";
-            productImageExtraStatus.className = "small error";
-        }
-    });
-}
-
-const techImagesSection = document.getElementById("techImagesAdmin");
-const techImageForm = document.getElementById("techImageForm");
-const techImageList = document.getElementById("techImageList");
-const productId = currentProductId; // senin zaten kullandığın id
-
-async function loadTechImages(productId) {
-    if (!techImageList) return;
-    techImageList.textContent = "Yükleniyor...";
-
-    try {
-        const res = await fetch(`/api/admin/products/${productId}/detail-images`, {
-            credentials: "include",
-        });
-        const data = await res.json().catch(() => ({}));
-        if (!res.ok || !data.ok) {
-            techImageList.innerHTML =
-                '<div class="message error">' +
-                (data.error || "Teknik görseller alınamadı.") +
-                "</div>";
-            return;
-        }
-
-        const images = data.images || [];
-        if (!images.length) {
-            techImageList.innerHTML =
-                '<div class="small">Bu ürüne ait teknik görsel yok.</div>';
-            return;
-        }
-
-        techImageList.innerHTML = images
-            .map(
-                (img) => `
-            <div class="tech-thumb">
-                <img src="${img.ImageUrl}" alt="${img.Caption || ""}">
-                <div class="caption">${img.Caption || ""}</div>
-                <button type="button" data-del="${img.Id}">Sil</button>
-            </div>
-        `
-            )
-            .join("");
-    } catch (err) {
-        console.error(err);
-        techImageList.innerHTML =
-            '<div class="message error">Teknik görseller alınırken hata oluştu.</div>';
-    }
-}
-
-if (techImageForm) {
-    techImageForm.addEventListener("submit", async (e) => {
-        e.preventDefault();
-
-        const productId = productIdInput.value;
-        if (!productId) {
-            alert("Önce ürünü kaydet ve listeden 'Düzenle' ile aç.");
-            return;
-        }
-
-        const fileInput = techImageForm.querySelector('input[type="file"][name="image"]');
-        const captionInput = techImageForm.querySelector('input[name="caption"]');
-        const file = fileInput.files[0];
-
-        if (!file) {
-            alert("Lütfen bir görsel seç.");
-            return;
-        }
-
-        const fd = new FormData();
-        fd.append("image", file);
-        if (captionInput && captionInput.value) {
-            fd.append("caption", captionInput.value);
-        }
-
-        try {
-            const res = await fetch(`/api/admin/products/${productId}/detail-images`, {
-                method: "POST",
-                body: fd,
-                credentials: "include",
-            });
-            const data = await res.json().catch(() => ({}));
-            if (!res.ok || !data.ok) {
-                alert(data.error || "Teknik görsel eklenemedi.");
-                return;
-            }
-
-            techImageForm.reset();
-            loadTechImages(productId);
-        } catch (err) {
-            console.error(err);
-            alert("Sunucu hatası.");
-        }
-    });
-}
-
-if (techImageList) {
-    techImageList.addEventListener("click", async (e) => {
-        const btn = e.target.closest("button[data-del]");
-        if (!btn) return;
-
-        const productId = productIdInput.value;
-        if (!productId) return;
-
-        const imgId = btn.dataset.del;
-        if (!confirm("Bu görsel silinsin mi?")) return;
-
-        try {
-            const res = await fetch(
-                `/api/admin/products/${productId}/detail-images/${imgId}`,
-                {
-                    method: "DELETE",
-                    credentials: "include",
-                }
-            );
-            const data = await res.json().catch(() => ({}));
-            if (!res.ok || !data.ok) {
-                alert(data.error || "Görsel silinemedi.");
-                return;
-            }
-            loadTechImages(productId);
-        } catch (err) {
-            console.error(err);
-            alert("Sunucu hatası.");
-        }
-    });
-}
-
-
-techImageForm?.addEventListener("submit", async (e) => {
-    e.preventDefault();
-    const fd = new FormData(techImageForm);
-
-    const res = await fetch(`/api/admin/products/${productId}/detail-images`, {
-        method: "POST",
-        body: fd,
-    });
-    const data = await res.json();
-    if (!data.ok) {
-        alert(data.error || "Teknik görsel eklenemedi");
-        return;
-    }
-    techImageForm.reset();
-    loadTechImages();
-});
-
-techImageList?.addEventListener("click", async (e) => {
-    const btn = e.target.closest("button[data-del]");
-    if (!btn) return;
-    const imgId = btn.dataset.del;
-    if (!confirm("Bu görsel silinsin mi?")) return;
-
-    const res = await fetch(
-        `/api/admin/products/${productId}/detail-images/${imgId}`,
-        { method: "DELETE" }
-    );
-    const data = await res.json();
-    if (!data.ok) {
-        alert(data.error || "Silme hatası");
-        return;
-    }
-    loadTechImages();
-});
-
-// sayfa açılınca
-loadTechImages();
-
-
-// ---- SİPARİŞLER ----
-const ordersTableWrapper = document.getElementById("orders-table-wrapper");
-const orderDetailCard = document.getElementById("order-detail-card");
-const orderDetailContent = document.getElementById("order-detail-content");
-
-async function loadOrders() {
-    ordersTableWrapper.textContent = "Yükleniyor...";
-    orderDetailCard.style.display = "none";
-    try {
-        const res = await fetch("/api/admin/orders", { credentials: "include" });
-        const data = await res.json().catch(() => ({}));
-        if (!res.ok || !data.ok) {
-            ordersTableWrapper.innerHTML =
-                '<div class="message error">' +
-                (data.error || "Siparişler alınamadı.") +
-                "</div>";
-            return;
-        }
-        const orders = data.orders || [];
-        if (!orders.length) {
-            ordersTableWrapper.innerHTML = '<div class="small">Henüz sipariş yok.</div>';
-            document.getElementById("stat-orders").textContent = "0";
-            return;
-        }
-        document.getElementById("stat-orders").textContent = orders.length;
-
-        const rows = orders.map(o => `
-        <tr class="clickable" data-id="${o.Id}">
-          <td>${o.Id}</td>
-          <td>${formatDate(o.CreatedAt)}</td>
-          <td>${formatPrice(o.TotalPrice)} TL</td>
-          <td>${o.ItemCount || 0}</td>
-          <td>${o.TrackingNumber || "-"}</td>
-          <td>${o.PaymentStatus === "paid"
-                ? '<span class="badge">Ödendi</span>'
-                : o.PaymentStatus === "failed"
-                    ? '<span class="badge red">Hata</span>'
-                    : '<span class="badge gray">' + (o.PaymentStatus || "Bilinmiyor") + "</span>"
-            }</td>
-        </tr>
-      `).join("");
-
-        ordersTableWrapper.innerHTML = `
-        <table>
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>Tarih</th>
-              <th>Tutar</th>
-              <th>Ürün Adedi</th>
-              <th>Kargo Takip</th>
-              <th>Durum</th>
-            </tr>
-          </thead>
-          <tbody>${rows}</tbody>
-        </table>
-      `;
-
-        ordersTableWrapper.querySelectorAll("tr[data-id]").forEach(row => {
-            row.addEventListener("click", () => loadOrderDetail(row.dataset.id));
-        });
-    } catch (e) {
-        console.error(e);
-        ordersTableWrapper.innerHTML =
-            '<div class="message error">Siparişler alınırken hata oluştu.</div>';
-    }
-}
-
-async function loadOrderDetail(id) {
-    orderDetailCard.style.display = "block";
-    orderDetailContent.textContent = "Yükleniyor...";
-    try {
-        const res = await fetch(`/api/admin/orders/${id}`, { credentials: "include" });
-        const data = await res.json().catch(() => ({}));
-        if (!res.ok || !data.ok) {
-            orderDetailContent.innerHTML =
-                '<div class="message error">' +
-                (data.error || "Sipariş detayı alınamadı.") +
-                "</div>";
-            return;
-        }
-        const o = data.order;
-        const items = data.items || [];
-        const itemsHtml = !items.length
-            ? "<div class='small'>Bu siparişte ürün yok.</div>"
-            : `
-          <table>
-            <thead>
-              <tr>
-                <th>Ürün</th>
-                <th>Adet</th>
-                <th>Birim Fiyat</th>
-                <th>Toplam</th>
-              </tr>
-            </thead>
-            <tbody>
-              ${items.map(it => `
-                <tr>
-                  <td>${it.ProductName || it.ProductId}</td>
-                  <td>${it.Quantity}</td>
-                  <td>${formatPrice(it.UnitPrice)} TL</td>
-                  <td>${formatPrice(it.TotalPrice)} TL</td>
-                </tr>
-              `).join("")}
-            </tbody>
-          </table>
-        `;
-        orderDetailContent.innerHTML = `
-        <p><strong>Sipariş ID:</strong> ${o.Id}</p>
-        <p><strong>Kullanıcı ID:</strong> ${o.UserId}</p>
-        <p><strong>Tarih:</strong> ${formatDate(o.CreatedAt)}</p>
-        <p><strong>Toplam:</strong> ${formatPrice(o.TotalPrice)} TL</p>
-        <p><strong>Ödenen:</strong> ${formatPrice(o.PaidPrice)} TL</p>
-        <p><strong>Durum:</strong> ${o.PaymentStatus || "-"}</p>
-        <p><strong>Kargo Takip:</strong> ${o.TrackingNumber || "-"}</p>
-        <hr />
-        <h3>Ürünler</h3>
-        ${itemsHtml}
-      `;
-    } catch (e) {
-        console.error(e);
-        orderDetailContent.innerHTML =
-            '<div class="message error">Sipariş detayı alınırken hata oluştu.</div>';
-    }
-}
 
 // ---- ÜYELER ----
-const usersTableWrapper = document.getElementById("users-table-wrapper");
 
 async function loadUsers() {
     usersTableWrapper.textContent = "Yükleniyor...";
@@ -865,11 +920,11 @@ async function loadUsers() {
         }
         const rows = users.map(u => `
         <tr>
-          <td>${u.Id}</td>
-          <td>${u.FullName}</td>
-          <td>${u.Email}</td>
+            <td>${u.id}</td>
+            <td>${u.fullName || u.fullname}</td>
+            <td>${u.email}</td>
         </tr>
-      `).join("");
+        `).join("");
         usersTableWrapper.innerHTML = `
         <table>
           <thead>

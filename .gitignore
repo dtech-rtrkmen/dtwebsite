@@ -1,1 +1,9 @@
+# Node
 node_modules/
+
+# Environment variables
+.env
+backend/.env
+
+# Uploads (runtime dosyalar)
+uploads/

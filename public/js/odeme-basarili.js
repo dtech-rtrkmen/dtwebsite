@@ -23,14 +23,14 @@
     // 2) URL parametrelerinden bilgiler
     const params = new URLSearchParams(window.location.search);
 
-    const orderId  = params.get("orderId") || "-";
-    const tracking = params.get("tracking") || "-";
+    const orderId = params.get("orderId") || "-";
+    const tracking = (params.get("tracking") || "").trim();
     const totalRaw = params.get("total");
 
-    const orderIdCell  = document.getElementById("orderIdCell");
+    const orderIdCell = document.getElementById("orderIdCell");
     const trackingCell = document.getElementById("trackingCell");
-    const totalCell    = document.getElementById("totalCell");
-    const btnYkTrack   = document.getElementById("btnYurticiTrack");
+    const totalCell = document.getElementById("totalCell");
+    const btnYkTrack = document.getElementById("ykTrackingLink");
 
     // Sipariş no
     if (orderIdCell) {
@@ -38,9 +38,7 @@
     }
 
     // Kargo takip
-    if (trackingCell) {
-      trackingCell.textContent = tracking || "-";
-    }
+    if (trackingCell) trackingCell.textContent = tracking || "-";
 
     // Toplam tutar
     if (totalCell) {
@@ -51,14 +49,23 @@
       }
     }
 
-    // Yurtiçi kargo sayfası butonu
-    if (btnYkTrack && tracking && tracking !== "-") {
-      btnYkTrack.addEventListener("click", () => {
-        const base =
-          "https://www.yurticikargo.com/tr/online-servisler/gonderi-sorgula";
-        const url = `${base}?code=${encodeURIComponent(tracking)}`;
-        window.open(url, "_blank");
-      });
+    // Kargo takip hücresi
+    if (trackingCell) trackingCell.textContent = tracking || "-";
+
+    // Buton davranışı
+    if (btnYkTrack) {
+      if (!tracking) {
+        // tracking yok → pasif
+        btnYkTrack.classList.add("disabled");
+        btnYkTrack.style.pointerEvents = "none";
+        btnYkTrack.style.opacity = "0.5";
+        btnYkTrack.textContent = "Kargo henüz oluşturulmadı";
+        btnYkTrack.removeAttribute("href");
+      } else {
+        // tracking var → link hazır
+        const base = "https://www.yurticikargo.com/tr/online-servisler/gonderi-sorgula";
+        btnYkTrack.href = `${base}?code=${encodeURIComponent(tracking)}`;
+      }
     }
 
     // 3) DB'den sipariş detaylarını çek (varsa)
@@ -77,8 +84,8 @@
 
       const { order, items } = data;
 
-      if (totalCell && order.PaidPrice != null) {
-        totalCell.textContent = TRY.format(Number(order.PaidPrice));
+      if (totalCell && order.paidprice != null) {
+        totalCell.textContent = TRY.format(Number(order.paidprice));
       }
 
       const block = document.getElementById("orderItemsBlock");
@@ -87,9 +94,9 @@
 
       listEl.innerHTML = items
         .map((it) => {
-          const qty = it.Quantity || 1;
-          const name = it.ProductName || "Ürün";
-          const lineTotal = Number(it.TotalPrice || 0);
+          const qty = it.quantity || 1;
+          const name = it.productname || "Ürün";
+          const lineTotal = Number(it.totalprice || 0);
           return `
             <div class="order-item-row">
               <div>

@@ -12,7 +12,7 @@
   function ensureProductRegistered(p) {
     // shop.js'teki addToCart'in çalışması için PRODUCTS içinde olmalı
     window.PRODUCTS = window.PRODUCTS || [];
-    const exists = window.PRODUCTS.find((x) => x.id === p.id);
+    const exists = window.PRODUCTS.find((x) => String(x.id) === String(p.id));
     if (!exists) {
       window.PRODUCTS.push({
         id: p.id,
@@ -44,18 +44,25 @@
       }
 
       const p = data.product;
+      const mainImgUrl = p.imageurl || "assets/placeholder.png";
+
       const product = {
-        id: String(p.Id),
-        name: p.Name,
-        price: Number(p.Price),
-        cat: p.Category || "",
-        img: p.ImageUrl || "assets/placeholder.png",
-        desc: p.Description || "",
-        images: [p.ImageUrl || "assets/placeholder.png"],
+        id: String(p.id),
+        name: p.name,
+        price: Number(p.price),
+        cat: p.category || "",
+        img: mainImgUrl,
+        desc: p.description || "",
+        images: [mainImgUrl], // galeri buradan genişleyecek
+        techImages: [],       // teknik görseller buraya gelecek
       };
 
-      await attachProductImages(product);   // Üstteki thumbnail galeri
-      await attachTechImages(product);      // Alttaki teknik görseller
+      // 🔹 Üst galeri: productimages tablosu
+      await attachProductImages(product);
+
+      // 🔹 Teknik özellik görselleri: productdetailimages tablosu
+      await attachTechImages(product);
+
       renderProduct(product);
       ensureProductRegistered(product);
     } catch (err) {
@@ -63,20 +70,30 @@
       wrap.innerHTML = "<p>Ürün yüklenirken bir hata oluştu.</p>";
     }
   }
+
+  // ---------- ÜST GALERİ: productimages ----------
   async function attachProductImages(p) {
     try {
       const res = await fetch(`/api/products/${p.id}/images`);
       const data = await res.json().catch(() => ({}));
       if (!res.ok || !data.ok) return;
 
+      // PostgreSQL'den gelen kolon isimleri: id, imageurl, createdat
       const extra = (data.images || [])
-        .map((img) => img.ImageUrl)
+        .map((img) => img.imageurl)   // !!! küçük harf
         .filter(Boolean);
 
-      if (!extra.length) return;
+      if (!extra.length) {
+        p.images = [p.img];
+        return;
+      }
 
-      const base = p.img;
-      const all = [base, ...extra];
+      // Eğer ana resim placeholder ise, ilk gerçek görseli ana resim yap
+      if (!p.img || p.img === "assets/placeholder.png") {
+        p.img = extra[0];
+      }
+
+      const all = [p.img, ...extra];
       // Tekrar edenleri kaldır
       p.images = [...new Set(all)];
     } catch (e) {
@@ -84,20 +101,24 @@
     }
   }
 
+  // ---------- TEKNİK GÖRSELLER: productdetailimages ----------
   async function attachTechImages(p) {
     try {
       const res = await fetch(`/api/products/${p.id}/detail-images`);
       const data = await res.json().catch(() => ({}));
       if (!res.ok || !data.ok) return;
 
+      // Kolonlar: id, productid, imageurl, caption, sortorder, createdat
       p.techImages = (data.images || [])
-        .map((img) => img.ImageUrl)
-        .filter(Boolean);
+        .map((img) => ({
+          url: img.imageurl,
+          caption: img.caption || "",
+        }))
+        .filter((x) => x.url);
     } catch (e) {
       console.error("attachTechImages error:", e);
     }
   }
-
 
   function renderProduct(p) {
     const titleEl = document.getElementById("pdTitle");
@@ -117,7 +138,7 @@
       priceEl.textContent =
         p.price != null ? TRY.format(p.price) : "Fiyat için iletişime geçin";
 
-    if (specsEl) specsEl.innerHTML = ""; // şimdilik teknik özellik yok (DB'ye ekleyince doldururuz)
+    if (specsEl) specsEl.innerHTML = ""; // şimdilik teknik özellik yok
     if (longEl) longEl.textContent = p.desc || "";
 
     if (mainImg) {
@@ -125,26 +146,54 @@
       mainImg.alt = p.name;
     }
 
-    // Teknik özellik görselleri (alt alta)
+    // ---------- Teknik özellik görselleri ----------
     if (techGalleryEl) {
-      const imgs = p.techImages || []; // sadece ProductDetailImages
-      if (!imgs.length) {
+      const techImgs = p.techImages || [];
+      if (!techImgs.length) {
         techGalleryEl.innerHTML = "";
       } else {
-        techGalleryEl.innerHTML = imgs
+        techGalleryEl.innerHTML = techImgs
           .map(
-            (url) => `
-      <div class="pd-tech-image">
-        <img src="${url}" alt="${p.name} teknik görsel" loading="lazy">
-      </div>
-    `
+            (t) => `
+          <figure class="pd-tech-image">
+            <img src="${t.url}" alt="${p.name} teknik görsel" loading="lazy">
+            ${t.caption ? `<figcaption>${t.caption}</figcaption>` : ""}
+          </figure>
+        `
           )
           .join("");
       }
     }
-    
+
+    // ---------- Üst thumbnail galeri + oklar ----------
+    const prevBtn = document.getElementById("pdPrev");
+    const nextBtn = document.getElementById("pdNext");
+
     if (thumbs) {
-      thumbs.innerHTML = p.images
+      const imgs = p.images && p.images.length ? p.images : [p.img];
+      let currentIndex = 0;
+
+      function setImageByIndex(idx) {
+        if (!imgs.length || !mainImg) return;
+        // 0–(n-1) aralığına mod alarak sar
+        const len = imgs.length;
+        currentIndex = ((idx % len) + len) % len;
+        const src = imgs[currentIndex] || p.img;
+
+        mainImg.src = src;
+
+        // aktif thumb sınıfı
+        thumbs
+          .querySelectorAll(".pd-thumb")
+          .forEach((x) => x.classList.remove("is-active"));
+        const activeBtn = thumbs.querySelector(
+          `.pd-thumb[data-index="${currentIndex}"]`
+        );
+        if (activeBtn) activeBtn.classList.add("is-active");
+      }
+
+      // thumb’ları bas
+      thumbs.innerHTML = imgs
         .map(
           (src, idx) => `
         <button type="button" class="pd-thumb${idx === 0 ? " is-active" : ""
@@ -155,22 +204,33 @@
         )
         .join("");
 
+      // thumb tıklama
       thumbs.addEventListener("click", (e) => {
         const btn = e.target.closest(".pd-thumb");
         if (!btn) return;
         const index = Number(btn.dataset.index) || 0;
-        const imgSrc = p.images[index] || p.img;
-        if (mainImg) {
-          mainImg.src = imgSrc;
-        }
-        thumbs
-          .querySelectorAll(".pd-thumb")
-          .forEach((x) => x.classList.remove("is-active"));
-        btn.classList.add("is-active");
+        setImageByIndex(index);
       });
+
+      // sol/sağ oklar
+      if (prevBtn) {
+        prevBtn.addEventListener("click", () => {
+          if (imgs.length <= 1) return;
+          setImageByIndex(currentIndex - 1);
+        });
+      }
+      if (nextBtn) {
+        nextBtn.addEventListener("click", () => {
+          if (imgs.length <= 1) return;
+          setImageByIndex(currentIndex + 1);
+        });
+      }
+
+      // ilk resmi garantiye al
+      setImageByIndex(0);
     }
 
-    // Zoom
+    // ---------- Zoom ----------
     const zoomBtn = document.getElementById("pdZoomBtn");
     const lightbox = document.getElementById("pdLightbox");
     const lightboxImg = document.getElementById("pdLightboxImg");
@@ -199,7 +259,7 @@
         }
       });
 
-    // Adet ve sepete ekleme
+     // ---------- Adet ve sepete ekleme ----------
     const qtyInput = document.getElementById("pdQtyInput");
     const qtyBtns = document.querySelectorAll(".qty-btn");
     const addBtn = document.getElementById("pdAddBtn");
@@ -208,7 +268,10 @@
       btn.addEventListener("click", () => {
         if (!qtyInput) return;
         const delta = parseInt(btn.dataset.delta || "0", 10);
-        const val = Math.max(1, (parseInt(qtyInput.value || "1", 10) || 1) + delta);
+        const val = Math.max(
+          1,
+          (parseInt(qtyInput.value || "1", 10) || 1) + delta
+        );
         qtyInput.value = String(val);
       });
     });
@@ -219,12 +282,45 @@
           ? Math.max(1, parseInt(qtyInput.value || "1", 10) || 1)
           : 1;
 
+        // 1) Eğer shop.js içindeki addToCart varsa onu kullan
         if (typeof window.addToCart === "function") {
-          window.addToCart(p.id, qty);
-          alert("Ürün sepetinize eklendi.");
+          window.addToCart(String(p.id), qty);
         } else {
-          console.warn("addToCart fonksiyonu bulunamadı.");
+          // 2) Yoksa slider'da yaptığımız gibi localStorage fallback
+          try {
+            const CART_KEY = "cart_v1";
+            const cart = JSON.parse(localStorage.getItem(CART_KEY) || "[]");
+
+            const ex = cart.find((i) => String(i.id) === String(p.id));
+            if (ex) {
+              ex.qty += qty;
+            } else {
+              cart.push({
+                id: String(p.id),
+                name: p.name,
+                price: p.price || 0,
+                qty,
+                img: p.img,
+              });
+            }
+
+            localStorage.setItem(CART_KEY, JSON.stringify(cart));
+
+            // rozet güncelle
+            const badge = document.getElementById("cartBadge");
+            if (badge) {
+              const totalQty = cart.reduce(
+                (t, i) => t + (i.qty || 0),
+                0
+              );
+              badge.textContent = totalQty;
+            }
+          } catch (err) {
+            console.warn("product page cart fallback error:", err);
+          }
         }
+
+        alert("Ürün sepetinize eklendi.");
       });
   }
 

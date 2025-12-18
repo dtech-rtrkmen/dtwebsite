@@ -4,7 +4,7 @@
   --ti-surface: #e9e27f;
   --ti-primary: #ebb134;
   --ti-text: #f9fafb;
-  --ti-text-muted: #9ca3af;
+  --ti-text-muted: #ffffff;
   --ti-border: #1f2933;
   --ti-radius-lg: 18px;
   --ti-shadow-soft: 0 18px 40px rgba(0, 0, 0, 0.45);
@@ -139,6 +139,31 @@ body {
   color: var(--ti-text);
   border-color: var(--ti-primary);
 }
+
+.ti-nav ul {
+  list-style: none;
+  display: flex;
+  gap: 1.5rem;
+  margin: 0;
+  padding: 0;
+}
+
+.ti-nav a {
+  text-decoration: none;
+  color: var(--ti-text-muted);
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  padding-bottom: 3px;
+  border-bottom: 2px solid transparent;
+  transition: color var(--ti-transition), border-color var(--ti-transition);
+}
+
+.ti-nav a:hover {
+  color: var(--ti-text);
+  border-color: var(--ti-primary);
+}
+
 
 /* NAV DROPDOWN */
 
@@ -363,7 +388,6 @@ body {
 }
 
 .ti-section-intro {
-  max-width: 640px;
   color: var(--ti-text-muted);
   margin-bottom: 2rem;
 }
@@ -426,6 +450,152 @@ body {
   border: 1px dashed rgba(148, 163, 184, 0.4);
   color: var(--ti-text-muted);
 }
+
+/* main container */
+.about-section {
+  background: #fff;
+  width: 100%;
+}
+
+.container.about-content {
+  min-height: calc(100vh - var(--ti-header-height));
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: calc(var(--ti-header-height) + 40px) 16px 40px;
+
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  /* dengeli */
+  gap: 48px;
+
+  align-items: center;
+  /* 🔥 dikey ortalama */
+}
+
+.about-text {
+  line-height: 1.7;
+  color: #4b5563;
+  font-size: 20px;
+
+  max-width: 520px;
+  /* metni çok yayma */
+}
+
+.about-text p {
+  margin: 0 0 16px;
+}
+
+/* Başlık gibi görünen strong */
+.about-text strong {
+  display: inline-block;
+  margin-bottom: 6px;
+  font-size: 28px;
+  letter-spacing: .2px;
+}
+
+.about-image {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.about-image img {
+  width: 100%;
+  max-width: 720px;
+  /* 🔥 büyüttük */
+  height: auto;
+  display: block;
+
+  border-radius: 18px;
+  box-shadow: 0 20px 45px rgba(0, 0, 0, .18);
+}
+
+/* Responsive: tablette iki sütun daralsın */
+@media (max-width: 900px) {
+  .container.about-content {
+    grid-template-columns: 1fr;
+    gap: 32px;
+    text-align: center;
+  }
+
+  .about-text {
+    max-width: 100%;
+    margin: 0 auto;
+  }
+
+  .about-image img {
+    max-width: 90%;
+  }
+}
+
+
+/* Mobil: padding biraz azalsın */
+@media (max-width: 520px) {
+  .container.about-content {
+    padding: calc(var(--ti-header-height) + 20px) 14px 24px;
+    /* ✅ üst yine header'a bağlı */
+  }
+
+  .about-text {
+    font-size: 15px;
+  }
+
+  .about-text strong {
+    font-size: 17px;
+  }
+}
+
+#scrollTopBtn {
+  position: fixed;
+  right: 22px;
+  bottom: 22px;
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
+  border: none;
+  cursor: pointer;
+
+  background: #ffd400;
+  color: #111;
+  font-size: 22px;
+  font-weight: 900;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  box-shadow: 0 10px 30px rgba(0, 0, 0, .25);
+  z-index: 999;
+
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(10px);
+  transition: all .25s ease;
+}
+
+#scrollTopBtn.show {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+#scrollTopBtn:hover {
+  background: #ffdf33;
+  transform: translateY(-2px);
+}
+
+/* mobilde biraz daha küçük */
+@media (max-width: 768px) {
+  #scrollTopBtn {
+    width: 42px;
+    height: 42px;
+    font-size: 20px;
+    right: 16px;
+    bottom: 16px;
+  }
+}
+
 
 /* FOOTER */
 
@@ -820,3 +990,5 @@ body {
   /* Test amaçlı olarak !important ekleyin */
   backdrop-filter: blur(10px);
 }
+
+

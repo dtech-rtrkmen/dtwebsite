@@ -7,7 +7,7 @@ import validator from "validator";
 import path from "path";
 import { fileURLToPath } from "url";
 import fs from "fs";
-import { getPool, sql } from "./db.mssql.js"; // <-- MSSQL bağlantısı
+import { query as dbQuery, pool as pgPool } from "./db.postgres.js";
 import Iyzipay from "iyzipay";
 import dotenv from "dotenv";
 dotenv.config();
@@ -44,7 +44,7 @@ const storage = multer.diskStorage({
 });
 const upload = multer({
   storage,
-  limits: { fileSize: 5 * 1024 * 1024 }, // 5 MB
+  limits: { fileSize: 10 * 1024 * 1024 }, // 10 MB (ideal)
 });
 
 // ÜRÜN GÖRSELLERİ İÇİN AYRI KLASÖR VE MULTER
@@ -149,24 +149,29 @@ function requireUserId(req, res) {
 }
 
 // ----- ADMIN HELPERLARI -----
-
 async function getAdminUser(req) {
   const sess = getSession(req);
   if (!sess?.userId) return null;
 
-  const pool = await getPool();
-  const r = await pool
-    .request()
-    .input("id", sql.Int, sess.userId)
-    .query(`
-      SELECT Id, FullName, Email, IsAdmin
-      FROM dbo.Users
-      WHERE Id = @id
-    `);
+  // PostgreSQL üzerinden sorgu
+  const r = await dbQuery(
+    `
+    SELECT
+      id,
+      fullname,
+      email,
+      isadmin
+    FROM users
+    WHERE id = $1
+    `,
+    [sess.userId]
+  );
 
-  if (!r.recordset.length) return null;
-  const user = r.recordset[0];
-  if (!user.IsAdmin) return null;
+  if (r.rows.length === 0) return null;
+
+  const user = r.rows[0];
+  if (!user.isadmin) return null;
+
   return user;
 }
 
@@ -206,33 +211,32 @@ app.post("/auth/register", async (req, res) => {
   if (Object.keys(fieldErrors).length) return res.status(400).json({ fieldErrors });
 
   try {
-    const pool = await getPool(); // <<< ÖNEMLİ: getPool kullan
+    // 1) E-posta var mı?
+    const existing = await dbQuery(
+      "SELECT id FROM users WHERE email = $1",
+      [email]
+    );
 
-    // E-posta var mı?
-    const existing = await pool
-      .request()
-      .input("email", sql.NVarChar(320), email)
-      .query("SELECT Id FROM dbo.Users WHERE Email = @email");
-
-    if (existing.recordset.length) {
-      return res.status(409).json({ fieldErrors: { email: "Bu e-posta ile kayıt var." } });
+    if (existing.rows.length > 0) {
+      return res.status(409).json({
+        fieldErrors: { email: "Bu e-posta ile kayıt var." },
+      });
     }
 
     const hash = await bcrypt.hash(password, 12);
+    // 3) Yeni kullanıcıyı ekle
+    const insert = await dbQuery(
+      `
+      INSERT INTO users (fullname, email, passwordhash, createdat, isadmin)
+      VALUES ($1, $2, $3, NOW(), false)
+      RETURNING id
+      `,
+      [full_name, email, hash]
+    );
 
-    const insert = await pool
-      .request()
-      .input("fullName", sql.NVarChar(200), full_name)
-      .input("email", sql.NVarChar(320), email)
-      .input("hash", sql.NVarChar(255), hash)
-      .query(`
-        INSERT INTO dbo.Users (FullName, Email, PasswordHash)
-        OUTPUT INSERTED.Id
-        VALUES (@fullName, @email, @hash)
-      `);
-
-    const newId = insert.recordset[0].Id;
+    const newId = insert.rows[0].id;
     setSession(res, { userId: newId });
+
 
     const wantsHTML = (req.headers.accept || "").includes("text/html");
     if (wantsHTML) return res.redirect(303, "/account.html");
@@ -254,51 +258,48 @@ app.post("/auth/login", async (req, res) => {
   if (Object.keys(fieldErrors).length) return res.status(400).json({ fieldErrors });
 
   try {
-    const pool = await getPool();
+    // 1) Kullanıcıyı e-posta ile çek
+    const result = await dbQuery(
+      `
+      SELECT id, email, passwordhash
+      FROM users
+      WHERE LOWER(email) = $1
+      LIMIT 1
+      `,
+      [identifier]
+    );
 
-    // Şemada 'Password' kolonu var mı?
-    const col = await pool.request().query(`
-      SELECT 1
-      FROM sys.columns
-      WHERE object_id = OBJECT_ID('dbo.Users') AND name = 'Password'
-    `);
-    const hasPasswordCol = col.recordset.length > 0;
-
-    // Şemaya göre SELECT'i kur
-    const selectSql = hasPasswordCol
-      ? `
-        SELECT TOP 1 Id, Email, 
-               CASE WHEN PasswordHash IS NOT NULL THEN PasswordHash ELSE Password END AS PasswordHash
-        FROM dbo.Users
-        WHERE LOWER(Email) = @email
-        `
-      : `
-        SELECT TOP 1 Id, Email, PasswordHash
-        FROM dbo.Users
-        WHERE LOWER(Email) = @email
-        `;
-
-    const result = await pool
-      .request()
-      .input("email", sql.NVarChar(320), identifier)
-      .query(selectSql);
-
-    if (!result.recordset.length) {
-      return res.status(404).json({ fieldErrors: { identifier: "Kayıt bulunamadı." } });
+    // 2) Kayıt yoksa
+    if (result.rows.length === 0) {
+      return res
+        .status(404)
+        .json({ fieldErrors: { identifier: "Kayıt bulunamadı." } });
     }
 
-    const user = result.recordset[0];
+    const user = result.rows[0];
 
-    if (!user.PasswordHash) {
+    // 3) Şifre kolonunda veri yoksa
+    if (!user.passwordhash) {      // kolon adını burada düzelt: passwordhash / password_hash
       return res
         .status(500)
-        .json({ message: "Hesapta şifre verisi eksik. Lütfen hesabı yeniden oluşturun." });
+        .json({
+          message:
+            "Hesapta şifre verisi eksik. Lütfen hesabı yeniden oluşturun.",
+        });
     }
 
-    const ok = await bcrypt.compare(password, user.PasswordHash);
-    if (!ok) return res.status(401).json({ fieldErrors: { password: "Şifre hatalı." } });
+    // 4) Şifreyi kontrol et
+    const ok = await bcrypt.compare(password, user.passwordhash);
+    if (!ok) {
+      return res
+        .status(401)
+        .json({ fieldErrors: { password: "Şifre hatalı." } });
+    }
 
-    setSession(res, { userId: user.Id });
+    setSession(res, {
+      userId: user.id,
+      isAdmin: user.isadmin, // istersen kullanırsın
+    });
 
     const wantsHTML = (req.headers.accept || "").includes("text/html");
     if (wantsHTML) return res.redirect(303, "/account.html");
@@ -333,10 +334,8 @@ app.post(
       String(body.desiredDepartmentOther || "").trim() || null;
     const criminalRecord =
       String(body.criminalRecord || "yok").trim().toLowerCase() || "yok";
-    const referencesText =
-      String(body.references || "").trim() || null;
-    const otherNotes =
-      String(body.otherNotes || "").trim() || null;
+    const referencesText = String(body.references || "").trim() || null;
+    const otherNotes = String(body.otherNotes || "").trim() || null;
     const approval = body.approval; // checkbox: "on" gelmesi beklenir
 
     // --- Basit validasyonlar ---
@@ -360,11 +359,14 @@ app.post(
     if (!phone) fieldErrors.phone = "Telefon zorunludur.";
     if (!address) fieldErrors.address = "Adres zorunludur.";
 
-    if (!lastSchool) fieldErrors.lastSchool = "Son mezun olduğunuz okul ve bölüm zorunludur.";
+    if (!lastSchool)
+      fieldErrors.lastSchool =
+        "Son mezun olduğunuz okul ve bölüm zorunludur.";
 
     if (!languages) fieldErrors.languages = "Yabancı dil bilgisi zorunludur.";
     if (!desiredDepartment)
-      fieldErrors.desiredDepartment = "Çalışmak istediğiniz bölüm zorunludur.";
+      fieldErrors.desiredDepartment =
+        "Çalışmak istediğiniz bölüm zorunludur.";
 
     if (!approval) {
       fieldErrors.approval =
@@ -377,7 +379,6 @@ app.post(
     const cvFilePath = cvFile ? cvFile.path : null;
 
     if (Object.keys(fieldErrors).length > 0) {
-      // Frontend'de yakalayacağız (JS ile)
       return res.status(400).json({
         ok: false,
         message: "Lütfen formu kontrol edin.",
@@ -386,77 +387,62 @@ app.post(
     }
 
     try {
-      const pool = await getPool();
+      // 🔹 BURASI ARTIK PostgreSQL
+      await dbQuery(
+        `
+      INSERT INTO jobapplications (
+        firstname,
+        lastname,
+        email,
+        birthdate,
+        phone,
+        address,
+        educationlevel,
+        lastschool,
+        militarystatus,
+        drivinglicense,
+        languages,
+        desireddepartment,
+        desireddepartmentother,
+        criminalrecord,
+        referencestext,
+        othernotes,
+        cvfilename,
+        cvfilepath,
+        ipaddress,
+        createdat
+      )
+      VALUES (
+        $1, $2, $3, $4, $5,
+        $6, $7, $8, $9, $10,
+        $11, $12, $13, $14, $15,
+        $16, $17, $18, $19, NOW()
+      )
+      `,
+        [
+          firstName,
+          lastName,
+          email,
+          birthDateValue,
+          phone,
+          address,
+          educationLevel,
+          lastSchool,
+          militaryStatus,
+          drivingLicense,
+          languages,
+          desiredDepartment,
+          desiredDepartmentOther,
+          criminalRecord,
+          referencesText,
+          otherNotes,
+          cvFileName,
+          cvFilePath,
+          req.ip || null,
+        ]
+      );
 
-      await pool
-        .request()
-        .input("FirstName", sql.NVarChar(100), firstName)
-        .input("LastName", sql.NVarChar(100), lastName)
-        .input("Email", sql.NVarChar(320), email)
-        .input("BirthDate", sql.Date, birthDateValue)
-        .input("Phone", sql.NVarChar(50), phone)
-        .input("Address", sql.NVarChar(500), address)
-        .input("EducationLevel", sql.NVarChar(50), educationLevel)
-        .input("LastSchool", sql.NVarChar(300), lastSchool)
-        .input("MilitaryStatus", sql.NVarChar(50), militaryStatus)
-        .input("DrivingLicense", sql.NVarChar(100), drivingLicense)
-        .input("Languages", sql.NVarChar(400), languages)
-        .input("DesiredDepartment", sql.NVarChar(100), desiredDepartment)
-        .input(
-          "DesiredDepartmentOther",
-          sql.NVarChar(200),
-          desiredDepartmentOther
-        )
-        .input("CriminalRecord", sql.NVarChar(10), criminalRecord)
-        .input("References", sql.NVarChar(sql.MAX), referencesText)
-        .input("OtherNotes", sql.NVarChar(sql.MAX), otherNotes)
-        .input("CvFileName", sql.NVarChar(255), cvFileName)
-        .input("CvFilePath", sql.NVarChar(400), cvFilePath)
-        .input("IpAddress", sql.NVarChar(45), req.ip || null)
-        .query(`
-          INSERT INTO dbo.JobApplications (
-            FirstName,
-            LastName,
-            Email,
-            BirthDate,
-            Phone,
-            [Address],
-            EducationLevel,
-            LastSchool,
-            MilitaryStatus,
-            DrivingLicense,
-            Languages,
-            DesiredDepartment,
-            DesiredDepartmentOther,
-            CriminalRecord,
-            [References],
-            OtherNotes,
-            CvFileName,
-            CvFilePath,
-            IpAddress
-          )
-          VALUES (
-            @FirstName,
-            @LastName,
-            @Email,
-            @BirthDate,
-            @Phone,
-            @Address,
-            @EducationLevel,
-            @LastSchool,
-            @MilitaryStatus,
-            @DrivingLicense,
-            @Languages,
-            @DesiredDepartment,
-            @DesiredDepartmentOther,
-            @CriminalRecord,
-            @References,
-            @OtherNotes,
-            @CvFileName,
-            @CvFilePath,
-            @IpAddress
-          );
-        `);
+      // 🔹 Mail kısmı aynen devam
       try {
         const notifyTo = process.env.JOB_APP_NOTIFY_TO || process.env.SMTP_USER;
 
@@ -509,24 +495,27 @@ Bu mail web sitesi iş başvuru formundan otomatik olarak gönderilmiştir.
     <p><strong>Diğer Bölüm:</strong> ${desiredDepartmentOther || "-"}</p>
     <p><strong>Adli Sicil Kaydı:</strong> ${criminalRecord}</p>
     <hr>
-    <p><strong>Referanslar:</strong><br>${(referencesText || "-")
-            .replace(/\n/g, "<br>")}</p>
-    <p><strong>Diğer Notlar:</strong><br>${(otherNotes || "-")
-            .replace(/\n/g, "<br>")}</p>
+    <p><strong>Referanslar:</strong><br>${(referencesText || "-").replace(
+          /\n/g,
+          "<br>"
+        )}</p>
+    <p><strong>Diğer Notlar:</strong><br>${(otherNotes || "-").replace(
+          /\n/g,
+          "<br>"
+        )}</p>
     <hr>
     <p style="font-size:12px;color:#666;">Bu mail web sitesi iş başvuru formundan otomatik olarak gönderilmiştir.</p>
   `;
 
         const mailOptions = {
-          from: `"Web İş Başvurusu" <${process.env.SMTP_USER}>`, // Gönderici: senin SMTP hesabın
-          to: notifyTo,                                         // Alıcı: r.turkmen@dronetech.com.tr
+          from: `"Web İş Başvurusu" <${process.env.SMTP_USER}>`,
+          to: notifyTo,
           subject,
           text: textBody,
           html: htmlBody,
           attachments: [],
         };
 
-        // CV yüklendiyse mail'e ekle
         if (cvFilePath && cvFileName) {
           mailOptions.attachments.push({
             filename: cvFileName,
@@ -541,7 +530,6 @@ Bu mail web sitesi iş başvuru formundan otomatik olarak gönderilmiştir.
         console.error("Mail hazırlarken hata:", mailErr);
       }
 
-      // Şimdilik JSON döndürüyoruz; bir sonraki adımda JS ile bunu yakalayacağız.
       return res.status(201).json({
         ok: true,
         message: "Başvurunuz başarıyla kaydedildi.",
@@ -559,7 +547,6 @@ Bu mail web sitesi iş başvuru formundan otomatik olarak gönderilmiştir.
 app.post("/api/contact", async (req, res) => {
   const body = req.body || {};
   const fieldErrors = {};
-
   const firstName = String(body.firstName || "").trim();
   const lastName = String(body.lastName || "").trim();
   const email = String(body.email || "").trim().toLowerCase();
@@ -583,38 +570,30 @@ app.post("/api/contact", async (req, res) => {
       fieldErrors,
     });
   }
-
   try {
-    const pool = await getPool();
-
-    // 1) Veritabanına kaydet
-    await pool
-      .request()
-      .input("FirstName", sql.NVarChar(100), firstName)
-      .input("LastName", sql.NVarChar(100), lastName)
-      .input("Email", sql.NVarChar(320), email)
-      .input("Subject", sql.NVarChar(200), subject)
-      .input("Message", sql.NVarChar(sql.MAX), messageText)
-      .input("IpAddress", sql.NVarChar(45), req.ip || null)
-      .query(`
-        INSERT INTO dbo.ContactMessages (
-          FirstName,
-          LastName,
-          Email,
-          Subject,
-          Message,
-          IpAddress
-        )
-        VALUES (
-          @FirstName,
-          @LastName,
-          @Email,
-          @Subject,
-          @Message,
-          @IpAddress
-        );
-      `);
-
+    // 1) Veritabanına kaydet (PostgreSQL)
+    await dbQuery(
+      `
+    INSERT INTO contactmessages (
+      firstname,
+      lastname,
+      email,
+      subject,
+      message,
+      ipaddress,
+      createdat
+    )
+    VALUES ($1, $2, $3, $4, $5, $6, NOW())
+    `,
+      [
+        firstName,
+        lastName,
+        email,
+        subject,
+        messageText,
+        req.ip || null,
+      ]
+    );
     // 2) Sana mail gönder
     try {
       const notifyTo =
@@ -625,20 +604,15 @@ app.post("/api/contact", async (req, res) => {
       const mailSubject = `İletişim Formu: ${subject} - ${firstName} ${lastName}`;
 
       const textBody = `
-Web sitenizden yeni bir iletişim mesajı alındı.
-
-Ad Soyad : ${firstName} ${lastName}
-E-posta  : ${email}
-Konu     : ${subject}
-
-Mesaj:
-${messageText}
-
-IP Adresi: ${req.ip || "-"}
-
-Bu mail web sitesi iletişim formundan otomatik olarak gönderilmiştir.
-`;
-
+      Web sitenizden yeni bir iletişim mesajı alındı.
+      Ad Soyad : ${firstName} ${lastName}
+      E-posta  : ${email}
+      Konu     : ${subject}
+      Mesaj:
+      ${messageText}
+      IP Adresi: ${req.ip || "-"}
+      Bu mail web sitesi iletişim formundan otomatik olarak gönderilmiştir.
+      `;
       const htmlBody = `
         <h2>Yeni İletişim Mesajı</h2>
         <p><strong>Ad Soyad:</strong> ${firstName} ${lastName}</p>
@@ -650,29 +624,29 @@ Bu mail web sitesi iletişim formundan otomatik olarak gönderilmiştir.
         <p><small>IP Adresi: ${req.ip || "-"}</small></p>
         <p style="font-size:12px;color:#666;">Bu mail web sitesi iletişim formundan otomatik olarak gönderilmiştir.</p>
       `;
-
       await mailTransporter.sendMail({
         from: `"Web İletişim" <${process.env.SMTP_USER}>`,
         to: notifyTo,
-        replyTo: email, // cevapla deyince gönderene gider (istersen kaldırabilirsin)
+        replyTo: email,
         subject: mailSubject,
         text: textBody,
         html: htmlBody,
       });
     } catch (mailErr) {
       console.error("İletişim maili gönderilemedi:", mailErr);
-      // Kullanıcıya hata dönmüyoruz; sadece log'da kalsın istiyorsan böyle bırak
     }
 
     return res.status(201).json({
       ok: true,
-      message: "Mesajınız başarıyla gönderildi. En kısa sürede sizinle iletişime geçilecektir.",
+      message:
+        "Mesajınız başarıyla gönderildi. En kısa sürede sizinle iletişime geçilecektir.",
     });
   } catch (err) {
     console.error("POST /api/contact error:", err);
-    return res
-      .status(500)
-      .json({ ok: false, message: "Sunucu hatası, lütfen daha sonra tekrar deneyin." });
+    return res.status(500).json({
+      ok: false,
+      message: "Sunucu hatası, lütfen daha sonra tekrar deneyin.",
+    });
   }
 });
 
@@ -699,37 +673,31 @@ app.post("/auth/forgot-password", async (req, res) => {
   }
 
   try {
-    const pool = await getPool();
-
     // Kullanıcı var mı?
-    const userRes = await pool
-      .request()
-      .input("email", sql.NVarChar(320), email)
-      .query(`
-        SELECT TOP 1 Id
-        FROM dbo.Users
-        WHERE LOWER(Email) = @email
-      `);
-
-    if (!userRes.recordset.length) {
-      return res
-        .status(404)
-        .json({ fieldErrors: { email: "Bu e-posta ile kayıt bulunamadı." } });
+    const userRes = await dbQuery(
+      `
+    SELECT id
+    FROM users
+    WHERE LOWER(email) = $1
+    LIMIT 1
+    `,
+      [email]
+    );
+    if (userRes.rows.length === 0) {
+      return res.status(404).json({
+        fieldErrors: { email: "Bu e-posta ile kayıt bulunamadı." },
+      });
     }
-
-    const userId = userRes.recordset[0].Id;
+    const userId = userRes.rows[0].id;
     const hash = await bcrypt.hash(newPassword, 12);
-
-    await pool
-      .request()
-      .input("id", sql.Int, userId)
-      .input("hash", sql.NVarChar(255), hash)
-      .query(`
-        UPDATE dbo.Users
-        SET PasswordHash = @hash
-        WHERE Id = @id
-      `);
-
+    await dbQuery(
+      `
+    UPDATE users
+    SET passwordhash = $1
+    WHERE id = $2
+    `,
+      [hash, userId]
+    );
     return res.json({
       ok: true,
       message: "Şifreniz güncellendi. Giriş yapabilirsiniz.",
@@ -754,22 +722,24 @@ app.get("/api/me", async (req, res) => {
   if (!sess?.userId) return res.status(401).json({ error: "Yetkisiz" });
 
   try {
-    const pool = await getPool();
-    const r = await pool
-      .request()
-      .input("id", sql.Int, sess.userId)
-      .query(`
-        SELECT
-          Id        AS id,
-          FullName  AS full_name,
-          Email     AS email,
-          CreatedAt AT TIME ZONE 'UTC' AT TIME ZONE 'Turkey Standard Time' AS created_at
-        FROM dbo.Users
-        WHERE Id = @id
-      `);
+    const r = await dbQuery(
+      `
+      SELECT
+        id,
+        fullname,
+        email,
+        createdat
+      FROM users
+      WHERE id = $1
+      `,
+      [sess.userId]
+    );
 
-    if (!r.recordset.length) return res.status(404).json({ error: "Kullanıcı bulunamadı." });
-    res.json({ user: r.recordset[0] });
+    if (r.rows.length === 0) {
+      return res.status(404).json({ error: "Kullanıcı bulunamadı." });
+    }
+
+    res.json({ user: r.rows[0] });
   } catch (e) {
     console.error("DB /api/me hatası:", e);
     res.status(500).json({ error: "DB hatası" });
@@ -785,9 +755,9 @@ app.get("/api/admin/me", async (req, res) => {
     return res.json({
       ok: true,
       user: {
-        id: admin.Id,
-        fullName: admin.FullName,
-        email: admin.Email,
+        id: admin.id,
+        fullName: admin.fullname,  // <<< BURASI ÖNEMLİ
+        email: admin.email,
       },
     });
   } catch (e) {
@@ -804,33 +774,30 @@ app.get("/api/addresses", async (req, res) => {
   if (!userId) return;
 
   try {
-    const pool = await getPool();
-    const result = await pool
-      .request()
-      .input("UserId", sql.Int, userId)
-      .query(`
-        SELECT TOP 1 *
-        FROM dbo.UserAddresses
-        WHERE UserId = @UserId AND Type = 'shipping'
-        ORDER BY Id DESC
-      `);
+    const result = await dbQuery(
+      `
+      SELECT *
+      FROM useraddresses
+      WHERE userid = $1 AND type = 'shipping'
+      ORDER BY id DESC
+      LIMIT 1
+      `,
+      [userId]
+    );
 
-    res.json({ address: result.recordset[0] || null });
+    res.json({ address: result.rows[0] || null });
   } catch (err) {
     console.error("GET /api/addresses error:", err);
     res.status(500).json({ error: "Server error" });
   }
 });
 
-// POST /api/payments/iyzico/init  → iyzico ödeme başlat
+
+// POST /api/payments/iyzico/init  → iyzico ödeme başlat (PostgreSQL sürümü)
 app.post("/api/payments/iyzico/init", async (req, res) => {
   try {
     console.log("Iyzico init body:", req.body);
 
-    // 🔥 Artık frontend'den bunlar geliyor:
-    // subtotal     → sadece ürünlerin toplamı
-    // shippingFee  → kargo ücreti
-    // totalPrice   → subtotal + shippingFee (karttan çekilecek toplam)
     const { subtotal, totalPrice, shippingFee, cart, address } = req.body || {};
 
     const sub = Number(subtotal || 0);
@@ -847,26 +814,32 @@ app.post("/api/payments/iyzico/init", async (req, res) => {
     const sess = getSession(req);
     const userId = sess?.userId || null;
 
-    // 🔹 1) PendingOrders'a geçici siparişi kaydet
-    const pool = await getPool();
-    const pendingResult = await pool
-      .request()
-      .input("UserId", sql.Int, userId)
-      // Burada TotalPrice'ı İSTEDİĞİN gibi yorumlayabilirsin.
-      // Şu an total (ürün + kargo) olarak kaydediyoruz:
-      .input("TotalPrice", sql.Decimal(18, 2), total)
-      .input("CartJson", sql.NVarChar, JSON.stringify(cart || []))
-      .input("AddressJson", sql.NVarChar, JSON.stringify(address || {}))
-      .input("ShippingFee", sql.Decimal(18, 2), ship)
-      .query(`
-        INSERT INTO dbo.PendingOrders
-          (UserId, TotalPrice, CartJson, AddressJson, ShippingFee, CreatedAt)
-        OUTPUT INSERTED.Id
-        VALUES
-          (@UserId, @TotalPrice, @CartJson, @AddressJson, @ShippingFee, SYSUTCDATETIME())
-      `);
+    // 🔹 1) PendingOrders'a geçici siparişi kaydet (PostgreSQL)
+    const pendingResult = await dbQuery(
+      `
+      INSERT INTO pendingorders (
+        userid,
+        totalprice,
+        cartjson,
+        addressjson,
+        shippingfee,
+        createdat,
+        status,
+        updatedat
+      )
+      VALUES ($1, $2, $3, $4, $5, NOW(),'pending',NOW())  
+      RETURNING id
+      `,
+      [
+        userId,                         // $1
+        total,                          // $2
+        JSON.stringify(cart || []),     // $3
+        JSON.stringify(address || {}),  // $4
+        ship,                           // $5
+      ]
+    );
 
-    const pendingId = pendingResult.recordset[0].Id;
+    const pendingId = pendingResult.rows[0].id;
     console.log("💾 PendingOrders insert Id:", pendingId);
 
     // 🔹 Bunları iyzico'ya conversationId ve basketId olarak göndereceğiz
@@ -907,21 +880,18 @@ app.post("/api/payments/iyzico/init", async (req, res) => {
         name: item.name || "Ürün",
         category1: item.cat || item.category || "Genel",
         itemType: Iyzipay.BASKET_ITEM_TYPE.PHYSICAL,
-        price: (price * qty).toFixed(2), // 🔹 ÜRÜN TOPLAMI (subtotal'ın parçaları)
+        price: (price * qty).toFixed(2), // ürün toplamı
       };
     });
 
     // 🔹 3) İyzico checkout form initialize isteği
-    // 💥 KRİTİK:
-    //   price     = sadece ürün toplamı (subtotal)
-    //   paidPrice = ürün + kargo (totalPrice)
     const request = {
       locale: Iyzipay.LOCALE.TR,
-      conversationId, // "42" (PendingOrders.Id)
-      price: sub.toFixed(2),
-      paidPrice: total.toFixed(2),
+      conversationId, // PendingOrders.id
+      price: sub.toFixed(2),    // ürün toplamı
+      paidPrice: total.toFixed(2), // ürün + kargo
       currency: Iyzipay.CURRENCY.TRY,
-      basketId, // "BASKET_42"
+      basketId,
       paymentGroup: Iyzipay.PAYMENT_GROUP.PRODUCT,
       callbackUrl: "http://localhost:3000/iyzico-callback",
       buyer,
@@ -951,17 +921,15 @@ app.post("/api/payments/iyzico/init", async (req, res) => {
         const token = result.token;
         console.log("💾 Init: pendingId =", pendingId, "token =", token);
 
-        // 🔹 PendingOrders’a token’ı yaz
-        const pool2 = await getPool();
-        await pool2
-          .request()
-          .input("Id", sql.Int, pendingId)
-          .input("Token", sql.NVarChar, token)
-          .query(`
-            UPDATE dbo.PendingOrders
-            SET IyzicoToken = @Token
-            WHERE Id = @Id
-          `);
+        // 🔹 PendingOrders’a token’ı yaz (PostgreSQL)
+        await dbQuery(
+          `
+          UPDATE pendingorders
+          SET iyzicotoken = $1
+          WHERE id = $2
+          `,
+          [token, pendingId]
+        );
 
         // 🔹 Frontend’e ödeme sayfası linkini dön
         return res.json({
@@ -981,6 +949,8 @@ app.post("/api/payments/iyzico/init", async (req, res) => {
     res.status(500).json({ error: "Sunucu hatası" });
   }
 });
+
+
 // ---------------- GERÇEK Yurtiçi Kargo Entegrasyonu ----------------
 
 // .env'den Yurtiçi ayarlarını oku
@@ -1104,6 +1074,138 @@ async function createYurticiKargoShipment(orderId, buyer, shippingAddress, cartI
     };
   }
 }
+
+// Admin: Siparişi otomatik kargoya ver (Yurtiçi createShipment)
+app.post("/api/admin/orders/:id/ship", requireAdmin, async (req, res) => {
+  const orderId = Number(req.params.id);
+  if (!orderId) {
+    return res.status(400).json({ ok: false, error: "Geçersiz sipariş ID." });
+  }
+
+  let client;
+  try {
+    client = await pgPool.connect();
+    await client.query("BEGIN");
+
+    // 1) Siparişi kilitle (aynı anda 2 kere kargoya verme olmasın)
+    const orderRes = await client.query(
+      `SELECT id, userid, trackingnumber, status
+       FROM orders
+       WHERE id = $1
+       FOR UPDATE`,
+      [orderId]
+    );
+
+    if (orderRes.rows.length === 0) {
+      await client.query("ROLLBACK");
+      return res.status(404).json({ ok: false, error: "Sipariş bulunamadı." });
+    }
+
+    const order = orderRes.rows[0];
+
+    // Zaten kargoya verildiyse tekrar üretme
+    if (order.trackingnumber) {
+      await client.query("COMMIT");
+      return res.json({
+        ok: true,
+        message: "Zaten kargoya verilmiş.",
+        trackingNumber: order.trackingnumber,
+      });
+    }
+
+    // 2) Adresi bul: pendingorders üzerinden (final_order_id ile)
+    const pendingRes = await client.query(
+      `SELECT addressjson
+       FROM pendingorders
+       WHERE final_order_id = $1
+       ORDER BY id DESC
+       LIMIT 1`,
+      [orderId]
+    );
+
+    let address = {};
+    if (pendingRes.rows.length > 0) {
+      address = JSON.parse(pendingRes.rows[0].addressjson || "{}");
+    } else {
+      // fallback: useraddresses (shipping)
+      const addrRes = await client.query(
+        `SELECT *
+         FROM useraddresses
+         WHERE userid = $1 AND type = 'shipping'
+         ORDER BY id DESC
+         LIMIT 1`,
+        [order.userid]
+      );
+      address = addrRes.rows[0] || {};
+    }
+
+    // 3) Sepeti ürünlerden çıkar: orderitems
+    const itemsRes = await client.query(
+      `SELECT productid AS id, productname AS name, quantity AS qty, unitprice AS price
+       FROM orderitems
+       WHERE orderid = $1`,
+      [orderId]
+    );
+
+    const cart = itemsRes.rows.map((r) => ({
+      id: r.id,
+      name: r.name,
+      qty: Number(r.qty || 1),
+      price: Number(r.price || 0),
+    }));
+
+    // 4) Kargo için buyer & adres
+    const buyer = {
+      firstName: address.firstName || "Müşteri",
+      lastName: address.lastName || "",
+      phone: address.phone || "",
+      email: address.email || "",
+    };
+
+    const shippingAddress = {
+      address: address.address || "",
+      city: address.city || "",
+      district: address.district || "",
+      postalCode: address.zipCode || address.postalcode || "",
+    };
+
+    // 5) Yurtiçi createShipment
+    const shipmentResult = await createYurticiKargoShipment(
+      orderId,
+      buyer,
+      shippingAddress,
+      cart
+    );
+
+    if (!shipmentResult?.success) {
+      throw new Error("Kargo oluşturulamadı: " + (shipmentResult?.error || ""));
+    }
+
+    const trackingNumber = shipmentResult.trackingNumber; // DT000000x
+
+    // 6) orders güncelle: tracking + status
+    await client.query(
+      `UPDATE orders
+       SET trackingnumber = $1,
+           status = 'shipped'
+       WHERE id = $2`,
+      [trackingNumber, orderId]
+    );
+
+    await client.query("COMMIT");
+
+    return res.json({ ok: true, trackingNumber });
+  } catch (e) {
+    console.error("ship auto error:", e);
+    if (client) {
+      try { await client.query("ROLLBACK"); } catch { }
+    }
+    return res.status(500).json({ ok: false, error: e.message || "Sunucu hatası" });
+  } finally {
+    if (client) client.release();
+  }
+});
+
 // ---------------- GERÇEK Yurtiçi Kargo Entegrasyonu SON ----------------
 
 //------------ YURTİÇİ KARGO - queryShipment (KARGOM NEREDE) ----------------
@@ -1216,6 +1318,7 @@ async function queryYurticiKargoShipment(cargoKey) {
 }
 
 // 💳 İyzico callback (ödeme sonucu burada tamamlanır)
+// Iyzico ödeme callback (PostgreSQL sürümü)
 app.post("/iyzico-callback", (req, res) => {
   const { token } = req.body || {};
   console.log("💳 Iyzico callback body:", req.body);
@@ -1225,13 +1328,14 @@ app.post("/iyzico-callback", (req, res) => {
     return res.redirect(303, "/odeme-hata.html");
   }
 
-  // 1) İyzico'dan gerçek sonuç sorgusu
   iyzipay.checkoutForm.retrieve(
-    {
-      locale: Iyzipay.LOCALE.TR,
-      token,
-    },
+    { locale: Iyzipay.LOCALE.TR, token },
     async (err, result) => {
+
+      // ✅ tek yerde token belirle
+      let iyzToken = token;
+      if (result?.token) iyzToken = result.token;
+
       if (err) {
         console.error("❌ iyzico retrieve error:", err);
         return res.redirect(303, "/odeme-hata.html");
@@ -1239,7 +1343,6 @@ app.post("/iyzico-callback", (req, res) => {
 
       console.log("✅ Iyzico retrieve result:", result);
 
-      // Ödeme başarısızsa
       if (result.status !== "success" || result.paymentStatus !== "SUCCESS") {
         console.error("❌ Ödeme başarısız veya iptal:", {
           status: result.status,
@@ -1249,100 +1352,73 @@ app.post("/iyzico-callback", (req, res) => {
         return res.redirect(303, "/odeme-hata.html");
       }
 
-      // Buraya geliyorsak ödeme kesin başarılı ✅
-
-      // 2) DB transaction başlat
-      let transaction;
+      let client;
       try {
-        const pool = await getPool();
-        transaction = new sql.Transaction(pool);
-        await transaction.begin();
+        client = await pgPool.connect();
+        await client.query("BEGIN");
 
-        // 3) PendingOrders kaydını BUL – token ile
-        const iyzToken = result.token || token;
         console.log("📦 Callback token ile pending ara:", iyzToken);
 
-        const pendingReq = new sql.Request(transaction);
-        const pendingRes = await pendingReq
-          .input("Token", sql.NVarChar, iyzToken)
-          .query(`
-            SELECT TOP 1 *
-            FROM dbo.PendingOrders
-            WHERE IyzicoToken = @Token
-          `);
+        const pendingRes = await client.query(
+          `
+          SELECT *
+          FROM pendingorders
+          WHERE iyzicotoken = $1
+          LIMIT 1
+          `,
+          [iyzToken]
+        );
 
-        if (!pendingRes.recordset.length) {
+        if (pendingRes.rows.length === 0) {
           throw new Error("PendingOrders kaydı bulunamadı (token eşleşmedi)");
         }
 
-        const pending = pendingRes.recordset[0];
-        const pendingId = pending.Id;
-        console.log("📦 Pending bulundu, Id =", pendingId);
+        const pending = pendingRes.rows[0];
+        const pendingId = pending.id;
 
-        const cart = JSON.parse(pending.CartJson || "[]");
-        //const shippingFee = Number(pending.ShippingFee || 0);
-        const address = JSON.parse(pending.AddressJson || "{}");
+        const cart = JSON.parse(pending.cartjson || "[]");
+        const address = JSON.parse(pending.addressjson || "{}");
 
-        // 4) Orders tablosuna ana siparişi yaz
-        const orderInsertReq = new sql.Request(transaction);
-        const orderInsertRes = await orderInsertReq
-          .input("UserId", sql.Int, pending.UserId)
-          // PendingOrders.TotalPrice = ürün + kargo (frontend totalPrice)
-          .input("TotalPrice", sql.Decimal(18, 2), Number(pending.TotalPrice))
-          // paidPrice: iyzico'nun gerçekten tahsil ettiği tutar
-          .input("PaidPrice", sql.Decimal(18, 2), Number(result.paidPrice))
-          .input("PaymentId", sql.NVarChar(50), String(result.paymentId))
-          .input("PaymentStatus", sql.NVarChar(20), String(result.paymentStatus))
-          .input(
-            "ConversationId",
-            sql.NVarChar(100),
-            String(result.conversationId || "")
-          )
-          .input("BasketId", sql.NVarChar(100), String(result.basketId || ""))
-          .input(
-            "IyzicoToken",
-            sql.NVarChar(200),
-            String(result.token || token)
-          )
-          .input(
-            "Currency",
-            sql.NVarChar(10),
-            String(result.currency || "TRY")
-          )
-          .query(`
-            INSERT INTO dbo.Orders
-              (UserId, TotalPrice, PaidPrice, PaymentId, PaymentStatus,
-               ConversationId, BasketId, IyzicoToken, Currency, CreatedAt)
-            OUTPUT INSERTED.Id
-            VALUES
-              (@UserId, @TotalPrice, @PaidPrice, @PaymentId, @PaymentStatus,
-               @ConversationId, @BasketId, @IyzicoToken, @Currency, SYSUTCDATETIME())
-          `);
+        const orderInsertRes = await client.query(
+          `
+        INSERT INTO orders (
+          userid, totalprice, paidprice, paymentid, paymentstatus,
+          conversationid, basketid, iyzicotoken, currency,
+          trackingnumber, createdat, shippingfee, status
+        )
+        VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,NOW(),$11,$12)
+        RETURNING id
+        `,
+          [
+            pending.userid,
+            Number(pending.totalprice),
+            Number(result.paidPrice),
+            String(result.paymentId),
+            String(result.paymentStatus),
+            String(result.conversationId || ""),
+            String(result.basketId || ""),
+            String(iyzToken),
+            String(result.currency || "TRY"),
+            null,                              // trackingnumber
+            Number(pending.shippingfee || 0),  // shippingfee
+            "preparing",                       // status
+          ]
+        );
 
-        const orderId = orderInsertRes.recordset[0].Id;
+        const orderId = orderInsertRes.rows[0].id;
 
-        // 5) OrderItems tablosuna sepet satırlarını yaz
         for (const item of cart) {
           const qty = item.qty || 1;
           const price = Number(item.price || 0);
-
-          const itemsReq = new sql.Request(transaction);
-          await itemsReq
-            .input("OrderId", sql.Int, orderId)
-            .input("ProductId", sql.NVarChar(50), item.id || null)
-            .input("ProductName", sql.NVarChar(200), item.name || "Ürün")
-            .input("Quantity", sql.Int, qty)
-            .input("UnitPrice", sql.Decimal(18, 2), price)
-            .input("TotalPrice", sql.Decimal(18, 2), price * qty)
-            .query(`
-              INSERT INTO dbo.OrderItems
-                (OrderId, ProductId, ProductName, Quantity, UnitPrice, TotalPrice)
-              VALUES
-                (@OrderId, @ProductId, @ProductName, @Quantity, @UnitPrice, @TotalPrice)
-            `);
+          await client.query(
+            `
+            INSERT INTO orderitems (orderid, productid, productname, quantity, unitprice, totalprice)
+            VALUES ($1,$2,$3,$4,$5,$6)
+            `,
+            [orderId, item.id || null, item.name || "Ürün", qty, price, price * qty]
+          );
         }
 
-        // 6) Yurtiçi Kargo gönderisi oluştur
         const buyer = {
           firstName: address.firstName || "Müşteri",
           lastName: address.lastName || "",
@@ -1357,69 +1433,100 @@ app.post("/iyzico-callback", (req, res) => {
           postalCode: address.zipCode || "",
         };
 
-        const shipmentResult = await createYurticiKargoShipment(
+        //const shipmentResult = await createYurticiKargoShipment(orderId, buyer, shippingAddress, cart);
+        //if (!shipmentResult?.success) {
+        //   throw new Error("Yurtiçi Kargo gönderisi oluşturulamadı: " + (shipmentResult?.error || ""));
+        //}
+        //const trackingNumber = shipmentResult.trackingNumber;
+        //await client.query(
+        //  `UPDATE orders SET trackingnumber = $1 WHERE id = $2`,
+        //  [trackingNumber || null, orderId]
+        // );
+        const trackingNumber = null; // kargo henüz oluşturulmadı
+        await client.query(
+          `
+          UPDATE pendingorders
+          SET status='completed',
+              final_order_id=$1,
+              updatedat=NOW(),
+              fail_reason=NULL
+          WHERE id=$2
+          `,
+          [orderId, pendingId]
+        );
+        await client.query("COMMIT");
+        // ✅ 1) önce grandTotal tanımla
+        const grandTotal = Number(pending.totalprice || result.paidPrice || 0);
+        notifyNewOrder({
           orderId,
-          buyer,
-          shippingAddress,
-          cart
-        );
-
-        if (!shipmentResult?.success) {
-          throw new Error(
-            "Yurtiçi Kargo gönderisi oluşturulamadı: " +
-            (shipmentResult?.error || "")
-          );
-        }
-
-        const trackingNumber = shipmentResult.trackingNumber;
-
-        // 6.b) Takip numarasını Orders tablosuna yaz
-        const trackReq = new sql.Request(transaction);
-        await trackReq
-          .input("OrderId", sql.Int, orderId)
-          .input("TrackingNumber", sql.NVarChar(50), trackingNumber || null)
-          .query(`
-            UPDATE dbo.Orders
-            SET TrackingNumber = @TrackingNumber
-            WHERE Id = @OrderId
-          `);
-
-        // PendingOrders kaydını sil
-        const deleteReq = new sql.Request(transaction);
-        await deleteReq
-          .input("Id", sql.Int, pendingId)
-          .query(`DELETE FROM dbo.PendingOrders WHERE Id = @Id`);
-
-        // 7) Transaction'ı onayla (COMMIT)
-        await transaction.commit();
-
-        // Toplam tutarı (kargo dahil) PendingOrders.TotalPrice’tan al
-        const grandTotal = Number(
-          pending.TotalPrice || result.paidPrice || 0
-        );
-
-        // Müşteriyi başarı sayfasına, orderId & tracking & total ile yönlendir
+          total: grandTotal.toFixed(2),
+          tracking: trackingNumber,   // null gider → mailde “Henüz yok” yazdırabilirsin
+          userId: pending.userid,
+        });
         const qs = new URLSearchParams({
           orderId: String(orderId),
-          tracking: trackingNumber || "",
-          total: grandTotal.toFixed(2), // "102.00" gibi
+          tracking: trackingNumber || "",  // "" olur
+          total: grandTotal.toFixed(2),
         }).toString();
 
         return res.redirect(303, `/odeme-basarili.html?${qs}`);
+
       } catch (dbErr) {
         console.error("❌ Ödeme sonrası DB/Kargo hatası:", dbErr);
-        if (transaction) {
-          try {
-            await transaction.rollback();
-          } catch (rbErr) {
-            console.error("Rollback hatası:", rbErr);
-          }
+
+        if (client) {
+          try { await client.query("ROLLBACK"); } catch { }
         }
+
+        // ✅ iyzToken burada da aynı değişken
+        try {
+          await dbQuery(
+            `
+            UPDATE pendingorders
+            SET status='failed',
+                fail_reason=$1,
+                updatedat=NOW()
+            WHERE iyzicotoken=$2
+            `,
+            [String(dbErr?.message || dbErr), iyzToken]
+          );
+        } catch (e2) {
+          console.error("pendingorders failed update hatası:", e2);
+        }
+
         return res.redirect(303, "/odeme-hata.html");
+      } finally {
+        if (client) client.release();
       }
     }
   );
 });
+
+async function notifyNewOrder({ orderId, total, tracking, userId }) {
+  try {
+    const to =
+      process.env.ORDER_NOTIFY_TO ||
+      process.env.JOB_APP_NOTIFY_TO ||
+      process.env.SMTP_USER;
+
+    const mailOptions = {
+      from: `"DroneTech Sipariş" <${process.env.SMTP_USER}>`,
+      to,
+      subject: `🛒 Yeni Sipariş Geldi (#${orderId})`,
+      text:
+        `Yeni bir sipariş oluşturuldu.\n\n` +
+        `Sipariş No: ${orderId}\n` +
+        `Kullanıcı ID: ${userId}\n` +
+        `Toplam Tutar: ${total} TL\n` +
+        `Kargo Takip: ${tracking || "-"}\n`,
+    };
+
+    const info = await mailTransporter.sendMail(mailOptions);
+    console.log("✅ Sipariş maili gönderildi:", info.messageId);
+  } catch (err) {
+    console.error("❌ Sipariş maili gönderilemedi:", err);
+  }
+}
 
 // Kargo durum sorgulama – "Kargom Nerede?"
 app.get("/api/shipping/status/:cargoKey", async (req, res) => {
@@ -1450,56 +1557,59 @@ app.get("/api/shipping/status/:cargoKey", async (req, res) => {
   }
 });
 
-// Sipariş detaylarını getir (ödeme sonrası sayfada göstermek için)
+// Sipariş detaylarını getir (ödeme sonrası sayfada göstermek için) - PostgreSQL
 app.get("/api/orders/:id", async (req, res) => {
   try {
     const id = Number(req.params.id);
     if (!id) {
-      return res.status(400).json({ ok: false, error: "Geçersiz sipariş numarası." });
+      return res
+        .status(400)
+        .json({ ok: false, error: "Geçersiz sipariş numarası." });
     }
-
-    const pool = await getPool();
 
     // Ana sipariş
-    const orderRes = await pool
-      .request()
-      .input("Id", sql.Int, id)
-      .query(`
-        SELECT TOP 1
-          Id,
-          UserId,
-          TotalPrice,
-          PaidPrice,
-          TrackingNumber,
-          CreatedAt
-        FROM dbo.Orders
-        WHERE Id = @Id
-      `);
+    const orderRes = await dbQuery(
+      `
+      SELECT
+        id,
+        userid,
+        totalprice,
+        paidprice,
+        trackingnumber,
+        createdat
+      FROM orders
+      WHERE id = $1
+      LIMIT 1
+      `,
+      [id]
+    );
 
-    if (!orderRes.recordset.length) {
-      return res.status(404).json({ ok: false, error: "Sipariş bulunamadı." });
+    if (orderRes.rows.length === 0) {
+      return res
+        .status(404)
+        .json({ ok: false, error: "Sipariş bulunamadı." });
     }
 
-    const order = orderRes.recordset[0];
+    const order = orderRes.rows[0];
 
     // Kalemler
-    const itemsRes = await pool
-      .request()
-      .input("OrderId", sql.Int, id)
-      .query(`
-        SELECT
-          ProductName,
-          Quantity,
-          UnitPrice,
-          TotalPrice
-        FROM dbo.OrderItems
-        WHERE OrderId = @OrderId
-      `);
+    const itemsRes = await dbQuery(
+      `
+      SELECT
+        productname,
+        quantity,
+        unitprice,
+        totalprice
+      FROM orderitems
+      WHERE orderid = $1
+      `,
+      [id]
+    );
 
     return res.json({
       ok: true,
       order,
-      items: itemsRes.recordset || [],
+      items: itemsRes.rows || [],
     });
   } catch (err) {
     console.error("GET /api/orders/:id error:", err);
@@ -1507,7 +1617,8 @@ app.get("/api/orders/:id", async (req, res) => {
   }
 });
 
-/* ---------------- API: Password Update ---------------- */
+
+/* ---------------- API: Password Update (PostgreSQL) ---------------- */
 app.post("/api/account/password", async (req, res) => {
   const userId = requireUserId(req, res);
   if (!userId) return;
@@ -1515,7 +1626,9 @@ app.post("/api/account/password", async (req, res) => {
   const { current_password, new_password, new_password_confirm } = req.body;
 
   if (!new_password || new_password.length < 8) {
-    return res.status(400).json({ error: "Yeni şifre en az 8 karakter olmalı." });
+    return res
+      .status(400)
+      .json({ error: "Yeni şifre en az 8 karakter olmalı." });
   }
 
   if (new_password !== new_password_confirm) {
@@ -1523,27 +1636,25 @@ app.post("/api/account/password", async (req, res) => {
   }
 
   try {
-    const pool = await getPool();
+    // Eski şifreyi çek (PostgreSQL)
+    const result = await dbQuery(
+      `
+      SELECT passwordhash
+      FROM users
+      WHERE id = $1
+      `,
+      [userId]
+    );
 
-    // Eski şifreyi çek
-    const result = await pool
-      .request()
-      .input("id", sql.Int, userId)
-      .query(`
-        SELECT PasswordHash
-        FROM dbo.Users
-        WHERE Id = @id
-      `);
-
-    if (!result.recordset.length) {
+    if (result.rows.length === 0) {
       return res.status(404).json({ error: "Kullanıcı bulunamadı." });
     }
 
-    const user = result.recordset[0];
+    const user = result.rows[0];
 
     // Mevcut şifre gönderilmişse doğrula
     if (current_password) {
-      const ok = await bcrypt.compare(current_password, user.PasswordHash);
+      const ok = await bcrypt.compare(current_password, user.passwordhash);
       if (!ok) {
         return res.status(401).json({ error: "Mevcut şifre hatalı." });
       }
@@ -1552,16 +1663,15 @@ app.post("/api/account/password", async (req, res) => {
     // Yeni şifreyi hash'le
     const newHash = await bcrypt.hash(new_password, 12);
 
-    // DB'ye yaz
-    await pool
-      .request()
-      .input("id", sql.Int, userId)
-      .input("hash", sql.NVarChar(255), newHash)
-      .query(`
-        UPDATE dbo.Users
-        SET PasswordHash = @hash
-        WHERE Id = @id
-      `);
+    // DB'ye yaz (PostgreSQL)
+    await dbQuery(
+      `
+      UPDATE users
+      SET passwordhash = $1
+      WHERE id = $2
+      `,
+      [newHash, userId]
+    );
 
     return res.json({ ok: true, message: "Şifre güncellendi." });
   } catch (err) {
@@ -1569,8 +1679,6 @@ app.post("/api/account/password", async (req, res) => {
     res.status(500).json({ error: "Sunucu hatası." });
   }
 });
-
-// Kullanıcının kendi siparişlerini getir
 app.get("/api/my/orders", async (req, res) => {
   try {
     const sess = getSession(req);
@@ -1583,37 +1691,148 @@ app.get("/api/my/orders", async (req, res) => {
         error: "Siparişleri görmek için giriş yapmalısınız.",
       });
     }
-
-    const pool = await getPool();
-    const result = await pool
-      .request()
-      .input("UserId", sql.Int, userId)
-      .query(`
-        SELECT 
-          o.Id,
-          o.TotalPrice,
-          o.PaidPrice,
-          o.TrackingNumber,
-          o.CreatedAt,
-          COUNT(oi.Id) AS ItemCount
-        FROM dbo.Orders o
-        LEFT JOIN dbo.OrderItems oi ON oi.OrderId = o.Id
-        WHERE o.UserId = @UserId
-        GROUP BY 
-          o.Id, o.TotalPrice, o.PaidPrice, 
-          o.TrackingNumber, o.CreatedAt
-        ORDER BY o.CreatedAt DESC
-      `);
+    const result = await dbQuery(
+      `
+      SELECT 
+        o.id,
+        o.totalprice,
+        o.paidprice,
+        o.trackingnumber,
+        o.createdat,
+        o.status,
+        COUNT(oi.id) AS itemcount
+      FROM orders o
+      LEFT JOIN orderitems oi ON oi.orderid = o.id
+      WHERE o.userid = $1
+      GROUP BY 
+        o.id, o.totalprice, o.paidprice, 
+        o.trackingnumber, o.createdat, o.status
+      ORDER BY o.createdat DESC
+      `,
+      [userId]
+    );
 
     return res.json({
       ok: true,
-      orders: result.recordset || [],
+      orders: result.rows || [],
     });
   } catch (err) {
     console.error("GET /api/my/orders error:", err);
     res.status(500).json({ ok: false, error: "Sunucu hatası." });
   }
 });
+
+// Admin: Siparişi kargoya ver (Yurtiçi createShipment çağırır)
+app.post("/api/admin/orders/:id/ship", requireAdmin, async (req, res) => {
+  const orderId = Number(req.params.id);
+  if (!orderId) {
+    return res.status(400).json({ ok: false, error: "Geçersiz sipariş ID." });
+  }
+
+  let client;
+  try {
+    client = await pgPool.connect();
+    await client.query("BEGIN");
+
+    // 1) Siparişi + adresi bulmak için pendingorders üzerinden addressjson çekiyoruz
+    // (senin akışında pendingorders.final_order_id yazılıyor)
+    const pendingRes = await client.query(
+      `
+      SELECT *
+      FROM pendingorders
+      WHERE final_order_id = $1
+      ORDER BY id DESC
+      LIMIT 1
+      `,
+      [orderId]
+    );
+
+    if (!pendingRes.rows.length) {
+      throw new Error("Bu sipariş için pendingorders bulunamadı (final_order_id eşleşmedi).");
+    }
+
+    const pending = pendingRes.rows[0];
+    const address = JSON.parse(pending.addressjson || "{}");
+    const cart = JSON.parse(pending.cartjson || "[]");
+
+    // 2) Orders kontrol (zaten shipped mi?)
+    const orderRes = await client.query(
+      `SELECT id, trackingnumber, status FROM orders WHERE id = $1 LIMIT 1`,
+      [orderId]
+    );
+    if (!orderRes.rows.length) {
+      throw new Error("Sipariş bulunamadı.");
+    }
+    const order = orderRes.rows[0];
+
+    if (order.trackingnumber) {
+      // zaten kargoya verilmiş
+      await client.query("ROLLBACK");
+      return res.json({
+        ok: true,
+        message: "Bu sipariş zaten kargoya verilmiş.",
+        trackingNumber: order.trackingnumber,
+        status: order.status,
+      });
+    }
+
+    // 3) Yurtiçi createShipment çağır
+    const buyer = {
+      firstName: address.firstName || "Müşteri",
+      lastName: address.lastName || "",
+      phone: address.phone || "",
+      email: address.email || "",
+    };
+
+    const shippingAddress = {
+      address: address.address || "",
+      city: address.city || "",
+      district: address.district || "",
+      postalCode: address.zipCode || "",
+    };
+
+    const shipmentResult = await createYurticiKargoShipment(
+      orderId,
+      buyer,
+      shippingAddress,
+      cart
+    );
+
+    if (!shipmentResult?.success) {
+      throw new Error("Yurtiçi Kargo oluşturulamadı: " + (shipmentResult?.error || ""));
+    }
+
+    const trackingNumber = shipmentResult.trackingNumber;
+
+    // 4) Orders tablosunu güncelle: trackingnumber + status=shipped
+    await client.query(
+      `
+      UPDATE orders
+      SET trackingnumber = $1,
+          status = 'shipped'
+      WHERE id = $2
+      `,
+      [trackingNumber, orderId]
+    );
+
+    await client.query("COMMIT");
+
+    return res.json({
+      ok: true,
+      trackingNumber,
+      status: "shipped",
+    });
+  } catch (err) {
+    if (client) {
+      try { await client.query("ROLLBACK"); } catch { }
+    }
+    console.error("POST /api/admin/orders/:id/ship error:", err);
+    return res.status(500).json({ ok: false, error: String(err?.message || err) });
+  } finally {
+    if (client) client.release();
+  }
+});
+
 
 // Admin: ürün resmi yükleme (file input'tan çağrılacak)
 app.post(
@@ -1638,8 +1857,174 @@ app.post(
   }
 );
 
+// Admin: yeni ürün ekle
+app.post("/api/admin/products", requireAdmin, async (req, res) => {
+  try {
+    const {
+      name,
+      slug,
+      description,
+      price,
+      stock,
+      imageUrl,
+      category,
+      isActive,
+      weight_kg,
+    } = req.body || {};
 
-// Admin: ürüne teknik görsel yükleme
+    if (!name || !slug) {
+      return res
+        .status(400)
+        .json({ ok: false, error: "Name ve slug zorunludur." });
+    }
+    // isActive undefined ise default true kabul edelim (eski davranışa benzer)
+    const activeValue =
+      typeof isActive === "boolean" ? isActive : true;
+
+    const insert = await dbQuery(
+      `
+        INSERT INTO products (
+          name,
+          slug,
+          description,
+          price,
+          stock,
+          imageurl,
+          category,
+          isactive,
+          weight_kg,  
+          createdat 
+        )
+        VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,NOW())
+        RETURNING *
+        `,
+      [
+        name,
+        slug,
+        description || null,
+        Number(price || 0),
+        Number(stock || 0),
+        imageUrl,
+        category,
+        activeValue,
+        Number(weight_kg || 0),   // ✅ ekle
+      ]
+    );
+
+    res
+      .status(201)
+      .json({ ok: true, product: insert.rows[0] });
+  } catch (err) {
+    console.error("POST /api/admin/products error:", err);
+    res
+      .status(500)
+      .json({ ok: false, error: "Sunucu hatası." });
+  }
+});
+
+// Admin: ürün güncelle (PostgreSQL)
+app.put("/api/admin/products/:id", requireAdmin, async (req, res) => {
+  try {
+    const id = Number(req.params.id);
+    if (!id) {
+      return res.status(400).json({ ok: false, error: "Geçersiz ürün ID." });
+    }
+
+    const {
+      name,
+      slug,
+      description,
+      price,
+      stock,
+      imageUrl,
+      category,
+      isActive,
+      weight_kg,          // ✅ ekle
+    } = req.body || {};
+
+    // isActive undefined ise varsayılan true
+    const activeValue =
+      typeof isActive === "boolean" ? isActive : true;
+
+    // UPDATE + RETURNING *
+    const update = await dbQuery(
+      `
+        UPDATE products
+        SET
+          name        = $1,
+          slug        = $2,
+          description = $3,
+          price       = $4,
+          stock       = $5,
+          imageurl    = $6,
+          category    = $7,
+          isactive    = $8,
+          weight_kg   = $9,        -- ✅ ekle
+          updatedat   = NOW()
+        WHERE id = $10
+        RETURNING *
+        `,
+      [
+        name,
+        slug,
+        description || null,
+        Number(price || 0),
+        Number(stock || 0),
+        imageUrl || null,
+        category || null,
+        activeValue,
+        Number(weight_kg || 0),   // ✅ ekle
+        id,
+      ]
+    );
+
+    if (!update.rows.length) {
+      return res.status(404).json({ ok: false, error: "Ürün bulunamadı." });
+    }
+
+    res.json({ ok: true, product: update.rows[0] });
+  } catch (err) {
+    console.error("PUT /api/admin/products/:id error:", err);
+    res.status(500).json({ ok: false, error: "Sunucu hatası." });
+  }
+});
+
+
+// Admin: ürün sil (PostgreSQL – istersen ileride soft delete'e çevirebiliriz)
+app.delete("/api/admin/products/:id", requireAdmin, async (req, res) => {
+  try {
+    const id = Number(req.params.id);
+    if (!id) {
+      return res
+        .status(400)
+        .json({ ok: false, error: "Geçersiz ürün ID." });
+    }
+
+    const result = await dbQuery(
+      `
+        DELETE FROM products
+        WHERE id = $1
+        `,
+      [id]
+    );
+
+    //İstersen "bulunamadı" kontrolü:
+    if (result.rowCount === 0) {
+      return res
+        .status(404)
+        .json({ ok: false, error: "Ürün bulunamadı." });
+    }
+
+    return res.json({ ok: true });
+  } catch (err) {
+    console.error("DELETE /api/admin/products/:id error:", err);
+    return res
+      .status(500)
+      .json({ ok: false, error: "Sunucu hatası." });
+  }
+});
+
+// Admin: ürüne teknik görsel yükleme (PostgreSQL)
 app.post(
   "/api/admin/products/:id/images",
   requireAdmin,
@@ -1660,15 +2045,24 @@ app.post(
 
       const url = `/uploads/products/${req.file.filename}`;
 
-      const pool = await getPool();
-      await pool
-        .request()
-        .input("ProductId", sql.Int, productId)
-        .input("ImageUrl", sql.NVarChar, url)
-        .query(`
-          INSERT INTO dbo.ProductImages (ProductId, ImageUrl)
-          VALUES (@ProductId, @ImageUrl);
-        `);
+      // 1) productimages tablosuna ekle
+      await dbQuery(
+        `
+        INSERT INTO productimages (productid, imageurl, createdat)
+        VALUES ($1, $2, NOW())
+        `,
+        [productId, url]
+      );
+
+      // 2) Eğer ürünün imageurl kolonu boşsa ANA görsel olarak bunu set et
+      await dbQuery(
+        `
+        UPDATE products
+        SET imageurl = $1
+        WHERE id = $2 AND (imageurl IS NULL OR imageurl = '')
+        `,
+        [url, productId]
+      );
 
       return res.json({ ok: true, url });
     } catch (err) {
@@ -1680,7 +2074,7 @@ app.post(
   }
 );
 
-// Admin: ürüne ait teknik görselleri listele
+// Admin: ürüne ait teknik görselleri listele (PostgreSQL)
 app.get("/api/admin/products/:id/images", requireAdmin, async (req, res) => {
   try {
     const productId = Number(req.params.id);
@@ -1690,25 +2084,28 @@ app.get("/api/admin/products/:id/images", requireAdmin, async (req, res) => {
         .json({ ok: false, error: "Geçersiz ürün ID." });
     }
 
-    const pool = await getPool();
-    const r = await pool
-      .request()
-      .input("ProductId", sql.Int, productId)
-      .query(`
-        SELECT Id, ImageUrl, CreatedAt
-        FROM dbo.ProductImages
-        WHERE ProductId = @ProductId
-        ORDER BY CreatedAt ASC
-      `);
+    const r = await dbQuery(
+      `
+      SELECT
+        id,
+        imageurl,
+        createdat
+      FROM productimages
+      WHERE productid = $1
+      ORDER BY createdat ASC
+      `,
+      [productId]
+    );
 
-    return res.json({ ok: true, images: r.recordset });
+    return res.json({ ok: true, images: r.rows });
   } catch (err) {
     console.error("GET /api/admin/products/:id/images error:", err);
     res.status(500).json({ ok: false, error: "Sunucu hatası." });
   }
 });
 
-// Admin: teknik görsel sil
+
+// Admin: teknik görsel sil (PostgreSQL)
 app.delete(
   "/api/admin/products/:productId/images/:imageId",
   requireAdmin,
@@ -1722,15 +2119,13 @@ app.delete(
           .json({ ok: false, error: "Geçersiz ID." });
       }
 
-      const pool = await getPool();
-      await pool
-        .request()
-        .input("Id", sql.Int, imageId)
-        .input("ProductId", sql.Int, productId)
-        .query(`
-          DELETE FROM dbo.ProductImages
-          WHERE Id = @Id AND ProductId = @ProductId
-        `);
+      await dbQuery(
+        `
+        DELETE FROM productimages
+        WHERE id = $1 AND productid = $2
+        `,
+        [imageId, productId]
+      );
 
       return res.json({ ok: true });
     } catch (err) {
@@ -1742,6 +2137,7 @@ app.delete(
     }
   }
 );
+
 /* ---------------- ADMIN: Ürüne teknik görsel ekle ---------------- */
 app.post(
   "/api/admin/products/:id/detail-images",
@@ -1750,67 +2146,83 @@ app.post(
   async (req, res) => {
     const productId = parseInt(req.params.id, 10);
     if (!productId) {
-      return res.status(400).json({ ok: false, error: "Geçersiz ürün Id." });
+      return res
+        .status(400)
+        .json({ ok: false, error: "Geçersiz ürün Id." });
     }
     if (!req.file) {
-      return res.status(400).json({ ok: false, error: "Görsel dosyası gerekli." });
+      return res
+        .status(400)
+        .json({ ok: false, error: "Görsel dosyası gerekli." });
     }
 
-    const caption = String(req.body.caption || "").trim();
+    const caption = String(req.body.caption || "").trim() || null;
     const relPath = "/uploads/products/" + req.file.filename;
 
     try {
-      const pool = await getPool();
-      const r = await pool
-        .request()
-        .input("ProductId", sql.Int, productId)
-        .input("ImageUrl", sql.NVarChar(400), relPath)
-        .input("Caption", sql.NVarChar(200), caption || null)
-        .query(`
-          INSERT INTO dbo.ProductDetailImages (ProductId, ImageUrl, Caption)
-          OUTPUT INSERTED.*
-          VALUES (@ProductId, @ImageUrl, @Caption);
-        `);
+      const r = await dbQuery(
+        `
+        INSERT INTO productdetailimages
+          (productid, imageurl, caption, sortorder, createdat)
+        VALUES
+          ($1,       $2,       $3,      $4,       NOW())
+        RETURNING *
+        `,
+        [productId, relPath, caption, 0]   // şimdilik sortorder = 0
+      );
 
-      return res.json({ ok: true, image: r.recordset[0] });
+      return res.json({ ok: true, image: r.rows[0] });
     } catch (err) {
-      console.error("POST /api/admin/products/:id/detail-images error:", err);
-      return res.status(500).json({ ok: false, error: "Sunucu hatası." });
+      console.error(
+        "POST /api/admin/products/:id/detail-images error:",
+        err
+      );
+      return res
+        .status(500)
+        .json({ ok: false, error: "Sunucu hatası." });
     }
   }
 );
 
-/* ---------------- ADMIN: Ürünün teknik görsellerini listele ---------------- */
+/* ---------------- ADMIN: Ürünün teknik görsellerini listele (PostgreSQL) ---------------- */
 app.get(
   "/api/admin/products/:id/detail-images",
   requireAdmin,
   async (req, res) => {
     const productId = parseInt(req.params.id, 10);
     if (!productId) {
-      return res.status(400).json({ ok: false, error: "Geçersiz ürün Id." });
+      return res
+        .status(400)
+        .json({ ok: false, error: "Geçersiz ürün Id." });
     }
-
     try {
-      const pool = await getPool();
-      const r = await pool
-        .request()
-        .input("ProductId", sql.Int, productId)
-        .query(`
-          SELECT Id, ProductId, ImageUrl, Caption, SortOrder, CreatedAt
-          FROM dbo.ProductDetailImages
-          WHERE ProductId = @ProductId
-          ORDER BY SortOrder, Id;
-        `);
+      const r = await dbQuery(
+        `
+        SELECT
+          id,
+          productid,
+          imageurl,
+          caption,
+          sortorder,
+          createdat
+        FROM productdetailimages
+        WHERE productid = $1
+        ORDER BY sortorder ASC, id ASC
+        `,
+        [productId]
+      );
 
-      return res.json({ ok: true, images: r.recordset });
+      return res.json({ ok: true, images: r.rows });
     } catch (err) {
       console.error("GET /api/admin/products/:id/detail-images error:", err);
-      return res.status(500).json({ ok: false, error: "Sunucu hatası." });
+      return res
+        .status(500)
+        .json({ ok: false, error: "Sunucu hatası." });
     }
   }
 );
 
-/* ---------------- ADMIN: Teknik görsel sil ---------------- */
+/* ---------------- ADMIN: Teknik görsel sil (PostgreSQL) ---------------- */
 app.delete(
   "/api/admin/products/:id/detail-images/:imageId",
   requireAdmin,
@@ -1819,55 +2231,63 @@ app.delete(
     const imageId = parseInt(req.params.imageId, 10);
 
     if (!productId || !imageId) {
-      return res.status(400).json({ ok: false, error: "Geçersiz parametre." });
+      return res
+        .status(400)
+        .json({ ok: false, error: "Geçersiz parametre." });
     }
 
     try {
-      const pool = await getPool();
-      await pool
-        .request()
-        .input("Id", sql.Int, imageId)
-        .input("ProductId", sql.Int, productId)
-        .query(`
-          DELETE FROM dbo.ProductDetailImages
-          WHERE Id = @Id AND ProductId = @ProductId;
-        `);
+      await dbQuery(
+        `
+        DELETE FROM productdetailimages
+        WHERE id = $1 AND productid = $2
+        `,
+        [imageId, productId]
+      );
 
       return res.json({ ok: true });
     } catch (err) {
-      console.error("DELETE /api/admin/products/:id/detail-images/:imageId error:", err);
-      return res.status(500).json({ ok: false, error: "Sunucu hatası." });
+      console.error(
+        "DELETE /api/admin/products/:id/detail-images/:imageId error:",
+        err
+      );
+      return res
+        .status(500)
+        .json({ ok: false, error: "Sunucu hatası." });
     }
   }
 );
 
-/* ---------------- PUBLIC: Ürünün teknik görselleri ---------------- */
+/* ---------------- PUBLIC: Ürünün teknik görselleri (PostgreSQL) ---------------- */
 app.get("/api/products/:id/detail-images", async (req, res) => {
   const productId = parseInt(req.params.id, 10);
   if (!productId) {
     return res.status(400).json({ ok: false, error: "Geçersiz ürün Id." });
   }
-
   try {
-    const pool = await getPool();
-    const r = await pool
-      .request()
-      .input("ProductId", sql.Int, productId)
-      .query(`
-        SELECT Id, ProductId, ImageUrl, Caption, SortOrder
-        FROM dbo.ProductDetailImages
-        WHERE ProductId = @ProductId
-        ORDER BY SortOrder, Id;
-      `);
+    const r = await dbQuery(
+      `
+      SELECT 
+        id, 
+        productid, 
+        imageurl, 
+        caption, 
+        sortorder
+      FROM productdetailimages
+      WHERE productid = $1
+      ORDER BY sortorder ASC, id ASC
+      `,
+      [productId]
+    );
 
-    return res.json({ ok: true, images: r.recordset });
+    return res.json({ ok: true, images: r.rows });
   } catch (err) {
     console.error("GET /api/products/:id/detail-images error:", err);
     return res.status(500).json({ ok: false, error: "Sunucu hatası." });
   }
 });
 
-// Kullanıcı: bir ürünün teknik/ekstra görselleri
+// Kullanıcı: bir ürünün teknik/ekstra görselleri (PostgreSQL)
 app.get("/api/products/:id/images", async (req, res) => {
   try {
     const productId = Number(req.params.id);
@@ -1877,179 +2297,75 @@ app.get("/api/products/:id/images", async (req, res) => {
         .json({ ok: false, error: "Geçersiz ürün ID." });
     }
 
-    const pool = await getPool();
-    const r = await pool
-      .request()
-      .input("ProductId", sql.Int, productId)
-      .query(`
-        SELECT Id, ImageUrl, CreatedAt
-        FROM dbo.ProductImages
-        WHERE ProductId = @ProductId
-        ORDER BY CreatedAt ASC
-      `);
+    const r = await dbQuery(
+      `
+      SELECT
+        id,
+        imageurl,
+        createdat
+      FROM productimages
+      WHERE productid = $1
+      ORDER BY createdat ASC
+      `,
+      [productId]
+    );
 
-    return res.json({ ok: true, images: r.recordset });
+    return res.json({ ok: true, images: r.rows });
   } catch (err) {
     console.error("GET /api/products/:id/images error:", err);
     res.status(500).json({ ok: false, error: "Sunucu hatası." });
   }
 });
 
-
 // ================== ADMIN PRODUCTS ==================
 
-// Admin: tüm ürünleri listele (basit, istersen pagination ekleyebiliriz)
+// Admin: tüm ürünleri listele (PostgreSQL)
 app.get("/api/admin/products", requireAdmin, async (req, res) => {
   try {
-    const pool = await getPool();
-    const result = await pool.request().query(`
+    const result = await dbQuery(
+      `
       SELECT
-        Id,
-        Name,
-        Slug,
-        Description,
-        Price,
-        Stock,
-        ImageUrl,
-        Category,
-        IsActive,
-        CreatedAt,
-        UpdatedAt
-      FROM dbo.Products
-      ORDER BY CreatedAt DESC
-    `);
+        id,
+        name,
+        slug,
+        description,
+        price,
+        stock,
+        imageurl,
+        category,
+        isactive,
+        weight_kg,
+        createdat,
+        updatedat
+      FROM products
+      ORDER BY createdat DESC
+      `
+    );
 
-    res.json({ ok: true, products: result.recordset });
+    res.json({ ok: true, products: result.rows });
   } catch (err) {
     console.error("GET /api/admin/products error:", err);
     res.status(500).json({ ok: false, error: "Sunucu hatası." });
   }
 });
 
-// Admin: yeni ürün ekle
-app.post("/api/admin/products", requireAdmin, async (req, res) => {
-  try {
-    const { name, slug, description, price, stock, imageUrl, category, isActive } =
-      req.body || {};
 
-    if (!name || !slug) {
-      return res.status(400).json({ ok: false, error: "Name ve slug zorunludur." });
-    }
 
-    const pool = await getPool();
-    const insert = await pool
-      .request()
-      .input("Name", sql.NVarChar(200), name)
-      .input("Slug", sql.NVarChar(200), slug)
-      .input("Description", sql.NVarChar(sql.MAX), description || null)
-      .input("Price", sql.Decimal(18, 2), Number(price || 0))
-      .input("Stock", sql.Int, Number(stock || 0))
-      .input("ImageUrl", sql.NVarChar(400), imageUrl || null)
-      .input("Category", sql.NVarChar(100), category || null)
-      .input("IsActive", sql.Bit, isActive === false ? 0 : 1)
-      .query(`
-        INSERT INTO dbo.Products
-          (Name, Slug, Description, Price, Stock, ImageUrl, Category, IsActive, CreatedAt)
-        OUTPUT INSERTED.*
-        VALUES
-          (@Name, @Slug, @Description, @Price, @Stock, @ImageUrl, @Category, @IsActive, SYSUTCDATETIME())
-      `);
-
-    res.status(201).json({ ok: true, product: insert.recordset[0] });
-  } catch (err) {
-    console.error("POST /api/admin/products error:", err);
-    res.status(500).json({ ok: false, error: "Sunucu hatası." });
-  }
-});
-
-// Admin: ürün güncelle
-app.put("/api/admin/products/:id", requireAdmin, async (req, res) => {
-  try {
-    const id = Number(req.params.id);
-    if (!id) {
-      return res.status(400).json({ ok: false, error: "Geçersiz ürün ID." });
-    }
-
-    const { name, slug, description, price, stock, imageUrl, category, isActive } =
-      req.body || {};
-
-    const pool = await getPool();
-    const update = await pool
-      .request()
-      .input("Id", sql.Int, id)
-      .input("Name", sql.NVarChar(200), name)
-      .input("Slug", sql.NVarChar(200), slug)
-      .input("Description", sql.NVarChar(sql.MAX), description || null)
-      .input("Price", sql.Decimal(18, 2), Number(price || 0))
-      .input("Stock", sql.Int, Number(stock || 0))
-      .input("ImageUrl", sql.NVarChar(400), imageUrl || null)
-      .input("Category", sql.NVarChar(100), category || null)
-      .input("IsActive", sql.Bit, isActive ? 1 : 0)
-      .query(`
-        UPDATE dbo.Products
-        SET
-          Name        = @Name,
-          Slug        = @Slug,
-          Description = @Description,
-          Price       = @Price,
-          Stock       = @Stock,
-          ImageUrl    = @ImageUrl,
-          Category    = @Category,
-          IsActive    = @IsActive,
-          UpdatedAt   = SYSUTCDATETIME()
-        WHERE Id = @Id;
-
-        SELECT *
-        FROM dbo.Products
-        WHERE Id = @Id;
-      `);
-
-    if (!update.recordset.length) {
-      return res.status(404).json({ ok: false, error: "Ürün bulunamadı." });
-    }
-
-    res.json({ ok: true, product: update.recordset[0] });
-  } catch (err) {
-    console.error("PUT /api/admin/products/:id error:", err);
-    res.status(500).json({ ok: false, error: "Sunucu hatası." });
-  }
-});
-
-// Admin: ürün sil (istersen soft delete yap)
-app.delete("/api/admin/products/:id", requireAdmin, async (req, res) => {
-  try {
-    const id = Number(req.params.id);
-    if (!id) {
-      return res.status(400).json({ ok: false, error: "Geçersiz ürün ID." });
-    }
-
-    const pool = await getPool();
-    await pool
-      .request()
-      .input("Id", sql.Int, id)
-      .query(`
-        DELETE FROM dbo.Products
-        WHERE Id = @Id
-      `);
-
-    res.json({ ok: true });
-  } catch (err) {
-    console.error("DELETE /api/admin/products/:id error:", err);
-    res.status(500).json({ ok: false, error: "Sunucu hatası." });
-  }
-});
-
-// Üyeler listesi (admin)
+// Üyeler listesi (admin - PostgreSQL)
 app.get("/api/admin/users", requireAdmin, async (req, res) => {
   try {
-    const pool = await getPool();
-    const r = await pool.request().query(`
-      SELECT Id, FullName, Email
-      FROM dbo.Users
-      ORDER BY Id DESC
-    `);
+    const r = await dbQuery(
+      `
+      SELECT 
+        id,
+        fullname,
+        email
+      FROM users
+      ORDER BY id DESC
+      `
+    );
 
-    return res.json({ ok: true, users: r.recordset });
+    return res.json({ ok: true, users: r.rows });
   } catch (e) {
     console.error("GET /api/admin/users error:", e?.message || e);
     return res.status(500).json({ ok: false, error: "Sunucu hatası" });
@@ -2059,187 +2375,221 @@ app.get("/api/admin/users", requireAdmin, async (req, res) => {
 
 // ================== ADMIN ORDERS ==================
 
-// Admin: tüm siparişleri listele
+// Admin: tüm siparişleri listele (PostgreSQL)
 app.get("/api/admin/orders", requireAdmin, async (req, res) => {
   try {
-    const pool = await getPool();
-    const result = await pool.request().query(`
+    const result = await dbQuery(
+      `
       SELECT
-        o.Id,
-        o.UserId,
-        o.TotalPrice,
-        o.PaidPrice,
-        o.TrackingNumber,
-        o.PaymentStatus,
-        o.CreatedAt,
-        COUNT(oi.Id) AS ItemCount
-      FROM dbo.Orders o
-      LEFT JOIN dbo.OrderItems oi ON oi.OrderId = o.Id
+        o.id,
+        o.userid,
+        o.totalprice,
+        o.paidprice,
+        o.trackingnumber,
+        o.paymentstatus,
+        o.status,
+        o.createdat,
+        COUNT(oi.id) AS itemcount
+      FROM orders o
+      LEFT JOIN orderitems oi ON oi.orderid = o.id
       GROUP BY
-        o.Id, o.UserId, o.TotalPrice, o.PaidPrice,
-        o.TrackingNumber, o.PaymentStatus, o.CreatedAt
-      ORDER BY o.CreatedAt DESC
-    `);
+        o.id, o.userid, o.totalprice, o.paidprice,
+        o.trackingnumber, o.paymentstatus, o.status, o.createdat
+      ORDER BY o.createdat DESC
+      `
+    );
 
-    res.json({ ok: true, orders: result.recordset });
+    res.json({ ok: true, orders: result.rows });
   } catch (err) {
     console.error("GET /api/admin/orders error:", err);
     res.status(500).json({ ok: false, error: "Sunucu hatası." });
   }
 });
 
-// Admin: tek bir sipariş ve kalemleri
+// Admin: tek bir sipariş ve kalemleri (PostgreSQL)
 app.get("/api/admin/orders/:id", requireAdmin, async (req, res) => {
   try {
     const id = Number(req.params.id);
     if (!id) {
-      return res.status(400).json({ ok: false, error: "Geçersiz sipariş ID." });
+      return res
+        .status(400)
+        .json({ ok: false, error: "Geçersiz sipariş ID." });
     }
 
-    const pool = await getPool();
+    // Ana siparişi çek
+    const orderRes = await dbQuery(
+      `
+      SELECT
+        id,
+        userid,
+        totalprice,
+        paidprice,
+        trackingnumber,
+        paymentstatus,
+        createdat
+      FROM orders
+      WHERE id = $1
+      `,
+      [id]
+    );
 
-    const orderRes = await pool
-      .request()
-      .input("Id", sql.Int, id)
-      .query(`
-        SELECT
-          o.Id,
-          o.UserId,
-          o.TotalPrice,
-          o.PaidPrice,
-          o.TrackingNumber,
-          o.PaymentStatus,
-          o.CreatedAt
-        FROM dbo.Orders o
-        WHERE o.Id = @Id
-      `);
-
-    if (!orderRes.recordset.length) {
-      return res.status(404).json({ ok: false, error: "Sipariş bulunamadı." });
+    if (orderRes.rows.length === 0) {
+      return res
+        .status(404)
+        .json({ ok: false, error: "Sipariş bulunamadı." });
     }
 
-    const itemsRes = await pool
-      .request()
-      .input("OrderId", sql.Int, id)
-      .query(`
-        SELECT
-          ProductId,
-          ProductName,
-          Quantity,
-          UnitPrice,
-          TotalPrice
-        FROM dbo.OrderItems
-        WHERE OrderId = @OrderId
-      `);
+    // Kalemleri çek
+    const itemsRes = await dbQuery(
+      `
+      SELECT
+        productid,
+        productname,
+        quantity,
+        unitprice,
+        totalprice
+      FROM orderitems
+      WHERE orderid = $1
+      `,
+      [id]
+    );
 
     res.json({
       ok: true,
-      order: orderRes.recordset[0],
-      items: itemsRes.recordset,
+      order: orderRes.rows[0],
+      items: itemsRes.rows,
     });
   } catch (err) {
     console.error("GET /api/admin/orders/:id error:", err);
-    res.status(500).json({ ok: false, error: "Sunucu hatası." });
+    res
+      .status(500)
+      .json({ ok: false, error: "Sunucu hatası." });
   }
 });
 
-// Admin: sipariş durumunu güncelle (ör: shipped, cancelled)
+// Admin: sipariş durumunu güncelle (ör: shipped, cancelled) - PostgreSQL
 app.put("/api/admin/orders/:id/status", requireAdmin, async (req, res) => {
   try {
     const id = Number(req.params.id);
     const { status } = req.body || {};
+
     if (!id || !status) {
-      return res.status(400).json({ ok: false, error: "Geçersiz parametre." });
+      return res
+        .status(400)
+        .json({ ok: false, error: "Geçersiz parametre." });
+    }
+    // sadece izin verilenler
+    const allowed = ["preparing", "shipped", "delivered", "cancelled"];
+    if (!allowed.includes(status)) {
+      return res.status(400).json({ ok: false, error: "Geçersiz status." });
+    }
+    const r = await dbQuery(
+      `
+      UPDATE orders
+      SET status = $1,
+          updatedat = NOW()
+      WHERE id = $2
+      RETURNING *
+      `,
+      [status, id]
+    );
+
+    if (r.rows.length === 0) {
+      return res
+        .status(404)
+        .json({ ok: false, error: "Sipariş bulunamadı." });
     }
 
-    const pool = await getPool();
-    const r = await pool
-      .request()
-      .input("Id", sql.Int, id)
-      .input("Status", sql.NVarChar(20), status)
-      .query(`
-        UPDATE dbo.Orders
-        SET PaymentStatus = @Status
-        WHERE Id = @Id;
-
-        SELECT *
-        FROM dbo.Orders
-        WHERE Id = @Id;
-      `);
-
-    if (!r.recordset.length) {
-      return res.status(404).json({ ok: false, error: "Sipariş bulunamadı." });
-    }
-
-    res.json({ ok: true, order: r.recordset[0] });
+    res.json({ ok: true, order: r.rows[0] });
   } catch (err) {
     console.error("PUT /api/admin/orders/:id/status error:", err);
-    res.status(500).json({ ok: false, error: "Sunucu hatası." });
+    res
+      .status(500)
+      .json({ ok: false, error: "Sunucu hatası." });
   }
 });
 
 // ================== PUBLIC PRODUCTS ==================
 
-// Tüm aktif ürünler
+// Tüm aktif ürünler (PostgreSQL)
 app.get("/api/products", async (req, res) => {
   try {
-    const pool = await getPool();
-    const result = await pool.request().query(`
+    const result = await dbQuery(
+      `
       SELECT
-        Id,
-        Name,
-        Slug,
-        Description,
-        Price,
-        Stock,
-        ImageUrl,
-        Category
-      FROM dbo.Products
-      WHERE IsActive = 1
-      ORDER BY CreatedAt DESC
-    `);
+        id,
+        name,
+        slug,
+        description,
+        price,
+        stock,
+        imageurl,
+        category,
+        weight_kg
+      FROM products
+      WHERE isactive = true
+      ORDER BY createdat DESC
+      `
+    );
 
-    res.json({ ok: true, products: result.recordset });
+    res.json({ ok: true, products: result.rows });
   } catch (err) {
     console.error("GET /api/products error:", err);
     res.status(500).json({ ok: false, error: "Sunucu hatası." });
   }
 });
 
-// Tek ürün (slug ile veya id ile)
+// Tek ürün (id ile) - PostgreSQL
 app.get("/api/products/:id", async (req, res) => {
   try {
     const id = Number(req.params.id);
     if (!id) {
-      return res.status(400).json({ ok: false, error: "Geçersiz ürün ID." });
-    }
-    const pool = await getPool();
-    const result = await pool
-      .request()
-      .input("Id", sql.Int, id)
-      .query(`
-        SELECT
-          Id,
-          Name,
-          Slug,
-          Description,
-          Price,
-          Stock,
-          ImageUrl,
-          Category
-        FROM dbo.Products
-        WHERE Id = @Id AND IsActive = 1
-      `);
-
-    if (!result.recordset.length) {
-      return res.status(404).json({ ok: false, error: "Ürün bulunamadı." });
+      return res
+        .status(400)
+        .json({ ok: false, error: "Geçersiz ürün ID." });
     }
 
-    res.json({ ok: true, product: result.recordset[0] });
+    const result = await dbQuery(
+      `
+      SELECT
+        id,
+        name,
+        slug,
+        description,
+        price,
+        stock,
+        imageurl,
+        category,
+        weight_kg
+      FROM products
+      WHERE id = $1 AND isactive = true
+      `,
+      [id]
+    );
+
+    if (result.rows.length === 0) {
+      return res
+        .status(404)
+        .json({ ok: false, error: "Ürün bulunamadı." });
+    }
+
+    res.json({ ok: true, product: result.rows[0] });
   } catch (err) {
     console.error("GET /api/products/:id error:", err);
-    res.status(500).json({ ok: false, error: "Sunucu hatası." });
+    res
+      .status(500)
+      .json({ ok: false, error: "Sunucu hatası." });
   }
+});
+
+app.use((err, req, res, next) => {
+  if (err?.code === "LIMIT_FILE_SIZE") {
+    return res.status(413).json({
+      ok: false,
+      message: "CV dosyası çok büyük. Maksimum 10 MB yükleyebilirsiniz.",
+    });
+  }
+  next(err);
 });
 
 // /admin => admin panel HTML (SPA)

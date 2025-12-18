@@ -9,6 +9,59 @@ const TRY_FORMAT = new Intl.NumberFormat("tr-TR", {
   currency: "TRY",
 });
 
+// 🔹 KARGO HESABI (KG bazlı) + posta hizmet + KDV
+const POSTA_HIZMET_ORAN = 0.0235; // %2.35
+const KDV_ORAN = 0.20;            // %20
+
+// TABLONA göre doldur (örnek: 0-1 / 1-4 / 5-6 ... gibi)
+const SHIPPING_RULES = [
+  { min: 0, max: 1, type: "fixed", price: 111.86 }, // 0-1 kg
+  { min: 1, max: 4, type: "fixed", price: 134.20 },
+  { min: 4, max: 6, type: "fixed", price: 163.53 },
+  { min: 6, max: 10, type: "fixed", price: 177.25 },
+  { min: 10, max: 15, type: "fixed", price: 200.48 },
+  { min: 15, max: 20, type: "fixed", price: 249.10 },
+  { min: 20, max: 25, type: "fixed", price: 309.55 },
+  { min: 25, max: 30, type: "fixed", price: 374.23 },
+
+  // 30 üstü: artan (örnek: her +1 kg için 12.324)
+  { min: 30, max: 999999, type: "incremental", basePrice: 374.23, perKg: 12.324 },
+];
+
+function addFeesAndVat(netPrice) {
+  const n = Number(netPrice || 0);
+  if (n <= 0) return 0;
+  return Math.round((n * (1 + POSTA_HIZMET_ORAN) * (1 + KDV_ORAN)) * 100) / 100;
+}
+
+function cartTotalKg(cart) {
+  return (cart || []).reduce((t, it) => {
+    const w = Number(it.weightKg ?? it.weight_kg ?? 0); // cart'a nasıl kaydettiysen
+    const q = Number(it.qty || 0);
+    return t + (w * q);
+  }, 0);
+}
+
+function calcShippingByKg(totalKg) {
+  const kg = Math.max(0, Number(totalKg || 0));
+  if (kg <= 0) return 0;
+
+  const rule = SHIPPING_RULES.find(r => kg > r.min && kg <= r.max);
+  if (!rule) return 0;
+
+  let net = 0;
+
+  if (rule.type === "fixed") {
+    net = rule.price;
+  } else if (rule.type === "incremental") {
+    const extraKg = kg - rule.min;       // 30 üstü kaç kg
+    net = rule.basePrice + (extraKg * rule.perKg);
+  }
+
+  // ✅ posta hizmet + KDV dahil
+  return addFeesAndVat(net);
+}
+
 // 🔹 İyzico’ya göndereceğimiz toplamlar
 let checkoutTotals = { subtotal: 0, shipping: 0, total: 0 };
 
@@ -250,7 +303,8 @@ function initCartSummary() {
   const subtotal = cart.reduce((sum, item) => sum + item.price * (item.qty || 1), 0);
 
   // 🔥 Kargo ücreti: calculateShippingFee fonksiyonu ile hesaplanıyor
-  const shipping = calculateShippingFee(subtotal);
+  const totalKg = cartTotalKg(cart);
+  const shipping = calcShippingByKg(totalKg);
 
   // Genel toplam
   const total = subtotal + shipping;
@@ -298,14 +352,6 @@ function initCartSummary() {
   // 🔥 Hem değişkeni hem window'u güncelle
   checkoutTotals = { subtotal, shipping, total };
   window.checkoutTotals = checkoutTotals;
-}
-
-function calculateShippingFee(subtotal) {
-  // örnek politika:
-  // 1500 TL ve üzeri: ücretsiz
-  // altı: 99 TL
-  if (subtotal >= 1500) return 0;
-  return 99;
 }
 
 /* Teslimat özet bloğunu doldur (step-2) */

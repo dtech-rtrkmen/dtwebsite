@@ -21,7 +21,9 @@
           <img src="assets/logo-drak.png" alt="Drone Tech" class="brand-logo">
         </a>
       </div>
-
+      <button class="nav-toggle" type="button" aria-label="Menüyü Aç/Kapat" aria-expanded="false">
+        ☰
+      </button>
       <nav class="main-nav" aria-label="Primary">
         <a class="nav-item" href="drone-teknolojileri.html">Anasayfa</a>
         <a class="nav-item" href="drone-hakkimizda.html">Hakkımızda</a>
@@ -30,11 +32,12 @@
           <a href="urunler.html" class="nav-link" id="urunlerLink">Ürünler</a>
           <div class="dropdown" role="menu">
             <a href="fixed-wing-plane-vtol.html" class="dropdown-item">Fixed Wing Plane Vtol</a>
-            <a href="gimbal.html" class="dropdown-item">Gimbal Camera</a>
-            <a href="datalink.html" class="dropdown-item">Video & Datalink</a>
-            <a href="fc.html" class="dropdown-item">Flight Controller</a>
-            <a href="battery.html" class="dropdown-item">Battery & Charger</a>
-            <a href="ground.html" class="dropdown-item">Ground Station</a>
+            <a href="multicopter.html" class="dropdown-item">Multicopter</a>
+            <a href="gimbal-camera.html" class="dropdown-item">Gimbal Camera</a>
+            <a href="video-datalink.html" class="dropdown-item">Video & Datalink</a>
+            <a href="flight-controller.html" class="dropdown-item">Flight Controller</a>
+            <a href="battery-charger.html" class="dropdown-item">Battery & Charger</a>
+            <a href="ground-station.html" class="dropdown-item">Ground Station</a>
             <a href="uav-parts.html" class="dropdown-item">UAV Parts</a>
           </div>
         </div>
@@ -53,9 +56,7 @@
   <!-- SAYFA BAŞLIĞI + BREADCRUMB -->
   <section class="about-hero">
     <div class="container about-hero-inner">
-      <h1 class="about-title">VTOL Drones</h1>
       <nav class="breadcrumb" aria-label="breadcrumb">
-        <a href="drone-teknolojileri.html">Home</a> <span>/</span> <span>VTOL Drones</span>
       </nav>
     </div>
   </section>
@@ -94,7 +95,6 @@
           <button class="btn-primary" id="pdAddBtn">Sepete Ekle</button>
         </div>
         <div class="pd-specs-wrap">
-          <h3 class="pd-specs-title">Teknik Özellikler</h3>
           <ul class="pd-specs" id="pdSpecs"></ul>
         </div>
       </div>
@@ -102,10 +102,10 @@
     <section class="pd-long-wrap container">
       <h3 class="pd-sec-title">Teknik Özellikler</h3>
       <div class="pd-long" id="pdLong"></div>
-      <!-- Teknik özellik görselleri buraya gelecek -->
+      <!-- Teknik özellik görselleri buraya geleFcek -->
       <div class="pd-tech-gallery" id="pdTechGallery"></div>
     </section>
-    
+
     <section class="product-slider" aria-label="Öne çıkan ürünler">
       <button class="ps-nav ps-prev" aria-label="Önceki ürün grubu">‹</button>
       <div class="ps-viewport">
@@ -117,35 +117,14 @@
     </section>
   </main>
 
-  <!-- SEPET ÇEKMECESİ -->
-  <aside class="cart-drawer" id="cartDrawer" aria-hidden="true">
-    <div class="cart-head">
-      <h3>Sepet</h3>
-      <button class="cart-close" id="closeCartBtn" aria-label="Kapat">✕</button>
-    </div>
-    <div id="cartItems" class="cart-items"></div>
-    <div class="cart-foot">
-      <div class="cart-total">Toplam: <strong id="cartTotal">₺0,00</strong></div>
-      <button class="btn-primary" id="checkoutBtn">Satın Al</button>
-      <p class="checkout-note">Ödeme entegrasyonu demo. Bir sonraki adımda iyzico/PayTR bağlarız.</p>
-    </div>
-  </aside>
-  <div class="cart-backdrop" id="cartBackdrop"></div>
-
   <!-- FOOTER -->
   <footer class="site-footer">
     <div class="container footer-inner">
       <div class="footer-contact">
         <h3>İLETİŞİM</h3>
-        <p><strong>İSTANBUL ADRES</strong><br>
-          Teknopark İstanbul<br>
-          Sanayi, 34906 Pendik/İstanbul<br>
-          <strong>Telefon:</strong> 0 530 000 00 00
-        </p>
         <p><strong>GİRESUN ADRES</strong><br>
-          II.OSB Caddesi, Maden, 28340 Piraziz/Giresun<br>
-          BULANCAK / GİRESUN<br>
-          <strong>Telefon:</strong> 0 530 000 00 00
+          Pazarsuyu Köyü II. OSB Mevki 5. Cadde No:12, 28300 Bulancak/Giresun<br>
+          <strong>Telefon:</strong> (0454) 333 20 20
         </p>
         <p><strong>Mail:</strong> info@dronetech.com.tr</p>
       </div>
@@ -167,13 +146,12 @@
     </div>
   </footer>
 
-  <script src="js/shop.js"></script> <!-- sepetin tek kaynağı + global fonksiyonlar -->
   <script src="js/product.js"></script> <!-- ürüne özel: addToCart çağırır -->
   <script src="js/script.js"></script> <!-- varsa ekstra (slider vs.) -->
 
 
   <!-- WhatsApp Floating Button -->
-  <a href="https://wa.me/905445318825?text=Merhaba%20bilgi%20almak%20istiyorum" class="whatsapp-float" target="_blank"
+  <a href="https://wa.me/905528786230?text=Merhaba%20bilgi%20almak%20istiyorum" class="whatsapp-float" target="_blank"
     aria-label="WhatsApp ile iletişime geç">
     <svg viewBox="0 0 32 32" width="28" height="28" fill="#fff" aria-hidden="true">
       <path
