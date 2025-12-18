@@ -18,7 +18,7 @@ import nodemailer from "nodemailer";
 const iyzipay = new Iyzipay({
   apiKey: "sandbox-eI51Rj7CHjWCLrtxy58lwmYRkMH492sq",
   secretKey: "sandbox-KGgGkoD9KZWPnK4ZIyZqQ5V33oYBFmuP",
-  uri: "https://sandbox-api.iyzipay.com",
+  uri: process.env.IYZICO_BASE_URL,
 });
 
 const __filename = fileURLToPath(import.meta.url);
@@ -77,7 +77,13 @@ const productUpload = multer({
 /* ---------------- Middleware ---------------- */
 /* ---------------- Middleware ---------------- */
 /* ---------------- Middleware ---------------- */
-app.use(helmet({ crossOriginResourcePolicy: { policy: "cross-origin" } }));
+app.use(
+  helmet({
+    crossOriginResourcePolicy: { policy: "cross-origin" },
+    hsts: false, // SSL yokken HSTS KAPALI  
+    contentSecurityPolicy: false,
+  })
+);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser(process.env.SESSION_SECRET));
@@ -119,7 +125,7 @@ function setSession(res, payload) {
   res.cookie("sid", value, {
     httpOnly: true,
     sameSite: "lax",
-    secure: process.env.NODE_ENV === "production",
+    secure: false,
     signed: true,
     maxAge: 1000 * 60 * 60 * 24 * 7, // 7 gün
   });
@@ -792,6 +798,7 @@ app.get("/api/addresses", async (req, res) => {
   }
 });
 
+app.set("trust proxy", 1);
 
 // POST /api/payments/iyzico/init  → iyzico ödeme başlat (PostgreSQL sürümü)
 app.post("/api/payments/iyzico/init", async (req, res) => {
@@ -805,14 +812,20 @@ app.post("/api/payments/iyzico/init", async (req, res) => {
     const total = Number(totalPrice || 0);
 
     if (!sub || !cart || !cart.length) {
-      return res
-        .status(400)
-        .json({ ok: false, error: "Sepet veya tutar yok." });
+      return res.status(400).json({ ok: false, error: "Sepet veya tutar yok." });
     }
 
     // 🔹 Oturumdan userId almaya çalış
     const sess = getSession(req);
     const userId = sess?.userId || null;
+
+    // ✅ Proxy uyumlu baseUrl + buyerIp (SUNUCUDA HATA 11’i genelde bu çözer)
+    const proto = (req.headers["x-forwarded-proto"] || req.protocol).split(",")[0];
+    const baseUrl = `${proto}://${req.get("host")}`;
+
+    const xf = req.headers["x-forwarded-for"];
+    const buyerIp = (xf ? xf.split(",")[0].trim() : req.socket.remoteAddress || "")
+      .replace("::ffff:", "") || "85.105.0.1";
 
     // 🔹 1) PendingOrders'a geçici siparişi kaydet (PostgreSQL)
     const pendingResult = await dbQuery(
@@ -827,26 +840,25 @@ app.post("/api/payments/iyzico/init", async (req, res) => {
         status,
         updatedat
       )
-      VALUES ($1, $2, $3, $4, $5, NOW(),'pending',NOW())  
+      VALUES ($1, $2, $3, $4, $5, NOW(),'pending',NOW())
       RETURNING id
       `,
       [
-        userId,                         // $1
-        total,                          // $2
-        JSON.stringify(cart || []),     // $3
-        JSON.stringify(address || {}),  // $4
-        ship,                           // $5
+        userId,
+        total,
+        JSON.stringify(cart || []),
+        JSON.stringify(address || {}),
+        ship,
       ]
     );
 
     const pendingId = pendingResult.rows[0].id;
     console.log("💾 PendingOrders insert Id:", pendingId);
 
-    // 🔹 Bunları iyzico'ya conversationId ve basketId olarak göndereceğiz
     const conversationId = String(pendingId);
     const basketId = "BASKET_" + pendingId;
 
-    // 🔹 2) İyzico'nun istediği buyer & adres & sepet
+    // 🔹 2) İyzico buyer & adres & sepet
     const buyer = {
       id: String(userId || "GUEST"),
       name: address?.firstName || "Test",
@@ -858,12 +870,11 @@ app.post("/api/payments/iyzico/init", async (req, res) => {
       city: address?.city || "İstanbul",
       country: "Turkey",
       zipCode: address?.zipCode || "34000",
-      ip: req.ip || "127.0.0.1",
+      ip: buyerIp,
     };
 
     const shippingAddress = {
-      contactName: `${address?.firstName || "Ad"} ${address?.lastName || "Soyad"
-        }`,
+      contactName: `${address?.firstName || "Ad"} ${address?.lastName || "Soyad"}`,
       city: address?.city || "İstanbul",
       country: "Turkey",
       address: address?.address || "Adres",
@@ -880,33 +891,37 @@ app.post("/api/payments/iyzico/init", async (req, res) => {
         name: item.name || "Ürün",
         category1: item.cat || item.category || "Genel",
         itemType: Iyzipay.BASKET_ITEM_TYPE.PHYSICAL,
-        price: (price * qty).toFixed(2), // ürün toplamı
+        price: (price * qty).toFixed(2),
       };
     });
 
     // 🔹 3) İyzico checkout form initialize isteği
     const request = {
       locale: Iyzipay.LOCALE.TR,
-      conversationId, // PendingOrders.id
-      price: sub.toFixed(2),    // ürün toplamı
-      paidPrice: total.toFixed(2), // ürün + kargo
+      conversationId,
+      price: sub.toFixed(2),
+      paidPrice: total.toFixed(2),
       currency: Iyzipay.CURRENCY.TRY,
       basketId,
       paymentGroup: Iyzipay.PAYMENT_GROUP.PRODUCT,
-      callbackUrl: "http://localhost:3000/iyzico-callback",
+
+      // ✅ localhost hardcode YOK! sunucuda otomatik doğru olur
+      callbackUrl: `${baseUrl}/iyzico-callback`,
+
       buyer,
       shippingAddress,
       billingAddress,
       basketItems,
     };
 
+    console.log("IYZICO init callbackUrl:", request.callbackUrl);
+    console.log("IYZICO init buyerIp:", buyer.ip);
+
     iyzipay.checkoutFormInitialize.create(request, async (err, result) => {
       try {
         if (err) {
           console.error("iyzico init error:", err);
-          return res
-            .status(500)
-            .json({ ok: false, error: "İyzico isteği başarısız." });
+          return res.status(500).json({ ok: false, error: "İyzico isteği başarısız." });
         }
 
         console.log("Iyzico init result:", result);
@@ -921,7 +936,6 @@ app.post("/api/payments/iyzico/init", async (req, res) => {
         const token = result.token;
         console.log("💾 Init: pendingId =", pendingId, "token =", token);
 
-        // 🔹 PendingOrders’a token’ı yaz (PostgreSQL)
         await dbQuery(
           `
           UPDATE pendingorders
@@ -931,7 +945,6 @@ app.post("/api/payments/iyzico/init", async (req, res) => {
           [token, pendingId]
         );
 
-        // 🔹 Frontend’e ödeme sayfası linkini dön
         return res.json({
           ok: true,
           paymentPageUrl: result.paymentPageUrl,
@@ -939,16 +952,15 @@ app.post("/api/payments/iyzico/init", async (req, res) => {
         });
       } catch (innerErr) {
         console.error("iyzico init içinde hata:", innerErr);
-        return res
-          .status(500)
-          .json({ ok: false, error: "Sunucu hatası (init)" });
+        return res.status(500).json({ ok: false, error: "Sunucu hatası (init)" });
       }
     });
   } catch (e) {
     console.error("iyzico init catch:", e);
-    res.status(500).json({ error: "Sunucu hatası" });
+    return res.status(500).json({ ok: false, error: "Sunucu hatası" });
   }
 });
+
 
 
 // ---------------- GERÇEK Yurtiçi Kargo Entegrasyonu ----------------
