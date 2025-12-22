@@ -347,9 +347,7 @@ async function loadOrderDetail(id) {
 
 async function shipOrder(orderId) {
     if (!confirm(`#${orderId} siparişi kargoya vermek istiyor musunuz?`)) return;
-
     let msg = ""; // ✅ her durumda tanımlı olsun
-
     try {
         const res = await fetch(`/api/admin/orders/${orderId}/ship`, {
             method: "POST",
@@ -359,18 +357,18 @@ async function shipOrder(orderId) {
         const data = await res.json().catch(() => ({}));
 
         if (!res.ok) {
-            msg = data?.error || data?.message || `Kargoya verme başarısız (HTTP ${res.status})`;
+            const msg = data?.error || data?.message || "Kargoya verme başarısız";
             alert(msg);
-            console.error("Ship error response:", data);
             return;
         }
 
-        alert(`Kargoya verildi ✅ Takip No: ${data.trackingNumber || "-"}`);
+        alert(`Kargoya verildi ✅ Takip No: ${data.trackingNumber}`);
 
+        // detay ekranını yenile
         loadOrderDetail(orderId);
     } catch (err) {
-        console.error("Ship request failed:", err);
-        alert("Sunucuya istek atılamadı (network/timeout).");
+        console.error(err);
+        alert("Sunucu hatası.");
     }
 }
 

@@ -981,23 +981,14 @@ const YK_WS_LANGUAGE = process.env.YK_WS_LANGUAGE || "TR";
  *
  * return { success: boolean, trackingNumber?: string, cargoKey?: string, jobId?: number, error?: string }
  */
-function makeUniqueCargoKey(orderId) {
-  // DT + 7 haneli orderId + 3 haneli random (toplam 2+7+3 = 12 karakter)
-  const base = String(orderId).padStart(7, "0");
-  const rnd = Math.floor(100 + Math.random() * 900); // 100-999
-  return `DT${base}${rnd}`;
-}
-
-
 async function createYurticiKargoShipment(orderId, buyer, shippingAddress, cartItems) {
   try {
-
     // 1) cargoKey & invoiceKey üret (max 20 karakter, tekil)
     // Örnek: ORD0000003
     const baseKey = String(orderId).padStart(7, "0");
-    const cargoKey = makeUniqueCargoKey(orderId);  // müşteri kargo anahtarı
+    const cargoKey = `DT${baseKey}`;   // müşteri kargo anahtarı
     const invoiceKey = cargoKey;        // fatura anahtarı da aynı olsun
-
+     
     // 2) Alıcı bilgilerini hazırla
     const fullName = `${buyer.firstName || ""} ${buyer.lastName || ""}`.trim() || "MÜŞTERİ";
     const rawPhone = (buyer.phone || "").replace(/\D/g, ""); // rakam dışı karakterleri at
@@ -1199,39 +1190,21 @@ app.post("/api/admin/orders/:id/ship", requireAdmin, async (req, res) => {
     );
 
     if (!shipmentResult?.success) {
-      const msg = String(shipmentResult?.error || "");
+      throw new Error("Kargo oluşturulamadı: " + (shipmentResult?.error || ""));
     }
 
-    // Yurtiçi aynı cargoKey ile daha önce oluşturulmuş gönderi
-    const alreadyExists =
-      msg.includes("gönderi sistemde mevcuttur") ||
-      msg.includes("sistemde mevcuttur") ||
-      msg.includes("CARGO_KEY");
+    const trackingNumber = shipmentResult.trackingNumber; // DT000000x
 
+    // 6) orders güncelle: tracking + status
+    await client.query(
+      `UPDATE orders
+       SET trackingnumber = $1,
+           status = 'shipped'
+       WHERE id = $2`,
+      [trackingNumber, orderId]
+    );
 
-    if (alreadyExists) {
-      // Bizim createYurticiKargoShipment içinde cargoKey üretiyoruz.
-      // O fonksiyon success false dönse bile cargoKey'i dönmüyorsa,
-      // burada cargoKey'i tekrar üretmemek için: aynı formatı kullanıyoruz.
-      // (En sağlıklısı: cargoKey'i DB'de saklamak. Şimdilik orderId tabanlı üretelim.)
-      const baseKey = String(orderId).padStart(7, "0");
-      const cargoKeyGuess = `DT${baseKey}`; // eski formatın buysa
-
-      await client.query(
-        `UPDATE orders
-           SET trackingnumber = $1,
-               status = 'shipped'
-           WHERE id = $2`,
-        [cargoKeyGuess, orderId]
-      );
-
-      await client.query("COMMIT");
-      return res.json({
-        ok: true,
-        trackingNumber: cargoKeyGuess,
-        message: "Gönderi daha önce oluşturulmuştu. Tracking kaydedildi.",
-      });
-    }
+    await client.query("COMMIT");
 
     return res.json({ ok: true, trackingNumber });
   } catch (e) {
