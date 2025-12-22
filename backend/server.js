@@ -1232,7 +1232,7 @@ app.post("/api/admin/orders/:id/ship", requireAdmin, async (req, res) => {
         message: "Gönderi daha önce oluşturulmuştu. Tracking kaydedildi.",
       });
     }
-    
+
     return res.json({ ok: true, trackingNumber });
   } catch (e) {
     console.error("ship auto error:", e);
