@@ -356,8 +356,9 @@ async function shipOrder(orderId) {
 
         const data = await res.json().catch(() => ({}));
 
-        if (!res.ok || !data.ok) {
-            alert(data.error || "Kargoya verme başarısız");
+        if (!res.ok) {
+            const msg = data?.error || data?.message || "Kargoya verme başarısız";
+            alert(msg);
             return;
         }
 
