@@ -820,8 +820,21 @@ app.post("/api/payments/iyzico/init", async (req, res) => {
     const userId = sess?.userId || null;
 
     // ✅ Proxy uyumlu baseUrl + buyerIp (SUNUCUDA HATA 11’i genelde bu çözer)
-    const proto = (req.headers["x-forwarded-proto"] || req.protocol).split(",")[0];
-    const baseUrl = `${proto}://${req.get("host")}`;
+    // ✅ Proxy uyumlu baseUrl (prod'da HTTPS'e sabitle)
+    const host = req.get("host");
+    const forwardedProto = (req.headers["x-forwarded-proto"] || "").split(",")[0].trim();
+    const proto =
+      forwardedProto ||
+      (req.protocol ? String(req.protocol) : "http");
+
+    // BASE_URL varsa onu kullan (en sağlam yöntem)
+    const baseUrl =
+      process.env.BASE_URL
+        ? process.env.BASE_URL.replace(/\/+$/, "")
+        : (host && (host.includes("localhost") || host.startsWith("127.0.0.1")))
+          ? `${proto}://${host}`        // localde http/https neyse
+          : `https://${host}`;          // canlıda kesin https
+
 
     const xf = req.headers["x-forwarded-for"];
     const buyerIp = (xf ? xf.split(",")[0].trim() : req.socket.remoteAddress || "")
@@ -988,7 +1001,7 @@ async function createYurticiKargoShipment(orderId, buyer, shippingAddress, cartI
     const baseKey = String(orderId).padStart(7, "0");
     const cargoKey = `DT${baseKey}`;   // müşteri kargo anahtarı
     const invoiceKey = cargoKey;        // fatura anahtarı da aynı olsun
-     
+
     // 2) Alıcı bilgilerini hazırla
     const fullName = `${buyer.firstName || ""} ${buyer.lastName || ""}`.trim() || "MÜŞTERİ";
     const rawPhone = (buyer.phone || "").replace(/\D/g, ""); // rakam dışı karakterleri at
@@ -1331,8 +1344,10 @@ async function queryYurticiKargoShipment(cargoKey) {
 
 // 💳 İyzico callback (ödeme sonucu burada tamamlanır)
 // Iyzico ödeme callback (PostgreSQL sürümü)
-app.post("/iyzico-callback", (req, res) => {
-  const { token } = req.body || {};
+const iyzicoCallbackHandler = (req, res) => {
+  const token =
+    (req.body && req.body.token) ||
+    (req.query && (req.query.token || req.query.checkoutFormToken));
   console.log("💳 Iyzico callback body:", req.body);
 
   if (!token) {
@@ -1512,7 +1527,10 @@ app.post("/iyzico-callback", (req, res) => {
       }
     }
   );
-});
+};
+
+app.get("/iyzico-callback", iyzicoCallbackHandler);
+app.post("/iyzico-callback", iyzicoCallbackHandler);
 
 async function notifyNewOrder({ orderId, total, tracking, userId }) {
   try {
