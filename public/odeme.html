@@ -203,19 +203,79 @@
                             <input type="radio" name="method" value="card" checked />
                             Kredi Kartı / Banka Kartı
                         </label>
+
+                        <label>
+                            <input type="radio" name="method" value="transfer" />
+                            Havale / EFT
+                        </label>
                     </div>
 
                     <div class="actions">
-                        <button type="button" class="btn btn-secondary" id="btnStep3Back">
-                            Geri
-                        </button>
-                        <button type="submit" class="btn btn-primary">
-                            Ödemeyi Tamamla
-                        </button>
+                        <button type="button" class="btn btn-secondary" id="btnStep3Back">Geri</button>
+                        <button type="submit" class="btn btn-primary">Ödemeyi Tamamla</button>
                     </div>
                 </form>
-                <!-- İyzico’nun checkout formu buraya gelecek -->
+
+                <!-- ✅ Kart seçilince iyzico buraya gelecek -->
                 <div id="iyzicoContainer" style="margin-top: 20px;"></div>
+
+                <!-- ✅ Havale/EFT seçilince bu kutu görünecek -->
+                <div id="transferBox" style="display:none; margin-top:20px;">
+
+                    <!-- ✅ Sipariş oluşturuldu başlığı -->
+                    <div id="transferSuccess" class="transfer-success" style="display:none;">
+                        <div class="tick">✓</div>
+                        <div>
+                            <div class="title">Siparişiniz başarılı bir şekilde kaydedilmiştir</div>
+                            <div class="sub">Sipariş No: <b id="orderNoTop">—</b></div>
+                        </div>
+                    </div>
+
+
+                    <div class="bank-transfer-box">
+                        <strong>Havale / EFT ile Ödeme</strong>
+
+                        <p style="margin:10px 0; color:#6b7280; font-size:13px;">
+                            Lütfen havale açıklamasına <b>Sipariş No</b> yazın.
+                        </p>
+
+                        <div class="bank-row">
+                            <span>IBAN TL</span>
+                            <b id="ibanText">TR45 0006 2000 4490 0006 2911 23</b>
+                            <button type="button" class="copy-btn" data-copy="#ibanText">Kopyala</button>
+                        </div>
+
+                        <div class="bank-row">
+                            <span>Hesap Adı</span>
+                            <b id="accName">FİRMA ÜNVANI</b>
+                            <button type="button" class="copy-btn" data-copy="#accName">Kopyala</button>
+                        </div>
+
+                        <div class="bank-row">
+                            <span>IBAN USD</span>
+                            <b id="ibanText">TR89 0006 2000 4490 0009 0746 19</b>
+                            <button type="button" class="copy-btn" data-copy="#ibanText">Kopyala</button>
+                        </div>
+
+                        <div class="bank-row">
+                            <span>Hesap Adı</span>
+                            <b id="accName">FİRMA ÜNVANI</b>
+                            <button type="button" class="copy-btn" data-copy="#accName">Kopyala</button>
+                        </div>
+
+                        <div class="bank-row">
+                            <span>Swift Kodu - Garanti Bankası</span>
+                            <b id="swiftText">TGBATRISXXX</b>
+                            <button type="button" class="copy-btn" data-copy="#swiftText">Kopyala</button>
+                        </div>
+
+                        <div class="bank-row">
+                            <span>Sipariş No</span>
+                            <b id="transferRef">—</b>
+                            <button type="button" class="copy-btn" data-copy="#transferRef">Kopyala</button>
+                        </div>
+                    </div>
+                </div>
             </section>
         </div>
 

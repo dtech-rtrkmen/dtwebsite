@@ -189,14 +189,19 @@ function statusSlug(s) {
     return "gray";
 }
 
-async function loadOrders() {
+async function loadOrders(mode = "all") {
     if (!ordersTableWrapper) return;
 
     ordersTableWrapper.textContent = "Yükleniyor...";
     if (orderDetailCard) orderDetailCard.style.display = "none";
 
     try {
-        const res = await fetch("/api/admin/orders", { credentials: "include" });
+        const url =
+            mode === "transfer"
+                ? "/api/admin/orders/transfer-pending"
+                : "/api/admin/orders";
+
+        const res = await fetch(url, { credentials: "include" });
         const data = await res.json().catch(() => ({}));
 
         if (!res.ok || !data.ok) {
@@ -220,45 +225,97 @@ async function loadOrders() {
         if (stat) stat.textContent = orders.length;
 
         const rows = orders
-            .map(
-                (o) => `
-        <tr class="clickable" data-id="${o.id}">
-          <td>${o.id}</td>
-          <td>${formatDate(o.createdat)}</td>
-          <td>${formatPrice(o.totalprice)} TL</td>
-          <td>${o.itemcount || 0}</td>
-          <td>${o.trackingnumber || "-"}</td>
-        <td>
-        <span class="badge ${statusSlug(o.status)}">
-            ${statusLabel(o.status)}
-        </span>
-        </td>
-        </tr>
-      `
-            )
+            .map((o) => {
+                const paymentText =
+                    o.paymentstatus === "PENDING_TRANSFER"
+                        ? "Havale (Bekliyor)"
+                        : (o.paymentstatus || "-");
+
+                const actionBtn =
+                    o.paymentstatus === "PENDING_TRANSFER"
+                        ? `<button class="btn btn-sm btn-primary btnMarkPaid" data-id="${o.id}" type="button">Ödeme Alındı</button>`
+                        : "-";
+
+                return `
+                <tr class="clickable" data-id="${o.id}">
+                    <td>${o.id}</td>
+                    <td>${formatDate(o.createdat)}</td>
+                    <td>${formatPrice(o.totalprice)} TL</td>
+                    <td>${o.itemcount || 0}</td>
+                    <td>${o.trackingnumber || "-"}</td>
+                    <td>
+                    <span class="badge ${statusSlug(o.status)}">
+                        ${statusLabel(o.status)}
+                    </span>
+                    </td>
+                    <td>${paymentText}</td>
+                    <td>${actionBtn}</td>
+                </tr>
+                `;
+            })
             .join("");
 
         ordersTableWrapper.innerHTML = `
-      <table>
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>Tarih</th>
-            <th>Tutar</th>
-            <th>Ürün Adedi</th>
-            <th>Kargo Takip</th>
-            <th>Durum</th>
-          </tr>
-        </thead>
-        <tbody>${rows}</tbody>
-      </table>
-    `;
+        <div style="display:flex; gap:8px; margin:10px 0 14px;">
+            <button class="btn btn-secondary" id="btnAllOrders" type="button">Tüm Siparişler</button>
+            <button class="btn btn-secondary" id="btnTransferPending" type="button">Havale Bekleyenler</button>
+        </div>
+
+        <table>
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Tarih</th>
+                <th>Tutar</th>
+                <th>Ürün Adedi</th>
+                <th>Kargo Takip</th>
+                <th>Durum</th>
+                <th>Ödeme</th>
+                <th>İşlem</th>
+            </tr>
+            </thead>
+            <tbody>${rows}</tbody>
+        </table>
+        `;
 
         ordersTableWrapper.querySelectorAll("tr[data-id]").forEach((row) => {
             row.addEventListener("click", () =>
                 loadOrderDetail(row.dataset.id)
             );
         });
+
+        ordersTableWrapper.querySelectorAll(".btnMarkPaid").forEach((btn) => {
+            btn.addEventListener("click", async (e) => {
+                e.stopPropagation(); // satır click'i detail açmasın
+                const id = btn.dataset.id;
+                if (!id) return;
+
+                btn.disabled = true;
+                btn.textContent = "İşleniyor...";
+
+                const res2 = await fetch(`/api/admin/orders/${id}/mark-paid`, {
+                    method: "POST",
+                    credentials: "include",
+                });
+                const d2 = await res2.json().catch(() => ({}));
+
+                if (!res2.ok || !d2.ok) {
+                    alert(d2.error || "İşlem başarısız.");
+                    btn.disabled = false;
+                    btn.textContent = "Ödeme Alındı";
+                    return;
+                }
+
+                // listeyi yenile
+                loadOrders("all");
+            });
+        });
+
+        const btnAll = document.getElementById("btnAllOrders");
+        const btnTr = document.getElementById("btnTransferPending");
+        if (btnAll) btnAll.addEventListener("click", () => loadOrders("all"));
+        if (btnTr) btnTr.addEventListener("click", () => loadOrders("transfer"));
+
     } catch (e) {
         console.error(e);
         ordersTableWrapper.innerHTML =
@@ -319,17 +376,54 @@ async function loadOrderDetail(id) {
       <p><strong>Durum:</strong> ${o.status || "-"}</p>
       <p><strong>Kargo Takip:</strong> <span id="trkNo">${o.trackingnumber || "-"}</span></p>
 
-      <div style="margin:10px 0;">
-        ${o.trackingnumber
-                ? `<button class="btn btn-sm btn-secondary" disabled>Kargoya Verildi</button>`
-                : `<button class="btn btn-primary" id="btnShipOrder">Kargoya Ver</button>`
+        <div style="margin:10px 0; display:flex; gap:8px; flex-wrap:wrap;">
+        ${o.paymentstatus === "PENDING_TRANSFER"
+                ? `<button class="btn btn-primary" id="btnMarkPaidDetail" type="button">Ödeme Alındı (Havale)</button>`
+                : ""
             }
-      </div>
+
+  ${o.trackingnumber
+                ? `<button class="btn btn-sm btn-secondary" disabled type="button">Kargoya Verildi</button>`
+                : `<button class="btn btn-primary" id="btnShipOrder" type="button">Kargoya Ver</button>`
+            }
+        </div>
 
       <hr />
       <h3>Ürünler</h3>
       ${itemsHtml}
     `;
+
+        const btnPaid = document.getElementById("btnMarkPaidDetail");
+        if (btnPaid) {
+            btnPaid.addEventListener("click", async () => {
+                btnPaid.disabled = true;
+                btnPaid.textContent = "İşleniyor...";
+
+                try {
+                    const r2 = await fetch(`/api/admin/orders/${o.id}/mark-paid`, {
+                        method: "POST",
+                        credentials: "include",
+                    });
+                    const d2 = await r2.json().catch(() => ({}));
+
+                    if (!r2.ok || !d2.ok) {
+                        alert(d2.error || "İşlem başarısız.");
+                        btnPaid.disabled = false;
+                        btnPaid.textContent = "Ödeme Alındı (Havale)";
+                        return;
+                    }
+
+                    // Detayı ve listeyi güncelle
+                    loadOrders("all");
+                    loadOrderDetail(o.id);
+                } catch (e) {
+                    console.error(e);
+                    alert("Sunucu hatası.");
+                    btnPaid.disabled = false;
+                    btnPaid.textContent = "Ödeme Alındı (Havale)";
+                }
+            });
+        }
 
         // ✅ CSP’ye takılmayan doğru yöntem: event listener
         const btn = document.getElementById("btnShipOrder");

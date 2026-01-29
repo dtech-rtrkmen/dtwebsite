@@ -269,6 +269,81 @@
   color: #fff;
   box-shadow: 0 4px 10px rgba(74, 92, 255, 0.35);
 }
+.bank-transfer-box {
+  padding: 14px;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  background: #fff;
+}
+
+.bank-row {
+  display: grid;
+  grid-template-columns: 90px 1fr auto;
+  gap: 10px;
+  align-items: center;
+  padding: 10px;
+  margin-top: 10px;
+  border: 1px solid #f1f5f9;
+  border-radius: 10px;
+  background: #ffefef;
+}
+
+.bank-row span {
+  font-size: 12px;
+  color: #374151;
+}
+
+.bank-row b {
+  font-family: ui-monospace, Menlo, Consolas, monospace;
+  font-size: 13px;
+  word-break: break-word;
+}
+
+.copy-btn {
+  padding: 7px 10px;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  background: #fff;
+  cursor: pointer;
+  font-size: 12px;
+}
+
+.transfer-success {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  padding: 14px;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  background: #f0fff4;
+  margin-bottom: 12px;
+}
+
+.transfer-success .tick {
+  width: 42px;
+  height: 42px;
+  border-radius: 999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #22c55e;
+  color: white;
+  font-weight: 800;
+  font-size: 22px;
+}
+
+.transfer-success .title {
+  font-size: 18px;
+  font-weight: 700;
+  color: #166534;
+}
+
+.transfer-success .sub {
+  margin-top: 4px;
+  font-size: 14px;
+  color: #374151;
+}
+
 
 .btn-primary:hover {
   background: #3b4ae0;

@@ -186,6 +186,53 @@ function initStepFlow() {
   if (btnStep3Back) btnStep3Back.addEventListener("click", () => showStep(2));
 }
 
+document.addEventListener("DOMContentLoaded", () => {
+  const transferBox = document.getElementById("transferBox");
+  const iyzicoContainer = document.getElementById("iyzicoContainer");
+
+  function applyPaymentUI() {
+    const method = document.querySelector('input[name="method"]:checked')?.value || "card";
+    if (!transferBox || !iyzicoContainer) return;
+
+    if (method === "transfer") {
+      transferBox.style.display = "block";
+      iyzicoContainer.style.display = "none";
+    } else {
+      transferBox.style.display = "none";
+      iyzicoContainer.style.display = "block";
+    }
+  }
+
+  applyPaymentUI(); // sayfa ilk açılınca
+  document.addEventListener("change", (e) => {
+    if (e.target.name === "method") applyPaymentUI();
+  });
+});
+
+document.addEventListener("click", async (e) => {
+  const btn = e.target.closest(".copy-btn");
+  if (!btn) return;
+
+  const sel = btn.getAttribute("data-copy");
+  const el = document.querySelector(sel);
+  if (!el) return;
+
+  const text = el.textContent.trim();
+  try {
+    await navigator.clipboard.writeText(text);
+  } catch {
+    const ta = document.createElement("textarea");
+    ta.value = text;
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand("copy");
+    ta.remove();
+  }
+
+  const old = btn.textContent;
+  btn.textContent = "Kopyalandı";
+  setTimeout(() => (btn.textContent = old), 1000);
+});
 /* --------------------------------------------------
  * 4. FORMLAR: TESLİMAT & ÖDEME
  * -------------------------------------------------- */
@@ -212,22 +259,100 @@ function initForms() {
     });
   }
 
-  // STEP 3: Ödeme formu → İyzico checkout
+  // STEP 3: Ödeme formu → Card: iyzico / Transfer: sipariş oluştur
   if (paymentForm) {
     paymentForm.addEventListener("submit", async (e) => {
       e.preventDefault();
 
       const submitBtn = paymentForm.querySelector('button[type="submit"]');
+      const method = document.querySelector('input[name="method"]:checked')?.value || "card";
+
+      // UI elemanları (varsa)
+      const transferBox = document.getElementById("transferBox");
+      const transferRefEl = document.getElementById("transferRef");
+      const iyzicoContainer = document.getElementById("iyzicoContainer");
+
+      let redirected = false;
+
+      // buton durumu
       if (submitBtn) {
         submitBtn.disabled = true;
-        submitBtn.textContent = "İyzico'ya yönlendiriliyor...";
+        submitBtn.textContent =
+          method === "transfer" ? "Sipariş oluşturuluyor..." : "İyzico'ya yönlendiriliyor...";
       }
 
       try {
         const cart = readCheckoutCart();
+
+        // adres (step-1) girilmemişse engelle
+        if (!deliveryData) {
+          alert("Lütfen önce teslimat bilgilerini girin.");
+          return;
+        }
+
+        // sepet boşsa engelle
+        if (!cart || !cart.length) {
+          alert("Sepet boş görünüyor.");
+          return;
+        }
+
+        // ✅ 1) TRANSFER / HAVALE
+        if (method === "transfer") {
+
+          // ✅ (1) Her denemede önce success’i gizle (ödeme yapılmadıysa görünmesin)
+          const transferSuccess = document.getElementById("transferSuccess");
+          if (transferSuccess) transferSuccess.style.display = "none";
+
+          const res = await fetch("/api/orders/transfer/create", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            credentials: "include",
+            body: JSON.stringify({
+              subtotal: checkoutTotals.subtotal,
+              shippingFee: checkoutTotals.shipping,
+              totalPrice: checkoutTotals.total,
+              cart,
+              address: deliveryData,
+            }),
+          });
+
+          const data = await res.json();
+          console.log("Transfer order create response:", data);
+
+          if (!res.ok || !data.ok) {
+            alert(data.error || "Havale siparişi oluşturulamadı.");
+            return;
+          }
+
+          // Sipariş/ref ekrana yaz
+          const ref =
+            data.orderNo ||
+            data.order?.order_no ||
+            data.order?.payment_reference ||
+            data.reference ||
+            data.order?.id ||
+            "—";
+
+          if (transferRefEl) transferRefEl.textContent = ref;
+
+          const orderNoTop = document.getElementById("orderNoTop");
+          if (orderNoTop) orderNoTop.textContent = ref;
+
+          // ✅ (2) Sipariş başarılı → success’i göster
+          if (transferSuccess) transferSuccess.style.display = "flex"; // veya "block"
+
+          // Transfer kutusunu aç, iyzico’yu kapat
+          if (transferBox) transferBox.style.display = "block";
+          if (iyzicoContainer) iyzicoContainer.style.display = "none";
+
+          return;
+        }
+
+        // ✅ 2) CARD / IYZICO
         const res = await fetch("/api/payments/iyzico/init", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
+          credentials: "include",
           body: JSON.stringify({
             subtotal: checkoutTotals.subtotal,
             shippingFee: checkoutTotals.shipping,
@@ -240,24 +365,20 @@ function initForms() {
         const data = await res.json();
         console.log("Iyzico init response:", data);
 
-        // 🔥 KRİTİK: data.paymentPageUrl'i kontrol et
         if (!res.ok || !data.ok || !data.paymentPageUrl) {
           console.error("İyzico init hata:", data);
-          alert("Ödeme başlatılamadı.");
+          alert(data.error || "Ödeme başlatılamadı.");
           return;
         }
 
-        // 🚀 YÖNLENDİRME KRİTİK ADIM: Başarılıysa, İyzico sayfasına git.
+        redirected = true;
         window.location.href = data.paymentPageUrl;
-
-        // Bu noktadan sonraki tüm JS kodu yoksayılacaktır.
-
       } catch (err) {
         console.error("Ödeme isteği hatası:", err);
         alert("Ödeme sırasında bir hata oluştu.");
-        // Hata olursa butonu tekrar aktif et
       } finally {
-        if (submitBtn && !window.location.href.includes("https://sandbox-api.iyzipay.com")) {
+        // yönlendirme olduysa zaten sayfa değişecek; butonu geri açma
+        if (!redirected && submitBtn) {
           submitBtn.disabled = false;
           submitBtn.textContent = "Ödemeyi Tamamla";
         }

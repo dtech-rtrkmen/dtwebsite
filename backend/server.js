@@ -974,7 +974,124 @@ app.post("/api/payments/iyzico/init", async (req, res) => {
   }
 });
 
+// ✅ Havale/EFT siparişi oluştur
+app.post("/api/orders/transfer/create", async (req, res) => {
+  try {
+    const { subtotal, totalPrice, shippingFee, cart, address } = req.body || {};
 
+    const sub = Number(subtotal || 0);
+    const ship = Number(shippingFee || 0);
+    const total = Number(totalPrice || 0);
+
+    if (!cart || !cart.length) {
+      return res.status(400).json({ ok: false, error: "Sepet boş." });
+    }
+    if (!total || total <= 0) {
+      return res.status(400).json({ ok: false, error: "Toplam tutar hatalı." });
+    }
+    if (!address) {
+      return res.status(400).json({ ok: false, error: "Adres bilgisi yok." });
+    }
+
+    // oturum varsa userId al, yoksa guest olsun
+    const sess = getSession(req);
+    const userId = sess?.userId || null;
+
+    let client;
+    try {
+      client = await pgPool.connect();
+      await client.query("BEGIN");
+
+      // 1) orders'a "ödeme bekleniyor" sipariş kaydı aç
+      const orderInsertRes = await client.query(
+        `
+        INSERT INTO orders (
+          userid, totalprice, paidprice,
+          paymentid, paymentstatus,
+          conversationid, basketid, iyzicotoken, currency,
+          trackingnumber, createdat, shippingfee, status
+        )
+        VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,NOW(),$11,$12)
+        RETURNING id
+        `,
+        [
+          userId,
+          total,
+          0,                         // paidprice = 0 (ödeme bekliyor)
+          null,                      // paymentid
+          "PENDING_TRANSFER",        // paymentstatus
+          "TRANSFER",                // conversationid
+          "TRANSFER",                // basketid
+          null,                      // iyzicotoken
+          "TRY",                     // currency (istersen frontend’den aldırırız)
+          null,                      // trackingnumber
+          ship,                      // shippingfee
+          "awaiting_payment",        // status (admin panelde göreceksin)
+        ]
+      );
+
+      const orderId = orderInsertRes.rows[0].id;
+
+      // 2) orderitems'e ürünleri yaz
+      for (const item of cart) {
+        const qty = Number(item.qty || 1);
+        const price = Number(item.price || 0);
+        await client.query(
+          `
+          INSERT INTO orderitems (orderid, productid, productname, quantity, unitprice, totalprice)
+          VALUES ($1,$2,$3,$4,$5,$6)
+          `,
+          [orderId, item.id || null, item.name || "Ürün", qty, price, price * qty]
+        );
+      }
+
+      // 3) pendingorders'a address + cart kaydet (kargo kodun buradan adres çekiyor)
+      await client.query(
+        `
+        INSERT INTO pendingorders (
+          userid, totalprice, cartjson, addressjson, shippingfee,
+          createdat, status, updatedat, final_order_id
+        )
+        VALUES ($1,$2,$3,$4,$5,NOW(),$6,NOW(),$7)
+        `,
+        [
+          userId,
+          total,
+          JSON.stringify(cart || []),
+          JSON.stringify(address || {}),
+          ship,
+          "transfer_pending",
+          orderId,
+        ]
+      );
+
+      await client.query("COMMIT");
+
+      // istersen mail bildirimi de at (ödeme bekleniyor diye)
+      try {
+        notifyNewOrder({
+          orderId,
+          total: total.toFixed(2),
+          tracking: null,
+          userId,
+        });
+      } catch {}
+
+      return res.json({ ok: true, orderNo: String(orderId), order: { id: orderId } });
+    } catch (e) {
+      if (client) {
+        try { await client.query("ROLLBACK"); } catch {}
+      }
+      console.error("transfer/create tx error:", e);
+      return res.status(500).json({ ok: false, error: "Sunucu hatası (transfer create)." });
+    } finally {
+      if (client) client.release();
+    }
+  } catch (e) {
+    console.error("transfer/create error:", e);
+    return res.status(500).json({ ok: false, error: "Sunucu hatası." });
+  }
+});
 
 // ---------------- GERÇEK Yurtiçi Kargo Entegrasyonu ----------------
 
@@ -1875,6 +1992,44 @@ app.post("/api/admin/orders/:id/ship", requireAdmin, async (req, res) => {
     return res.status(500).json({ ok: false, error: String(err?.message || err) });
   } finally {
     if (client) client.release();
+  }
+});
+
+app.get("/api/admin/orders/transfer-pending", requireAdmin, async (_req, res) => {
+  try {
+    const r = await dbQuery(`
+      SELECT id, userid, totalprice, paidprice, paymentstatus, status, createdat
+      FROM orders
+      WHERE paymentstatus = 'PENDING_TRANSFER'
+      ORDER BY createdat DESC
+    `);
+    res.json({ ok: true, orders: r.rows });
+  } catch (e) {
+    console.error("transfer-pending error:", e);
+    res.status(500).json({ ok: false, error: "Sunucu hatası" });
+  }
+});
+
+app.post("/api/admin/orders/:id/mark-paid", requireAdmin, async (req, res) => {
+  try {
+    const orderId = Number(req.params.id);
+    if (!orderId) return res.status(400).json({ ok:false, error:"Geçersiz sipariş id" });
+
+    const r = await dbQuery(`
+      UPDATE orders
+      SET
+        paidprice = totalprice,
+        paymentstatus = 'SUCCESS'
+      WHERE id = $1
+      RETURNING id, totalprice, paidprice, paymentstatus, status, createdat
+    `, [orderId]);
+
+    if (!r.rows.length) return res.status(404).json({ ok:false, error:"Sipariş bulunamadı" });
+
+    res.json({ ok: true, order: r.rows[0] });
+  } catch (e) {
+    console.error("mark-paid error:", e);
+    res.status(500).json({ ok: false, error: "Sunucu hatası" });
   }
 });
 
