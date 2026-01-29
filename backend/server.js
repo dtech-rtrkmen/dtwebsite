@@ -996,14 +996,24 @@ const YK_WS_LANGUAGE = process.env.YK_WS_LANGUAGE || "TR";
  */
 async function createYurticiKargoShipment(orderId, buyer, shippingAddress, cartItems) {
   try {
-    const crypto = require("crypto");
     const baseKey = String(orderId).padStart(7, "0"); // 7 hane
     const d = new Date();
     const yymmdd =
       String(d.getFullYear()).slice(-2) +
       String(d.getMonth() + 1).padStart(2, "0") +
-      String(d.getDate()).padStart(2, "0");          // 6 hane
-    const rnd = String(crypto.randomInt(0, 1000)).padStart(3, "0"); // 3 hane
+      String(d.getDate()).padStart(2, "0"); // 6 hane
+
+    let rndNum = Math.floor(Math.random() * 1000);
+    try {
+      const cryptoMod = await import("crypto");
+      const randomInt = cryptoMod.randomInt || cryptoMod.default?.randomInt;
+      if (typeof randomInt === "function") rndNum = randomInt(0, 1000);
+    } catch (e) {
+      // crypto import başarısızsa Math.random ile devam
+    }
+
+    const rnd = String(rndNum).padStart(3, "0"); // 3 hane
+
     const cargoKey = `DT${baseKey}${yymmdd}${rnd}`; // toplam 18
     const invoiceKey = cargoKey;
 
