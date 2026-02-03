@@ -2798,6 +2798,6 @@ app.get("/admin", (req, res) => {
 });
 
 /* ---------------- Start ---------------- */
-app.listen(PORT, () => {
-  console.log(`✅ Server çalışıyor: http://localhost:${PORT}`);
+app.listen(PORT, "127.0.0.1", () => {
+  console.log(`✅ Server çalışıyor: http://127.0.0.1:${PORT}`);
 });
