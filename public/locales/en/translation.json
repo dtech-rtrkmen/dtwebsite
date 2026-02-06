@@ -1,0 +1,427 @@
+{
+  "nav": {
+    "home": "Home",
+    "about": "About Us",
+    "products": "Products",
+    "contact": "Contact",
+    "login": "Login / Register"
+  },
+  "machining": {
+    "page_title": "Machining — DRONE TECH",
+    "nav": {
+      "home": "Home",
+      "production": "Production",
+      "quality": "Quality",
+      "about": "About Us",
+      "contact": "Contact",
+      "job_application": "Job Application Form"
+    },
+    "hero": {
+      "slide1": {
+        "title": "Zero Error Tolerance in Critical Parts",
+        "desc": "Reliability of aviation and drone systems depends on parts with micron-level precision."
+      },
+      "slide2": {
+        "title": "Advanced Technology CNC Park",
+        "desc": "We use 5-Axis CNC to handle complex parts."
+      },
+      "slide3": {
+        "title": "Absolute Measurement and Quality Control",
+        "desc": "We use state-of-the-art measuring devices."
+      },
+      "slide4": {
+        "title": "Speed and Capacity",
+        "desc": "We respond quickly to your demands with our flexible and large machine park."
+      },
+      "slide5": {
+        "title": "Leveling Operations",
+        "desc": "We perform precise leveling operations."
+      }
+    },
+    "services": {
+      "title": "Machining and CNC Processing Services",
+      "desc": "Our factory produces critical parts with precision CNC machining.",
+      "card1": {
+        "title": "CNC Machining",
+        "desc": "We produce with modern CNC milling and turning machines."
+      },
+      "card2": {
+        "title": "Precision Machining",
+        "desc": "Critical parts requiring sub-millimeter tolerance."
+      },
+      "card3": {
+        "title": "Metal Processing",
+        "desc": "Aluminum, stainless steel, and special alloys."
+      },
+      "card4": {
+        "title": "Production and Design",
+        "desc": "Design team accelerating mass production processes."
+      }
+    },
+    "machines": {
+      "title": "Advanced Technology CNC Park",
+      "intro": "Modern CNC machines for reliable production.",
+      "card1": {
+        "title": "3D CNC Programming",
+        "desc": "Simulation supported"
+      },
+      "card2": {
+        "title": "CNC Tool Room",
+        "desc": "Cutting Tool Stock"
+      },
+      "card3": {
+        "title": "Modern CNC Infrastructure",
+        "desc": "Production Assurance"
+      },
+      "card4": {
+        "title": "Quality Control",
+        "desc": "Statistical Process"
+      },
+      "card5": {
+        "title": "Grinding",
+        "desc": "Surface Quality"
+      },
+      "card6": {
+        "title": "MES System",
+        "desc": "Efficiency Analysis"
+      }
+    },
+    "about": {
+      "vision_title": "VISION",
+      "vision_text": "To be a worldwide market leader in the aviation sector",
+      "mission_title": "MISSION",
+      "mission_text": "To aim to be a leader in the sector by designing, producing, and marketing quality aviation products suitable for our customers' needs.",
+      "quality_policy_title": "QUALITY POLICY",
+      "quality_policy_text": "To develop and produce durable, safe, and reliable products that exceed our customers' quality expectations."
+    },
+    "contact": {
+      "title": "CONTACT",
+      "address_title": "GIRESUN ADDRESS",
+      "address_text": "Pazarsuyu Village II. OSB Locality 5th Street No:12, Bulancak/Giresun",
+      "phone": "Phone:",
+      "mail": "Mail:",
+      "form": {
+        "first_name": "First Name",
+        "last_name": "Last Name",
+        "email": "E-mail Address",
+        "subject": "Subject",
+        "message": "Message",
+        "submit": "SEND"
+      }
+    },
+    "production": {
+      "quick_nav": {
+        "axis3": "3 AXIS CNC",
+        "axis4": "4 AXIS CNC",
+        "axis5": "5 AXIS CNC",
+        "honing": "HONING",
+        "rifling": "RIFLING",
+        "broaching": "BROACHING"
+      },
+      "sections": {
+        "axis3": {
+          "title": "3 AXIS CNC",
+          "desc": "Machining of prismatic parts.",
+          "card_title": "3 Axis CNC Machining Centers",
+          "card_desc": "Our modern 3 axis CNC machines...",
+          "list": {
+            "item1": "Precision machining focused on ± tolerance",
+            "item2": "Repeatable CNC production",
+            "item3": "Quality gauge results"
+          }
+        },
+        "axis4": {
+          "title": "4 AXIS CNC",
+          "desc": "Multi-surface production.",
+          "card_title": "4 Axis CNC Machining Centers",
+          "card_desc": "Our modern 4 axis CNC machining infrastructure...",
+          "list": {
+            "item1": "Machining supported by rotary axis (A)",
+            "item2": "Multi-surface production in a single setup",
+            "item3": "High dimensional accuracy"
+          }
+        },
+        "axis5": {
+          "title": "5 AXIS CNC",
+          "desc": "Complex geometries.",
+          "card_title": "5 Axis CNC Machining Centers",
+          "card_desc": "Our simultaneous 5 axis CNC machining technology...",
+          "list": {
+            "item1": "Tight tolerances (at µm level)",
+            "item2": "Simultaneous interpolation",
+            "item3": "High surface quality"
+          }
+        },
+        "honing": {
+          "title": "Honing",
+          "desc": "Inner diameter precision machining.",
+          "card_title": "Honing Process",
+          "card_desc": "Operations performed using honing machine...",
+          "list": {
+            "item1": "Inner diameter honing",
+            "item2": "Micron tolerances",
+            "item3": "Geometric accuracy"
+          }
+        },
+        "rifling": {
+          "title": "Rifling",
+          "desc": "Rifling pitch and depth control.",
+          "card_title": "Rifling Process",
+          "card_desc": "Operations performed using rifling machine...",
+          "list": {
+            "item1": "Rifling pitch control",
+            "item2": "Profile geometry",
+            "item3": "Functional inner surface machining"
+          }
+        },
+        "broaching": {
+          "title": "Broaching",
+          "desc": "Keyway and spline machining.",
+          "card_title": "Broaching Process",
+          "card_desc": "Operations performed using broaching machine...",
+          "list": {
+            "item1": "Spline and special profiles",
+            "item2": "Keyway broaching",
+            "item3": "Tight tolerances"
+          }
+        }
+      }
+    },
+    "quality_page": {
+      "hero": {
+        "badge": "Quality",
+        "title": "Quality Control",
+        "desc": "We verify and report every part.",
+        "stats": {
+          "process": "Process",
+          "process_desc": "Input → Process → Final Control",
+          "precision": "Precision",
+          "precision_desc": "Tolerance focused verification",
+          "report": "Report",
+          "report_desc": "Traceable record / measurement report"
+        },
+        "checklist": {
+          "item1": "Input quality control",
+          "item2": "In-process measurement / verification",
+          "item3": "Final control and reporting",
+          "item4": "Use of calibrated equipment"
+        }
+      },
+      "approach": {
+        "title": "Our Quality Approach",
+        "desc": "Measurable goals.",
+        "cards": {
+          "card1": {
+            "title": "Measurement & Verification",
+            "desc": "Critical dimensions are checked throughout the process."
+          },
+          "card2": {
+            "title": "Surface & Visual Control",
+            "desc": "Surface quality and visual criteria."
+          },
+          "card3": {
+            "title": "Documentation",
+            "desc": "Control results are recorded."
+          },
+          "card4": {
+            "title": "Traceability",
+            "desc": "Retrospective verification is possible."
+          }
+        }
+      },
+      "gallery": {
+        "title": "Gallery",
+        "desc": "Measurement images",
+        "captions": {
+          "img1": "Precision measurement and tolerance control",
+          "img2": "In-process measurement / verification",
+          "img3": "Final control and reporting",
+          "img4": "Surface and visual control"
+        }
+      },
+      "flow": {
+        "title": "Control Flow",
+        "desc": "Input, Process and Final Control.",
+        "steps": {
+          "step1": {
+            "title": "Input Control",
+            "desc": "Raw material conformity."
+          },
+          "step2": {
+            "title": "In-Process Control",
+            "desc": "Inter-operation control."
+          },
+          "step3": {
+            "title": "Final Control",
+            "desc": "Technical drawing approval."
+          },
+          "step4": {
+            "title": "Reporting",
+            "desc": "Recording and reporting."
+          }
+        }
+      }
+    },
+    "footer": {
+      "contact_title": "CONTACT",
+      "address_title": "GIRESUN ADDRESS",
+      "address_text": "Pazarsuyu Village II. OSB Locality 5th Street No:12, Bulancak/Giresun",
+      "phone": "Phone:",
+      "mail": "Mail:",
+      "links_title": "LINKS",
+      "privacy": "Privacy Policy",
+      "warranty": "Warranty & Return",
+      "sales_contract": "Sales Contract",
+      "delivery": "Delivery Terms",
+      "copyright": "DRONE TECH © 2025, ALL RIGHTS RESERVED"
+    }
+  },
+  "footer": {
+    "contact_title": "CONTACT",
+    "address_title": "GIRESUN ADDRESS",
+    "address_text": "Pazarsuyu Village II. OSB Locality 5th Street No:12, Bulancak/Giresun",
+    "phone": "Phone:",
+    "mail": "Mail:",
+    "links_title": "LINKS",
+    "privacy": "Privacy Policy",
+    "warranty": "Warranty & Return",
+    "sales_contract": "Sales Contract",
+    "delivery": "Delivery Terms",
+    "copyright": "DRONE TECH © 2025, ALL RIGHTS RESERVED"
+  },
+  "privacy": {
+    "title": "Privacy Policy",
+    "intro": "This privacy policy explains how information collected through dronetech.com.tr (hereinafter referred to as \"Platform\") operated by DRONETECH will be used, shared, and protected. Please read this policy carefully.",
+    "section1": {
+      "title": "1. Collected Information",
+      "text": "The Platform aims to minimize the collection of user information. However, the following types of information may be automatically collected during access to the Platform:",
+      "sub1": {
+        "title": "1.1. Personal Information:",
+        "text": "Personal details such as your name, email address, and phone number may be collected to communicate with you or provide services on the Platform."
+      },
+      "sub2": {
+        "title": "1.2. Usage Information:",
+        "text": "Data such as your interactions on the Platform, visited pages, and duration of use may be automatically recorded. This information is used to improve user experience, optimize services, and ensure security."
+      }
+    },
+    "section2": {
+      "title": "2. Use and Sharing of Information",
+      "sub1": {
+        "title": "2.1. Service Provision:",
+        "text": "Collected information may be used to provide services on the Platform, respond to user requests, and resolve issues."
+      },
+      "sub2": {
+        "title": "2.2. Communication:",
+        "text": "Collected contact information may be used to communicate with users; send updates, notifications, or marketing materials."
+      },
+      "sub3": {
+        "title": "2.3. Sharing with Third Parties:",
+        "text": "The Platform will not share, sell, or rent user information to third parties. However, the right to provide information to authorized authorities in accordance with legal requirements is reserved."
+      }
+    },
+    "section3": {
+      "title": "3. Cookies and Similar Technologies",
+      "text": "The Platform aims to improve user experience using cookies and similar technologies. Users can manage or reject cookies through browser settings."
+    },
+    "section4": {
+      "title": "4. Security",
+      "text": "The Platform undertakes to take appropriate security measures to keep collected information safe. However, communication over the internet or data storage always carries risk, and complete security cannot be guaranteed."
+    },
+    "section5": {
+      "title": "5. Privacy Policy Updates",
+      "text": "This privacy policy may be updated from time to time. It is the user's responsibility to follow updates. Significant changes will be notified to users."
+    },
+    "contact_intro": "If you have any questions about this privacy policy, please contact us."
+  },
+  "warranty": {
+    "title": "Warranty & Return Conditions",
+    "text": "All products are under the manufacturer's warranty unless otherwise specified. For the warranty conditions to be valid, please check the product during cargo delivery. If you see any damage, do not accept the product by having a report drawn up. Modifications made to the product, deformation of the product, or deterioration of the product's original design will cause the product to be out of warranty."
+  },
+  "sales_contract": {
+    "title": "SALES AGREEMENT",
+    "preliminary_info": {
+      "title": "PRELIMINARY INFORMATION"
+    },
+    "seller_info": {
+      "title": "ARTICLE 1 SELLER INFORMATION",
+      "seller": {
+        "title": "ARTICLE 1.1 – SELLER",
+        "content": "Commercial Title: DRONETECH Address: II.OSB Caddesi, Maden, 28340 Piraziz/Giresun - BULANCAK / GİRESUN Phone: 0 530 000 00 00 E-mail: info@dronetech.com.tr"
+      },
+      "buyer": {
+        "title": "ARTICLE 1.2 – BUYER",
+        "content": "Is the person who is a member of the www.dronetech.com.tr shopping site. The address and contact information used during membership are taken as a basis."
+      }
+    },
+    "product_specs": {
+      "title": "ARTICLE 2 PRODUCT SPECIFICATIONS SUBJECT TO SALE",
+      "content": "The basic features of the good or service are available at www.dronetech.com.tr. You can review the basic features of the product during the campaign. The prices listed on the site are the sales prices. The announced prices and promises are valid until they are updated and changed. Prices announced for a limited period are valid until the end of the specified period. The type, quantity, brand/model, color, number of units, sales price, payment method, and the information at the time the order is finalized constitute the product's features. The shipping cost, which is the product's delivery expense, will be paid by the BUYER, and in case of a return, the shipping fee will also be covered by the BUYER."
+    },
+    "general_provisions": {
+      "title": "ARTICLE 3 GENERAL PROVISIONS",
+      "civilian_use": {
+        "title": "Civilian Use Commitment and Usage Restrictions",
+        "content": "\"The Buyer declares and undertakes that the product(s) purchased under this agreement will be used exclusively for civilian, commercial, or hobby purposes; that the said products will not be used directly or indirectly for military purposes, in defense industry projects, in weapon systems, or in any attack/defense activity prohibited by international law. All legal, criminal, and administrative liability that may arise from the use of the product contrary to this commitment belongs exclusively to the Buyer; Drone Tech (Seller) cannot be held responsible in any way for damages incurred by third parties or public institutions due to such violations.\""
+      },
+      "items": {
+        "item1": "<strong>3.1)</strong> The BUYER declares that they have read and are informed about the basic qualities of the contract product, the sales price, payment method, and delivery information on the www.dronetech.com.tr website and have given the necessary confirmation electronically. By confirming this Preliminary Information electronically, the BUYER confirms that, before the conclusion of distance contracts, they have accurately and completely obtained the address to be given by the SELLER, the basic features of the ordered products, the price of the products including taxes, and payment and delivery information.",
+        "item2": "<strong>3.2)</strong> The contract product is delivered to the BUYER or the person/organization at the address indicated by the BUYER within the period specified in the preliminary information section on the website, depending on the distance of the BUYER's place of residence for each product, provided that it does not exceed the legal 30-day period.",
+        "item3": "<strong>3.3)</strong> The SELLER cannot be held responsible for the failure to deliver the ordered product to the BUYER or for any reason of non-delivery due to any problems that the shipping company may encounter during the delivery of the product to the BUYER.",
+        "item4": "<strong>3.4)</strong> The SELLER is responsible for delivering the contract product in a sound, complete manner, in accordance with the qualifications specified in the order, and with warranty documents and user manuals, if any.",
+        "item5": "<strong>3.5)</strong> The SELLER may supply a different product of equal quality and price by informing the BUYER and obtaining their explicit consent before the expiry of the performance obligation arising from the contract.",
+        "item6": "<strong>3.6)</strong> If the SELLER cannot fulfill its contractual obligations because the performance of the product or service subject to the contract becomes impossible, it shall notify the consumer of this situation before the expiry of the performance obligation arising from the contract and shall return the total price to the BUYER within 10 days.",
+        "item7": "<strong>3.7)</strong> For the delivery of the product, this Preliminary Information Form must be confirmed electronically. If for any reason the product price is not paid or is canceled in the bank records, the SELLER is deemed to be released from the obligation to deliver the product.",
+        "item8": "<strong>3.8)</strong> If the relevant bank or financial institution does not pay the product price to the SELLER due to the unauthorized or unlawful use of the BUYER's credit card by unauthorized persons, not due to the BUYER's fault, after the delivery of the product, the BUYER is obliged to return the product to the SELLER within 3 days, provided that it has been delivered to them. In this case, the shipping costs belong to the BUYER.",
+        "item9": "<strong>3.9)</strong> If the SELLER cannot deliver the contract product within the period due to force majeure or extraordinary circumstances such as adverse weather conditions preventing transportation, interruption of transportation, it is obliged to notify the BUYER. In this case, the BUYER may use one of the rights to cancel the order, replace the contract product with its equivalent, if any, and/or postpone the delivery period until the obstructive situation is eliminated. If the BUYER cancels the order, the amount paid is paid to them in cash and in full within 10 days. For payments made by the BUYER with a credit card, the product amount is returned to the relevant bank within 7 days after the order is canceled by the BUYER. Since the reflection of this amount on the BUYER's accounts after its return to the bank is entirely related to the bank's transaction process, the BUYER accepts in advance that the SELLER cannot intervene in any way for possible delays and that it may take an average of 2 to 3 weeks for the amount returned to the credit card by the SELLER to be reflected in the BUYER's account by the bank.",
+        "item10": "<strong>3.10)</strong> The SELLER cannot be held responsible for the failure to deliver the ordered product to the BUYER or for any reason of non-delivery due to any problems that the shipping company may encounter during the delivery of the product to the BUYER."
+      }
+    },
+    "withdrawal": {
+      "title": "ARTICLE 4 RIGHT OF WITHDRAWAL",
+      "content": "The BUYER has the right of withdrawal within 14 (fourteen) days from the delivery of the goods to themself or to the person/organization at the address they have indicated. To exercise the right of withdrawal, a notification must be made to the SELLER by fax, e-mail, or telephone within this 14-day period, and the product must not have been used within the framework of the provisions of Article 6. The invoice of the returned products must be returned. To exercise the right of withdrawal, it is mandatory to notify the SELLER by fax, e-mail, or telephone within 14 (fourteen) days and the product must not have been used within the framework of the provisions of Article 6. The invoice of the returned products must be returned. In case of exercising the right of withdrawal, the product must be delivered to the SELLER within 10 (ten) days. The shipping cost of the product returned due to the right of withdrawal is covered by the BUYER."
+    },
+    "non_returnable": {
+      "title": "ARTICLE 5 NON-RETURNABLE PRODUCTS",
+      "items": {
+        "item1": "<strong>ARTICLE 5.1 –</strong> Goods prepared in line with the consumer's requests or clearly personal needs, or made suitable for personal use.",
+        "item2": "<strong>5.2 –</strong> Goods that are perishable or may expire.",
+        "item3": "<strong>5.3 –</strong> The return of goods whose protective elements such as packaging, tape, seal, package have been opened after delivery is not acceptable if it is not suitable in terms of health and hygiene."
+      }
+    },
+    "non_approved": {
+      "title": "ARTICLE 6 NON-APPROVED SITUATIONS",
+      "items": {
+        "item1": "<strong>6.1)</strong> If the relevant bank or financial institution does not pay the product price to the SELLER due to the unauthorized or unlawful use of the BUYER's credit card by unauthorized persons, not due to the BUYER's fault, after the delivery of the product, the BUYER is obliged to return the product to the SELLER within 3 days, provided that it has been delivered to them. In this case, the shipping costs belong to the BUYER.",
+        "item2": "<strong>6.2)</strong> If the SELLER cannot deliver the contract product within the legal 30-day period due to force majeure or extraordinary circumstances such as adverse weather conditions preventing transportation, interruption of transportation, it is obliged to notify the BUYER. In this case, the BUYER may use one of the rights to cancel the order, replace the contract product with its equivalent, if any, and/or postpone the delivery period until the obstructive situation is eliminated. If the BUYER cancels the order; the amount paid is returned to them within 10 days.",
+        "item3": "<strong>6.3)</strong> The SELLER reserves the right to change the campaign information announced on www.dronetech.com.tr at any time. These changes take effect on the date of announcement.",
+        "item4": "<strong>6.4)</strong> The SELLER may update the provisions of this Preliminary Information Form at any time by publishing it on the site or by sending an e-mail to the users."
+      }
+    },
+    "international_warranty": {
+      "title": "ARTICLE 7 International Warranty and Regulatory Compliance",
+      "content": "\"The warranty conditions, durations, and scope offered by Drone Tech may vary according to the local consumer laws and mandatory legislative provisions of the country where the product is purchased, delivered, or ultimately used. The Buyer agrees that the legal regulations and local service procedures of the country where the product is located will be valid when benefiting from warranty services. In international sales, customs, tax, and international logistics costs related to repair or replacement processes under warranty belong to the Buyer—unless the mandatory laws of the relevant country provide otherwise.\""
+    },
+    "authorized_court": {
+      "title": "ARTICLE 8 AUTHORIZED COURT",
+      "content": "In the implementation of this preliminary information, TURKISH LAW and ENFORCEMENT COURTS will be authorized to resolve any disputes that may arise between the parties from the implementation and interpretation of this Preliminary Information."
+    },
+    "conclusion": "The Consumer has read and approved all preliminary information regarding the delivery of the product, the basic features of the ordered product, the price of the product, and the payment method, and has given electronic confirmation by ordering the product through the website.",
+    "signature": {
+      "seller": "SELLER:",
+      "buyer": "BUYER:",
+      "date": "Date:",
+      "place": "Place:"
+    }
+  },
+  "delivery": {
+    "title": "DELIVERY TERMS",
+    "orders": {
+      "title": "ORDERS",
+      "text1": "Your orders will be delivered to the cargo within 40 business days (Monday-Friday) after bank approval is received. Delivery times for custom production products may vary depending on the production time. Delivery information and times for such products are specified on the product pages.",
+      "text2": "In case of any disruption caused by us, you will be informed via your membership information. Therefore, it is important that your membership information is complete and accurate. Delivery is not made on holidays and public holidays.",
+      "text3": "All products you choose will be delivered to you with DRONETECH guarantee through the cargo companies we have contracted with.",
+      "text4": "A confirmation email will be sent to you regarding the products you have purchased. If any of the selected products are not in stock, an email will be sent to you regarding the subject and the first date the product will be in stock will be notified.",
+      "text5": "www.dronetech.com.tr is an online shopping site that allows multiple users to shop at the same time. Although rare, there is a possibility that another consumer buys the same product and the product runs out of stock; in this case, your payment will be refunded unconditionally."
+    }
+  }
+}

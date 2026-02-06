@@ -1,0 +1,693 @@
+{
+  "nav": {
+    "home": "Anasayfa",
+    "about": "Hakkımızda",
+    "products": "Ürünler",
+    "contact": "İletişim",
+    "login": "Giriş / Kayıt"
+  },
+  "machining": {
+    "page_title": "Talaşlı İmalat — DRONE TECH",
+    "nav": {
+      "home": "Ana Sayfa",
+      "production": "Üretim",
+      "quality": "Kalite",
+      "about": "Hakkımızda",
+      "contact": "İletişim",
+      "job_application": "İş Başvuru Formu"
+    },
+    "hero": {
+      "slide1": {
+        "title": "Kritik Parçalarda Sıfır Hata Toleransı",
+        "desc": "Havacılık ve drone sistemlerinin güvenilirliği, milimetrenin binde biri hassasiyetteki parçalara bağlıdır."
+      },
+      "slide2": {
+        "title": "İleri Teknoloji CNC Parkuru",
+        "desc": "Karmaşık parçaların üstesinden gelmek için 5 Eksenli CNC kullanıyoruz."
+      },
+      "slide3": {
+        "title": "Mutlak Ölçüm ve Kalite Kontrol",
+        "desc": "En son teknoloji ölçüm cihazlarını kullanıyoruz."
+      },
+      "slide4": {
+        "title": "Hız ve Kapasite",
+        "desc": "Esnek ve geniş makine parkurumuz ile taleplerinize hızla yanıt veriyoruz."
+      },
+      "slide5": {
+        "title": "Tesviye İşlemleri",
+        "desc": "Hassas tesviye operasyonları gerçekleştiriyoruz."
+      }
+    },
+    "services": {
+      "title": "Talaşlı İmalat ve CNC İşleme Hizmetleri",
+      "desc": "Fabrikamızda hassas CNC işleme kritik parçalar üretmektedir.",
+      "card1": {
+        "title": "CNC Talaşlı İmalat",
+        "desc": "Modern CNC freze ve torna makinelerimizle üretim yapıyoruz."
+      },
+      "card2": {
+        "title": "Hassas İşleme",
+        "desc": "Milimetrenin altında tolerans gerektiren kritik parçalar."
+      },
+      "card3": {
+        "title": "Metal İşleme",
+        "desc": "Alüminyum, paslanmaz çelik ve özel alaşımlar."
+      },
+      "card4": {
+        "title": "Üretim ve Tasarım",
+        "desc": "Seri üretim süreçlerini hızlandıran tasarım ekibi."
+      }
+    },
+    "machines": {
+      "title": "İleri Teknoloji CNC Parkuru",
+      "intro": "Güvenilir üretim için modern CNC tezgahları.",
+      "card1": {
+        "title": "3D CNC Programlama",
+        "desc": "Simülasyon destekli"
+      },
+      "card2": {
+        "title": "CNC Takımhane",
+        "desc": "Kesici Takım Stok"
+      },
+      "card3": {
+        "title": "Modern CNC Altyapısı",
+        "desc": "Üretim Güvencesi"
+      },
+      "card4": {
+        "title": "Kalite Kontrol",
+        "desc": "İstatistiksel Proses"
+      },
+      "card5": {
+        "title": "Taşlama",
+        "desc": "Yüzey Kalitesi"
+      },
+      "card6": {
+        "title": "MES Sistemi",
+        "desc": "Verimlilik Analizi"
+      }
+    },
+    "about": {
+      "vision_title": "VİZYON",
+      "vision_text": "Havacılık sektöründe dünya lideri olmak",
+      "mission_title": "MİSYON",
+      "mission_text": "Kaliteli havacılık ürünleri tasarlamak ve üretmek.",
+      "quality_policy_title": "KALİTE POLİTİKASI",
+      "quality_policy_text": "Müşteri beklentilerini aşan güvenilir ürünler geliştirmek."
+    },
+    "contact": {
+      "title": "İLETİŞİM",
+      "address_title": "GİRESUN ADRES",
+      "address_text": "Pazarsuyu Köyü II. OSB Mevki 5. Cadde No:12, Bulancak/Giresun",
+      "phone": "Telefon:",
+      "mail": "Mail:",
+      "form": {
+        "first_name": "Adınız",
+        "last_name": "Soyadınız",
+        "email": "E-posta Adresiniz",
+        "subject": "Konu",
+        "message": "Mesajınız",
+        "submit": "GÖNDER"
+      }
+    },
+    "production": {
+      "quick_nav": {
+        "axis3": "3 EKSEN CNC",
+        "axis4": "4 EKSEN CNC",
+        "axis5": "5 EKSEN CNC",
+        "honing": "HONLAMA",
+        "rifling": "YİV SET",
+        "broaching": "BROŞ"
+      },
+      "sections": {
+        "axis3": {
+          "title": "3 EKSEN CNC",
+          "desc": "Prizmatik parçaların işlenmesi.",
+          "card_title": "3 Eksen CNC İşleme Merkezleri",
+          "card_desc": "Modern 3 eksen CNC tezgahlarımız...",
+          "list": {
+            "item1": "± tolerans odaklı hassas işleme",
+            "item2": "Tekrarlanabilir CNC üretim",
+            "item3": "Kaliteli mastar sonuçları"
+          }
+        },
+        "axis4": {
+          "title": "4 EKSEN CNC",
+          "desc": "Çok yüzeyli üretim.",
+          "card_title": "4 Eksen CNC İşleme Merkezleri",
+          "card_desc": "Modern 4 eksen CNC işleme altyapımız...",
+          "list": {
+            "item1": "Döner eksen (A) destekli işleme",
+            "item2": "Tek bağlamada çok yüzeyli üretim",
+            "item3": "Yüksek ölçüsel doğruluk"
+          }
+        },
+        "axis5": {
+          "title": "5 EKSEN CNC",
+          "desc": "Karmaşık geometriler.",
+          "card_title": "5 Eksen CNC İşleme Merkezleri",
+          "card_desc": "Eşzamanlı 5 eksen CNC işleme teknolojimiz...",
+          "list": {
+            "item1": "Dar toleranslar (µm seviyesinde)",
+            "item2": "Eşzamanlı interpolasyon",
+            "item3": "Yüksek yüzey kalitesi"
+          }
+        },
+        "honing": {
+          "title": "Honlama",
+          "desc": "İç çap hassas işleme.",
+          "card_title": "Honlama İşlemi",
+          "card_desc": "Honlama tezgahı kullanılarak gerçekleştirilen işlemler...",
+          "list": {
+            "item1": "İç çap honlama",
+            "item2": "Mikron toleranslar",
+            "item3": "Geometrik doğruluk"
+          }
+        },
+        "rifling": {
+          "title": "Yiv Set",
+          "desc": "Yiv adımı ve derinlik kontrolü.",
+          "card_title": "Yiv Set İşlemi",
+          "card_desc": "Yiv set tezgahı kullanılarak yapılan işlemler...",
+          "list": {
+            "item1": "Yiv adımı (pitch) kontrolü",
+            "item2": "Profil geometrisi",
+            "item3": "Fonksiyonel iç yüzey işleme"
+          }
+        },
+        "broaching": {
+          "title": "Broş",
+          "desc": "Kama kanalı ve spline işleme.",
+          "card_title": "Broş İşleme",
+          "card_desc": "Broş tezgahı kullanılarak gerçekleştirilen işlemler...",
+          "list": {
+            "item1": "Spline ve özel profiller",
+            "item2": "Kama kanalı broşlama",
+            "item3": "Dar toleranslar"
+          }
+        }
+      }
+    },
+    "quality_page": {
+      "hero": {
+        "badge": "Kalite",
+        "title": "Kalite Kontrol",
+        "desc": "Her parçayı doğrular ve raporlarız.",
+        "stats": {
+          "process": "Süreç",
+          "process_desc": "Giriş → Proses → Son Kontrol",
+          "precision": "Hassasiyet",
+          "precision_desc": "Tolerans odaklı doğrulama",
+          "report": "Rapor",
+          "report_desc": "İzlenebilir kayıt / ölçüm raporu"
+        },
+        "checklist": {
+          "item1": "Giriş kalite kontrol",
+          "item2": "Proses içi ölçüm / doğrulama",
+          "item3": "Son kontrol ve raporlama",
+          "item4": "Kalibrasyonlu ekipman kullanımı"
+        }
+      },
+      "approach": {
+        "title": "Kalite Yaklaşımımız",
+        "desc": "Ölçülebilir hedefler.",
+        "cards": {
+          "card1": {
+            "title": "Ölçüm & Doğrulama",
+            "desc": "Kritik ölçüler proses boyunca kontrol edilir."
+          },
+          "card2": {
+            "title": "Yüzey & Görsel Kontrol",
+            "desc": "Yüzey kalitesi ve görsel kriterler."
+          },
+          "card3": {
+            "title": "Dokümantasyon",
+            "desc": "Kontrol sonuçları kayıt altına alınır."
+          },
+          "card4": {
+            "title": "İzlenebilirlik",
+            "desc": "Geriye dönük doğrulama yapılabilir."
+          }
+        }
+      },
+      "gallery": {
+        "title": "Galeri",
+        "desc": "Ölçüm görselleri",
+        "captions": {
+          "img1": "Hassas ölçüm ve tolerans kontrolü",
+          "img2": "Proses içi ölçüm / doğrulama",
+          "img3": "Son kontrol ve raporlama",
+          "img4": "Yüzey ve görsel kontrol"
+        }
+      },
+      "flow": {
+        "title": "Kontrol Akışı",
+        "desc": "Giriş, Proses ve Son Kontrol.",
+        "steps": {
+          "step1": {
+            "title": "Giriş Kontrol",
+            "desc": "Hammadde uygunluğu."
+          },
+          "step2": {
+            "title": "Proses İçi Kontrol",
+            "desc": "Operasyon arası kontrol."
+          },
+          "step3": {
+            "title": "Son Kontrol",
+            "desc": "Teknik resim onayı."
+          },
+          "step4": {
+            "title": "Raporlama",
+            "desc": "Kayıt ve raporlama."
+          }
+        }
+      }
+    },
+    "footer": {
+      "contact_title": "İLETİŞİM",
+      "address_title": "GİRESUN ADRES",
+      "address_text": "Pazarsuyu Köyü II. OSB Mevki 5. Cadde No:12, Bulancak/Giresun",
+      "phone": "Telefon:",
+      "mail": "Mail:",
+      "links_title": "LİNKLER",
+      "privacy": "Gizlilik Politikası",
+      "warranty": "Garanti ve İade",
+      "sales_contract": "Satış Sözleşmesi",
+      "delivery": "Teslimat Koşulları",
+      "copyright": "DRONE TECH © 2025, HER HAKKI SAKLIDIR"
+    }
+  },
+  "careers": {
+    "intro_title": "İş Başvurusu Formu",
+    "intro_desc": "Alttaki nitelikleri karşılayabilen kişiler öncelikli olarak değerlendirilecektir.",
+    "roles": {
+      "quality_control": {
+        "title": "Kalite Kontrol Personeli",
+        "items": {
+          "1": "En az lise mezunu",
+          "2": "Askerliğini tamamlamış",
+          "3": "Teknik resim bilgisine sahip",
+          "4": "Tercihen kalite kontrol alanında iş tecrübesine sahip",
+          "5": "Kumpas, mihengir gibi ölçüm araçlarını kullanabilen",
+          "6": "Tercihen iyi derecede İngilizce bilen"
+        }
+      },
+      "operator": {
+        "title": "İmalat Operatörü",
+        "items": {
+          "1": "Meslek lisesi mezunu",
+          "2": "Askerliğini tamamlamış",
+          "3": "Tercihen CNC operatörü olarak çalışmış",
+          "4": "Tercihen teknik resim okuma becerisine sahip"
+        }
+      },
+      "drafter": {
+        "title": "Teknik Ressam",
+        "items": {
+          "1": "En az meslek lisesi mezunu, tercihen teknik üniversite mezunu",
+          "2": "Askerliğini tamamlamış",
+          "3": "Teknik resim kurallarını bilen ve çizebilen",
+          "4": "Tercihen imalat bilgisine sahip",
+          "5": "Tercihen iyi derecede İngilizce bilen"
+        }
+      },
+      "engineer": {
+        "title": "Elektrik ve Elektronik Mühendisi",
+        "items": {
+          "1": "Gömülü mimaride yazılım geliştirebilen",
+          "2": "C ve C++ dillerine iyi derecede hakim",
+          "3": "Devre çizimi ve analizi üzerine tecrübeli",
+          "4": "Laboratuvar ekipmanları konusunda tecrübeli",
+          "5": "Tercihen ST ürün yelpazesi üzerinde tecrübeli",
+          "6": "Piezo ve MEMS tabanlı sensörler konusunda bilgili",
+          "7": "İyi derecede İngilizce bilen"
+        }
+      }
+    },
+    "form_title": "Başvuru Formu",
+    "personal_info": {
+      "title": "Kişisel Bilgiler",
+      "first_name": "Adınız",
+      "last_name": "Soyadınız",
+      "email": "E-Posta Adresiniz",
+      "birth_date": "Doğum Tarihiniz",
+      "phone": "Telefon Numaranız",
+      "address": "Adresiniz"
+    },
+    "education_cv": {
+      "title": "Eğitim ve Özgeçmiş",
+      "education_level": "Öğrenim Durumu",
+      "levels": {
+        "select": "Seçiniz",
+        "primary": "İlköğretim",
+        "high_school": "Lise",
+        "associate": "Ön Lisans",
+        "bachelor": "Lisans",
+        "master": "Yüksek Lisans",
+        "doctorate": "Doktora"
+      },
+      "last_school": "Son Mezun Olunan Okul ve Bölüm",
+      "cv_file": "Öz Geçmiş (CV)",
+      "cv_note": "PDF veya Word formatında yükleyiniz (Maks. 10 MB)"
+    },
+    "other_info": {
+      "title": "Diğer Bilgiler",
+      "military_status": "Askerlik Durumu (Erkek adaylar için)",
+      "military_options": {
+        "select": "Seçiniz",
+        "done": "Yaptı",
+        "not_done": "Yapmadı",
+        "postponed": "Tecilli",
+        "exempt": "Muaf"
+      },
+      "driving_license": "Ehliyet (Sınıfıyla Birlikte)",
+      "languages": "Yabancı Diller",
+      "languages_placeholder": "Dil ve seviye belirtiniz",
+      "desired_dept": "Çalışmak İstediğiniz Bölüm",
+      "departments": {
+        "select": "Seçiniz",
+        "quality": "Kalite Kontrol Personeli",
+        "operator": "İmalat Operatörü",
+        "drafter": "Teknik Ressam",
+        "engineer": "Elektrik ve Elektronik Mühendisi",
+        "maintenance": "Bakım ve Onarım",
+        "other": "Diğer"
+      },
+      "other_dept": "Diğer Çalışmak İstediğiniz Bölüm",
+      "other_dept_placeholder": "Diğer ise belirtiniz",
+      "criminal_record": "Adli Sicil Kaydı",
+      "criminal_options": {
+        "no": "Yok",
+        "yes": "Var"
+      },
+      "references": "Referanslarınız (İletişim Bilgileriyle Birlikte)",
+      "other_notes": "Belirtmek İstediğiniz Diğer Konular"
+    },
+    "submit": {
+      "approval": "Beyan ettiğim bilgilerin doğruluğunu onaylıyorum",
+      "btn": "Başvuruyu Gönder"
+    }
+  },
+  "drone_tech": {
+    "categories_title": "Ürün Kategorileri",
+    "categories": {
+      "fixed_wing": "Fixed Wing Plane Vtol",
+      "multicopter": "Multicopter",
+      "gimbal_camera": "Gimbal Camera",
+      "video_datalink": "Video & Datalink",
+      "flight_controller": "Flight Controller",
+      "battery_charger": "Battery & Charger",
+      "ground_station": "Ground Station",
+      "uav_parts": "UAV Parts"
+    },
+    "sub_categories": {
+      "vtol": "VTOL",
+      "vtol_airframe": "VTOL Airframe",
+      "vtol_cargo": "Vtol Cargo",
+      "heavy_lift": "Heavy Lift",
+      "agricultural": "Zirai Drone",
+      "radio_control": "Kumanda",
+      "motors": "Motorlar",
+      "esc": "ESC",
+      "propellers": "Pervaneler"
+    }
+  },
+  "footer": {
+    "contact_title": "İLETİŞİM",
+    "address_title": "GİRESUN ADRES",
+    "address_text": "Pazarsuyu Köyü II. OSB Mevki 5. Cadde No:12, Bulancak/Giresun",
+    "phone": "Telefon:",
+    "mail": "Mail:",
+    "links_title": "LİNKLER",
+    "privacy": "Gizlilik Politikası",
+    "warranty": "Garanti ve İade",
+    "sales_contract": "Satış Sözleşmesi",
+    "delivery": "Teslimat Koşulları",
+    "copyright": "DRONE TECH © 2025, HER HAKKI SAKLIDIR"
+  },
+  "products_detail": {
+    "technical_specs": "Teknik Özellikler",
+    "common": {
+      "weight": "Ağırlık",
+      "dimensions": "Boyutlar",
+      "voltage": "Voltaj",
+      "capacity": "Kapasite",
+      "material": "Malzeme",
+      "range": "Menzil",
+      "flight_time": "Uçuş Süresi",
+      "payload": "Faydalı Yük Kapasitesi",
+      "resolution": "Çözünürlük",
+      "zoom": "Yakınlaştırma (Zoom)",
+      "frequency": "Frekans",
+      "output": "Çıkış Gücü",
+      "current": "Akım",
+      "max_thrust": "Maksimum İtki",
+      "recommended_battery": "Önerilen Batarya",
+      "working_temp": "Çalışma Sıcaklığı"
+    },
+    "vtol_drones": {
+      "title": "VTOL İHA Sistemleri"
+    },
+    "vtol_airframe": {
+      "title": "VTOL Gövde (Airframe)"
+    },
+    "vtol_cargo": {
+      "title": "VTOL Kargo Taşıma Kutusu"
+    },
+    "heavy_lift": {
+      "title": "Ağır Yük Drone"
+    },
+    "agricultural": {
+      "title": "Zirai İlaçlama Drone"
+    },
+    "thermal_camera": {
+      "title": "Termal Drone Kamerası"
+    },
+    "sensor_tracking": {
+      "title": "Sensör Takip Serisi"
+    },
+    "multispectral": {
+      "title": "Multispektral Kamera"
+    },
+    "mapping_camera": {
+      "title": "Haritalama Kamerası"
+    },
+    "ir_laser": {
+      "title": "IR Lazer Aydınlatma"
+    },
+    "gps_resolving": {
+      "title": "GPS Konum Çözümleme"
+    },
+    "dual_sensor": {
+      "title": "Çift Sensörlü Takip"
+    },
+    "aheadx": {
+      "title": "AheadX"
+    },
+    "dji": {
+      "title": "DJI"
+    },
+    "cuav": {
+      "title": "CUAV"
+    },
+    "micropilot": {
+      "title": "Micropilot"
+    },
+    "lipo_battery": {
+      "title": "Lİ-PO BATARYA"
+    },
+    "s2": {
+      "title": "2S Batarya"
+    },
+    "s3": {
+      "title": "3S Batarya"
+    },
+    "s4": {
+      "title": "4S Batarya"
+    },
+    "s6": {
+      "title": "6S Batarya"
+    },
+    "s12": {
+      "title": "12S Batarya"
+    },
+    "radio_control": {
+      "title": "Radyo Kontrol (Kumanda)"
+    },
+    "motors": {
+      "title": "Motorlar",
+      "specs": {
+        "kv": "KV Değeri",
+        "max_power": "Maksimum Güç",
+        "idle_current": "Boşta Akım"
+      }
+    },
+    "esc": {
+      "title": "ESC (Hız Kontrolcü)",
+      "specs": {
+        "current": "Sürekli Akım",
+        "burst": "Anlık Akım",
+        "bec": "BEC Çıkışı"
+      }
+    },
+    "propellers": {
+      "title": "Pervaneler"
+    },
+    "flight_controller": {
+      "title": "Uçuş Kontrolcüsü"
+    },
+    "pixhawk": {
+      "title": "Pixhawk"
+    },
+    "charger": {
+      "title": "Şarj Cihazı"
+    },
+    "solid_state_li_on_battery": {
+      "title": "Solid State Li-On Batarya"
+    },
+    "video_datalink": {
+      "title": "Video & Datalink"
+    }
+  },
+  "home_page": {
+    "machining_link": "TALAŞLI İMALAT",
+    "drone_tech_link": "DRONE TEKNOLOJİLERİ"
+  },
+  "messages": {
+    "no_product": "Şu anda listelenecek ürün bulunamadı."
+  },
+  "privacy": {
+    "title": "Gizlilik Politikası",
+    "intro": "Bu gizlilik politikası, DRONETECH tarafından işletilen dronetech.com.tr (bundan böyle “Platform” olarak anılacaktır) üzerinden toplanan bilgilerin nasıl kullanılacağını, paylaşılacağını ve korunacağını açıklar. Lütfen bu politikayı dikkatlice okuyunuz.",
+    "section1": {
+      "title": "1. Toplanan Bilgiler",
+      "text": "Platform, kullanıcı bilgisi toplanmasını en aza indirmeyi amaçlar. Ancak, Platforma erişim sırasında aşağıdaki türde bilgiler otomatik olarak toplanabilir:",
+      "sub1": {
+        "title": "1.1. Kişisel Bilgiler:",
+        "text": "Sizinle iletişim kurmak veya Platform üzerinde hizmet sağlamak amacıyla adınız, e-posta adresiniz, telefon numaranız gibi kişisel detaylar toplanabilir."
+      },
+      "sub2": {
+        "title": "1.2. Kullanım Bilgileri:",
+        "text": "Platform üzerindeki etkileşimleriniz, ziyaret edilen sayfalar ve kullanım süresi gibi veriler otomatik olarak kaydedilebilir. Bu bilgiler kullanıcı deneyimini geliştirmek, hizmetleri optimize etmek ve güvenliği sağlamak amacıyla kullanılır."
+      }
+    },
+    "section2": {
+      "title": "2. Bilgilerin Kullanımı ve Paylaşımı",
+      "sub1": {
+        "title": "2.1. Hizmet Sağlama:",
+        "text": "Toplanan bilgiler, Platform üzerinde hizmet sağlamak, kullanıcı taleplerine yanıt vermek ve sorunları çözmek amacıyla kullanılabilir."
+      },
+      "sub2": {
+        "title": "2.2. İletişim:",
+        "text": "Toplanan iletişim bilgileri kullanıcılarla iletişim kurmak; güncellemeler, bildirimler veya pazarlama materyalleri göndermek için kullanılabilir."
+      },
+      "sub3": {
+        "title": "2.3. Üçüncü Taraflarla Paylaşım:",
+        "text": "Platform, kullanıcı bilgilerini üçüncü taraflarla paylaşmayacak, satmayacak veya kiralamayacaktır. Ancak, yasal gereklilikler uyarınca yetkili makamlara bilgi sağlama hakkı saklı tutulabilir."
+      }
+    },
+    "section3": {
+      "title": "3. Çerezler ve Benzer Teknolojiler",
+      "text": "Platform, çerezler ve benzer teknolojileri kullanarak kullanıcı deneyimini geliştirmeyi amaçlar. Kullanıcılar tarayıcı ayarları aracılığıyla çerezleri yönetebilir veya reddedebilir."
+    },
+    "section4": {
+      "title": "4. Güvenlik",
+      "text": "Platform, toplanan bilgileri güvende tutmak için uygun güvenlik önlemlerini almayı taahhüt eder. Ancak, internet üzerinden iletişim veya veri depolama her zaman risk taşır ve tam güvenlik garanti edilemez."
+    },
+    "section5": {
+      "title": "5. Gizlilik Politikası Güncellemeleri",
+      "text": "Bu gizlilik politikası zaman zaman güncellenebilir. Güncellemeleri takip etmek kullanıcıların sorumluluğundadır. Önemli değişiklikler kullanıcılara bildirilecektir."
+    },
+    "contact_intro": "Bu gizlilik politikası hakkında herhangi bir sorunuz varsa, lütfen bizimle iletişime geçin."
+  },
+  "warranty": {
+    "title": "Garanti ve İade Koşulları",
+    "text": "Tüm ürünler aksi belirtilmediği takdirde üretici firmanın garantisi altındadır. Garanti koşullarının geçerli olabilmesi için kargo teslimatı esnasında ürünü mutlaka kontrol ediniz. Herhangi bir hasar gördüğünüzde tutanak tutturarak ürünü teslim almayınız. Ürün üzerinde yapılan değişiklikler, ürünün deforme olması ya da ürünün orijinal dizaynının bozulması ürünün garanti kapsamı dışına çıkmasına neden olur."
+  },
+  "sales_contract": {
+    "title": "SATIŞ SÖZLEŞMESİ",
+    "preliminary_info": {
+      "title": "ÖN BİLGİLENDİRME"
+    },
+    "seller_info": {
+      "title": "MADDE 1 SATICI BİLGİLERİ",
+      "seller": {
+        "title": "MADDE 1.1 – SATICI",
+        "content": "Ticari Unvan: DRONETECH Adres: II.OSB Caddesi, Maden, 28340 Piraziz/Giresun - BULANCAK / GİRESUN Telefon: 0 530 000 00 00 E-posta: info@dronetech.com.tr"
+      },
+      "buyer": {
+        "title": "MADDE 1.2 – ALICI",
+        "content": "www.dronetech.com.tr alışveriş sitesine üye olan kişidir. Üyelik sırasında kullanılan adres ve iletişim bilgileri esas alınır."
+      }
+    },
+    "product_specs": {
+      "title": "MADDE 2 SATIŞA KONU ÜRÜN ÖZELLİKLERİ",
+      "content": "Mal veya hizmetin temel özellikleri www.dronetech.com.tr adresinde yer almaktadır. Kampanya süresince ürünün temel özelliklerini inceleyebilirsiniz. Sitede listelenen fiyatlar satış fiyatlarıdır. İlan edilen fiyatlar ve vaatler güncelleme yapılana ve değiştirilene kadar geçerlidir. Süreli olarak ilan edilen fiyatlar ise belirtilen süre sonuna kadar geçerlidir. Ürünün türü, miktarı, marka/modeli, rengi, adedi, satış bedeli, ödeme şekli ve siparişin sonlandığı andaki bilgiler ürünün özelliklerini oluşturur. Ürünün sevkiyat masrafı olan kargo ücreti ALICI tarafından ödenecek olup, iade durumunda da kargo ücreti ALICI tarafından karşılanacaktır."
+    },
+    "general_provisions": {
+      "title": "MADDE 3 GENEL HÜKÜMLER",
+      "civilian_use": {
+        "title": "Sivil Kullanım Taahhüdü ve Kullanım Kısıtlamaları",
+        "content": "\"Alıcı, işbu sözleşme kapsamında satın aldığı ürün/ürünlerin münhasıran sivil, ticari veya hobi amaçlı faaliyetlerde kullanılacağını; söz konusu ürünlerin doğrudan veya dolaylı olarak askeri amaçlarla, savunma sanayii projelerinde, silah sistemlerinde veya uluslararası hukukça yasaklanmış herhangi bir saldırı/savunma faaliyetinde kullanılmayacağını beyan ve taahhüt eder. Ürünün bu taahhüde aykırı kullanımından doğabilecek tüm hukuki, cezai ve idari sorumluluk münhasıran Alıcı’ya ait olup; Drone Tech (Satıcı), bu tür aykırılıklar nedeniyle üçüncü kişilerin veya kamu kurumlarının uğrayacağı zararlardan hiçbir şekilde sorumlu tutulamaz.\""
+      },
+      "items": {
+        "item1": "<strong>3.1)</strong> ALICI, www.dronetech.com.tr internet sitesinde sözleşme konusu ürünün temel nitelikleri, satış fiyatı ve ödeme şekli ile teslimata ilişkin ön bilgileri okuyup bilgi sahibi olduğunu ve elektronik ortamda gerekli teyidi verdiğini beyan eder. ALICI; bu Ön Bilgilendirmeyi elektronik ortamda teyit etmekle, mesafeli sözleşmelerin akdinden önce, SATICI tarafından ALICI'ya verilmesi gereken adres, siparişi verilen ürünlere ait temel özellikler, ürünlerin vergiler dahil fiyatı, ödeme ve teslimat bilgilerini de doğru ve eksiksiz olarak edindiğini teyit etmiş olur.",
+        "item2": "<strong>3.2)</strong> Sözleşme konusu ürün, yasal 30 günlük süreyi aşmamak koşuluyla her bir ürün için ALICI'nın yerleşim yerinin uzaklığına bağlı olarak internet sitesindeki ön bilgiler kısmında belirtilen süre zarfında ALICI veya gösterdiği adresteki kişi/kuruluşa teslim edilir.",
+        "item3": "<strong>3.3)</strong> Kargo firmasının, ürünü ALICI’ya teslimi aşamasında karşılaşacağı her türlü sorun nedeniyle, siparişi verilen ürünün ALICI’ya teslim edilememesinden veya herhangi bir nedenle teslim edilememesinden dolayı SATICI sorumlu tutulamaz.",
+        "item4": "<strong>3.4)</strong> SATICI, sözleşme konusu ürünün sağlam, eksiksiz, siparişte belirtilen niteliklere uygun ve varsa garanti belgeleri ve kullanım kılavuzları ile teslim edilmesinden sorumludur.",
+        "item5": "<strong>3.5)</strong> SATICI, sözleşmeden doğan ifa yükümlülüğünün süresi dolmadan ALICI’yı bilgilendirmek ve açıkça onayını almak suretiyle eşit kalite ve fiyatta farklı bir ürün tedarik edebilir.",
+        "item6": "<strong>3.6)</strong> SATICI, sözleşme konusu ürün veya hizmetin yerine getirilmesinin imkânsızlaşması halinde sözleşmeden doğan ifa yükümlülüğünü yerine getiremezse, bu durumu, sözleşmeden doğan ifa yükümlülüğünün süresi dolmadan tüketiciye bildirir ve 10 gün içinde toplam bedeli ALICI’ya iade eder.",
+        "item7": "<strong>3.7)</strong> Ürünün teslimatı için işbu Ön Bilgilendirme Formunun elektronik ortamda teyit edilmesi şarttır. Herhangi bir nedenle ürün bedeli ödenmez veya banka kayıtlarında iptal edilir ise, SATICI ürünün teslimi yükümlülüğünden kurtulmuş kabul edilir.",
+        "item8": "<strong>3.8)</strong> Ürünün tesliminden sonra ALICI'ya ait kredi kartının ALICI'nın kusurundan kaynaklanmayan bir şekilde yetkisiz kişilerce haksız veya hukuka aykırı olarak kullanılması nedeni ile ilgili banka veya finans kuruluşunun ürün bedelini SATICI'ya ödememesi halinde, ALICI kendisine teslim edilmiş olması kaydıyla ürünü 3 gün içinde SATICI'ya iade etmek zorundadır. Bu takdirde nakliye giderleri ALICI'ya aittir.",
+        "item9": "<strong>3.9)</strong> SATICI mücbir sebepler veya nakliyeyi engelleyen hava muhalefeti, ulaşımın kesilmesi gibi olağanüstü durumlar nedeni ile sözleşme konusu ürünü süresi içinde teslim edemezse, durumu ALICI'ya bildirmekle yükümlüdür. Bu takdirde ALICI siparişin iptal edilmesini, sözleşme konusu ürünün varsa emsali ile değiştirilmesini ve/veya teslimat süresinin engelleyici durumun ortadan kalkmasına kadar ertelenmesi haklarından birini kullanabilir. ALICI'nın siparişi iptal etmesi halinde ödediği tutar 10 gün içinde kendisine nakden ve defaten ödenir. ALICI'nın kredi kartı ile yaptığı ödemelerde ise, ürün tutarı, siparişin ALICI tarafından iptal edilmesinden sonra 7 gün içerisinde ilgili bankaya iade edilir. Bu tutarın bankaya iadesinden sonra ALICI hesaplarına yansıması tamamen banka işlem süreci ile ilgili olduğundan, ALICI, olası gecikmeler için SATICI’nın herhangi bir şekilde müdahalede bulunamayacağını ve SATICI tarafından kredi kartına iade edilen tutarın banka tarafından ALICI hesabına yansıtılmasının ortalama 2 ile 3 haftayı bulabileceğini şimdiden kabul eder.",
+        "item10": "<strong>3.10)</strong> Kargo firmasının, ürünü ALICI’ya teslimi aşamasında karşılaşacağı her türlü sorun nedeniyle, siparişi verilen ürünün ALICI’ya teslim edilememesinden veya herhangi bir nedenle teslim edilememesinden dolayı SATICI sorumlu tutulamaz."
+      }
+    },
+    "withdrawal": {
+      "title": "MADDE 4 CAYMA HAKKI",
+      "content": "ALICI; malın kendisine veya gösterdiği adresteki kişi/kuruluşa tesliminden itibaren 14 (on dört) gün içerisinde cayma hakkına sahiptir. Cayma hakkının kullanılması için bu 14 günlük süre içinde SATICI'ya faks, e-posta veya telefon ile bildirimde bulunulması ve ürünün 6. madde hükümleri çerçevesinde kullanılmamış olması şarttır. İade edilen ürünlerin faturası iade edilmelidir. Cayma hakkının kullanılması için 14 (on dört) gün içinde SATICI'ya faks, e-posta veya telefon ile bildirimde bulunulması ve ürünün 6. madde hükümleri çerçevesinde kullanılmamış olması zorunludur. İade edilen ürünlerin faturası iade edilmelidir. Cayma hakkının kullanılması halinde, ürünün 10 (on) gün içinde SATICI'ya teslim edilmesi gerekmektedir. Cayma hakkı nedeni ile iade edilen ürünün kargo bedeli ALICI tarafından karşılanır."
+    },
+    "non_returnable": {
+      "title": "MADDE 5 KULLANILAMAYACAK ÜRÜNLER",
+      "items": {
+        "item1": "<strong>MADDE 5.1 –</strong> Tüketicinin istekleri veya açıkça kişisel ihtiyaçları doğrultusunda hazırlanan veya kişisel kullanıma uygun hale getirilen mallar,",
+        "item2": "<strong>5.2 –</strong> Çabuk bozulabilen veya son kullanma tarihi geçebilecek mallar,",
+        "item3": "<strong>5.3 –</strong> Teslimden sonra ambalaj, bant, mühür, paket gibi koruyucu unsurları açılmış olan malların iadesi, sağlık ve hijyen açısından uygun olmadığı takdirde kabul edilemez."
+      }
+    },
+    "non_approved": {
+      "title": "MADDE 6 ONAYLANMAYAN DURUMLAR",
+      "items": {
+        "item1": "<strong>6.1)</strong> Ürünün tesliminden sonra ALICI'ya ait kredi kartının yetkisiz kişilerce haksız veya hukuka aykırı olarak kullanılması nedeni ile ilgili banka veya finans kuruluşunun ürün bedelini SATICI'ya ödememesi halinde, ALICI kendisine teslim edilmiş olması kaydıyla ürünü 3 gün içinde SATICI'ya iade etmek zorundadır. Bu takdirde nakliye giderleri ALICI'ya aittir.",
+        "item2": "<strong>6.2)</strong> SATICI mücbir sebepler veya nakliyeyi engelleyen hava muhalefeti, ulaşımın kesilmesi gibi olağanüstü durumlar nedeni ile sözleşme konusu ürünü yasal 30 günlük süre içinde teslim edemezse, durumu ALICI'ya bildirmekle yükümlüdür. Bu durumda ALICI siparişin iptal edilmesini, sözleşme konusu ürünün varsa emsali ile değiştirilmesini ve/veya teslimat süresinin engelleyici durumun ortadan kalkmasına kadar ertelenmesi haklarından birini kullanabilir. ALICI siparişi iptal ederse; ödenen tutar 10 gün içinde kendisine iade edilir.",
+        "item3": "<strong>6.3)</strong> SATICI, www.dronetech.com.tr adresinde duyurduğu kampanya bilgilerinde dilediği zaman değişiklik yapma hakkını saklı tutar. Bu değişiklikler duyuru tarihinde yürürlüğe girer.",
+        "item4": "<strong>6.4)</strong> SATICI, işbu Ön Bilgilendirme Formu hükümlerini dilediği zaman sitede yayınlayarak veya kullanıcılara e-posta göndererek güncelleyebilir."
+      }
+    },
+    "international_warranty": {
+      "title": "MADDE 7 Uluslararası Garanti ve Mevzuat Uyumu",
+      "content": "\"Drone Tech tarafından sunulan garanti şartları, süreleri ve kapsamı; ürünün satın alındığı, teslim edildiği veya nihai olarak kullanıldığı ülkenin yerel tüketici kanunları ve emredici mevzuat hükümleri doğrultusunda farklılık gösterebilir. Alıcı, garanti hizmetlerinden yararlanırken ürünün bulunduğu ülkenin yasal düzenlemelerinin ve yerel servis prosedürlerinin geçerli olacağını kabul eder. Uluslararası satışlarda, garanti kapsamındaki onarım veya değişim süreçlerine ilişkin gümrük, vergi ve uluslararası lojistik maliyetleri —ilgili ülkenin emredici yasaları aksini öngörmedikçe— Alıcı’ya aittir.\""
+    },
+    "authorized_court": {
+      "title": "MADDE 8 YETKİLİ MAHKEME",
+      "content": "İşbu ön bilgilendirmenin uygulanmasında, taraflar arasında işbu Ön Bilgilendirmenin uygulanmasından ve yorumlanmasından doğabilecek her türlü uyuşmazlığın çözümünde TÜRK HUKUKU ve İCRA MAHKEMELERİ yetkili olacaktır."
+    },
+    "conclusion": "Tüketici, ürünün teslimine ilişkin tüm ön bilgileri, sipariş edilen ürünün temel özelliklerini, ürünün fiyatını ve ödeme şeklini okuyup onaylamış ve web sitesi üzerinden ürünü sipariş vererek elektronik onayı vermiştir.",
+    "signature": {
+      "seller": "SATICI:",
+      "buyer": "ALICI:",
+      "date": "Tarih:",
+      "place": "Yer:"
+    }
+  },
+  "delivery": {
+    "title": "TESLİMAT KOŞULLARI",
+    "orders": {
+      "title": "SİPARİŞLER",
+      "text1": "Siparişleriniz, banka onayı alındıktan sonra 40 iş günü (Pazartesi-Cuma) içerisinde kargoya teslim edilir. Özel üretim ürünlerin teslimat süreleri, üretim zamanına göre farklılık gösterebilir. Bu tür ürünlerin teslimat bilgileri ve süreleri ürün sayfalarında belirtilmiştir.",
+      "text2": "Tarafımızdan kaynaklanan herhangi bir aksaklık durumunda, üyelik bilgileriniz üzerinden size bilgi verilecektir. Bu nedenle üyelik bilgilerinizin eksiksiz ve doğru olması önemlidir. Bayram ve tatil günlerinde teslimat yapılmamaktadır.",
+      "text3": "Seçtiğiniz tüm ürünler, anlaşmalı olduğumuz kargo şirketleri aracılığıyla DRONETECH garantisi ile size teslim edilecektir.",
+      "text4": "Satın aldığınız ürünlerle ilgili olarak size bir onay e-postası gönderilecektir. Seçilen ürünlerden herhangi birinin stokta bulunmaması durumunda, konuyla ilgili size bir e-posta gönderilecek ve ürünün stokta gireceği ilk tarih bildirilecektir.",
+      "text5": "www.dronetech.com.tr, aynı anda birden fazla kullanıcının alışveriş yapmasına olanak tanıyan bir çevrimiçi alışveriş sitesidir. Nadir de olsa, başka bir tüketicinin aynı ürünü alması ve ürünün stokta tükenmesi ihtimali bulunmaktadır; bu durumda ödemeniz koşulsuz olarak iade edilecektir."
+    }
+  }
+}

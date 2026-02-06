@@ -7,6 +7,12 @@
   <title>Talaşlı İmalat — DRONE TECH</title>
   <!-- Talaşlı imalat sayfasına özel stiller -->
   <link rel="stylesheet" href="css/talasli-imalat.css" />
+  <!-- i18n Kütüphaneleri (CDN) -->
+  <script src="https://unpkg.com/i18next@23.7.11/dist/umd/i18next.min.js"></script>
+  <script src="https://unpkg.com/i18next-http-backend@2.4.2/i18nextHttpBackend.min.js"></script>
+  <script src="https://unpkg.com/i18next-browser-languagedetector@7.2.0/i18nextBrowserLanguageDetector.min.js"></script>
+  <!-- Bizim i18n ayar dosyamız -->
+  <script src="js/i18n.js"></script>
 </head>
 
 <body>
@@ -25,19 +31,24 @@
       </button>
       <nav class="ti-nav">
         <ul>
-          <li><a href="talasli-imalat.html">Ana Sayfa</a></li>
-          <li><a href="uretim.html">Üretim</a></li>
-          <li><a href="kalite.html">Kalite</a></li>
-          <li><a href="talasli-imalat-hakkimizda.html">Hakkımızda</a></li>
+          <li><a href="talasli-imalat.html" data-i18n="machining.nav.home">Ana Sayfa</a></li>
+          <li><a href="uretim.html" data-i18n="machining.nav.production">Üretim</a></li>
+          <li><a href="kalite.html" data-i18n="machining.nav.quality">Kalite</a></li>
+          <li><a href="talasli-imalat-hakkimizda.html" data-i18n="machining.nav.about">Hakkımızda</a></li>
           <li class="ti-has-dropdown">
-            <a href="talasli-imalat-iletisim.html">İletişim</a>
+            <a href="talasli-imalat-iletisim.html" data-i18n="machining.nav.contact">İletişim</a>
             <ul class="ti-dropdown">
-              <li><a href="is-basvuru-formu.html">İş Başvuru Formu</a></li>
-              <li><a href="talasli-imalat-iletisim.html">İletişim</a></li>
+              <li><a href="is-basvuru-formu.html" data-i18n="machining.nav.job_application">İş Başvuru Formu</a></li>
+              <li><a href="talasli-imalat-iletisim.html" data-i18n="machining.nav.contact">İletişim</a></li>
             </ul>
           </li>
         </ul>
       </nav>
+      <div class="language-switch">
+          <button onclick="changeLanguage('tr')" class="lang-btn">TR</button>
+          <span class="separator">|</span>
+          <button onclick="changeLanguage('en')" class="lang-btn">EN</button>
+      </div>
     </div>
   </header>
 
@@ -49,43 +60,36 @@
 
       <div class="ti-slide active" style="background-image: url('assets/talasli-imalat/6.jpeg');">
         <div class="ti-slide-content">
-          <h1>Kritik Parçalarda Sıfır Hata Toleransı</h1>
-          <p>Havacılık ve drone sistemlerinin güvenilirliği, milimetrenin binde biri hassasiyetteki parçalara bağlıdır.
-            En zorlu malzemeleri 0.05 mm'ye varan toleranslarla işleyerek, projelerinizin gerektirdiği mutlak
-            hassasiyeti ve kaliteyi garanti ediyoruz.</p>
+          <h1 data-i18n="machining.hero.slide1.title">Kritik Parçalarda Sıfır Hata Toleransı</h1>
+          <p data-i18n="machining.hero.slide1.desc">Havacılık ve drone sistemlerinin güvenilirliği, milimetrenin binde biri hassasiyetteki parçalara bağlıdır. En zorlu malzemeleri 0.05 mm'ye varan toleranslarla işleyerek, projelerinizin gerektirdiği mutlak hassasiyeti ve kaliteyi garanti ediyoruz.</p>
         </div>
       </div>
 
       <div class="ti-slide" style="background-image: url('assets/talasli-imalat/7.jpeg');">
         <div class="ti-slide-content">
-          <h1>İleri Teknoloji CNC Parkuru: 5 Eksen Uzmanlığı</h1>
-          <p>Karmaşık parçaların ve zorlu geometrilerin üstesinden gelmek için son teknoloji 5 Eksenli CNC İşleme
-            Merkezlerini kullanıyoruz</p>
+          <h1 data-i18n="machining.hero.slide2.title">İleri Teknoloji CNC Parkuru: 5 Eksen Uzmanlığı</h1>
+          <p data-i18n="machining.hero.slide2.desc">Karmaşık parçaların ve zorlu geometrilerin üstesinden gelmek için son teknoloji 5 Eksenli CNC İşleme Merkezlerini kullanıyoruz</p>
         </div>
       </div>
 
       <div class="ti-slide" style="background-image: url('assets/talasli-imalat/18.png');">
         <div class="ti-slide-content">
-          <h1>Mutlak Ölçüm ve Kalite Kontrol</h1>
-          <p>Ürettiğimiz her parçanın teknik resimdeki gereklilikleri birebir karşıladığından emin olmak için en son
-            teknoloji ölçüm cihazlarını kullanıyoruz. CMM (Koordinat Ölçüm Cihazı) başta olmak üzere gelişmiş metroloji
-            ekipmanlarımızla, mikron seviyesindeki hassasiyetleri dahi raporlayabiliriz.</p>
+          <h1 data-i18n="machining.hero.slide3.title">Mutlak Ölçüm ve Kalite Kontrol</h1>
+          <p data-i18n="machining.hero.slide3.desc">Ürettiğimiz her parçanın teknik resimdeki gereklilikleri birebir karşıladığından emin olmak için en son teknoloji ölçüm cihazlarını kullanıyoruz. CMM (Koordinat Ölçüm Cihazı) başta olmak üzere gelişmiş metroloji ekipmanlarımızla, mikron seviyesindeki hassasiyetleri dahi raporlayabiliriz.</p>
         </div>
       </div>
 
       <div class="ti-slide" style="background-image: url('assets/talasli-imalat/CNC.png');">
         <div class="ti-slide-content">
-          <h1>Prototiplemeden Seri Üretime Hız ve Kapasite</h1>
-          <p>İster yeni bir drone tasarımı için hızlı prototip ihtiyacınız olsun, ister yüksek hacimli seri üretim
-            talebiniz, esnek ve geniş makine parkurumuz ile taleplerinize hızla yanıt veriyoruz. </p>
+          <h1 data-i18n="machining.hero.slide4.title">Prototiplemeden Seri Üretime Hız ve Kapasite</h1>
+          <p data-i18n="machining.hero.slide4.desc">İster yeni bir drone tasarımı için hızlı prototip ihtiyacınız olsun, ister yüksek hacimli seri üretim talebiniz, esnek ve geniş makine parkurumuz ile taleplerinize hızla yanıt veriyoruz.</p>
         </div>
       </div>
 
       <div class="ti-slide" style="background-image: url('assets/talasli-imalat/8.png');">
         <div class="ti-slide-content">
-          <h1>Tesviye İşlemleri</h1>
-          <p>İşlenen parçaların yüzeylerinin istenen düzlüğe, pürüzsüzlüğe ve toleranslara ulaşması için hassas tesviye
-            operasyonları gerçekleştiriyoruz.</p>
+          <h1 data-i18n="machining.hero.slide5.title">Tesviye İşlemleri</h1>
+          <p data-i18n="machining.hero.slide5.desc">İşlenen parçaların yüzeylerinin istenen düzlüğe, pürüzsüzlüğe ve toleranslara ulaşması için hassas tesviye operasyonları gerçekleştiriyoruz.</p>
         </div>
       </div>
 
@@ -111,8 +115,8 @@
         <!-- Sol taraf: başlık + açıklama -->
         <div class="ti-product-intro">
           <span class="ti-eyebrow">DRONE TECH</span>
-          <h2>Talaşlı İmalat ve CNC İşleme Hizmetleri</h2>
-          <p class="ti-product-text">
+          <h2 data-i18n="machining.services.title">Talaşlı İmalat ve CNC İşleme Hizmetleri</h2>
+          <p class="ti-product-text" data-i18n="machining.services.desc">
             Fabrikamızda hassas CNC işleme, torna, freze imalatı için
             kritik parçalar üretmektedir. Yıllara dayanan tecrübemiz ve ileri teknoloji CNC
             ekipmanlarımızla projelerinize güvenilir bir çözüm ortağı sunuyoruz.
@@ -123,8 +127,8 @@
         <div class="ti-product-grid">
           <article class="ti-product-card">
             <div class="ti-product-icon">▣</div>
-            <h3>CNC Talaşlı İmalat</h3>
-            <p>
+            <h3 data-i18n="machining.services.card1.title">CNC Talaşlı İmalat</h3>
+            <p data-i18n="machining.services.card1.desc">
               Modern CNC freze ve CNC torna makinelerimizle, çeşitli malzemelerden hassas ve
               kompleks parçalar üretiyoruz. Metal ve kompozit malzemeler üzerinde uzmanlaşmış
               ekibimizle ihtiyaçlarınıza çözüm sunuyoruz.
@@ -133,8 +137,8 @@
 
           <article class="ti-product-card">
             <div class="ti-product-icon">▣</div>
-            <h3>Hassas İşleme</h3>
-            <p>
+            <h3 data-i18n="machining.services.card2.title">Hassas İşleme</h3>
+            <p data-i18n="machining.services.card2.desc">
               Milimetrenin altında tolerans gerektiren kritik parçalar için proses kontrollü
               hassas işleme teknikleri kullanıyor, her parçayı kayıt altına alarak izlenebilirlik
               sağlıyoruz.
@@ -143,8 +147,8 @@
 
           <article class="ti-product-card">
             <div class="ti-product-icon">▣</div>
-            <h3>Metal İşleme</h3>
-            <p>
+            <h3 data-i18n="machining.services.card3.title">Metal İşleme</h3>
+            <p data-i18n="machining.services.card3.desc">
               Alüminyum, paslanmaz çelik, karbür ve özel alaşımlar gibi yüksek performanslı malzemelerde talaşlı imalat
               yaparak, havacılık ve savunma sanayii için yüksek hassasiyetli ve güvenilir parçalar üretiyoruz. Modern
               üretim altyapımız, deneyimli teknik kadromuz ve kalite odaklı yaklaşımımız sayesinde,
@@ -154,8 +158,8 @@
 
           <article class="ti-product-card">
             <div class="ti-product-icon">▣</div>
-            <h3>Üretim ve Tasarım Geliştirme</h3>
-            <p>
+            <h3 data-i18n="machining.services.card4.title">Üretim ve Tasarım Geliştirme</h3>
+            <p data-i18n="machining.services.card4.desc">
               Seri üretim süreçlerini hızlandıran, alanında tecrübeli tasarım ve geliştirme ekibimiz ile üretime yönelik
               detaylı ve teknik görseller hazırlıyor; tasarımdan imalata kadar tüm aşamalarda verimliliği, doğruluğu ve
               kaliteyi ön planda tutan çözümler sunuyoruz.
@@ -168,8 +172,8 @@
     <section id="machines" class="ti-section ti-machines-section">
       <div class="ti-container">
 
-        <h2 class="ti-machines-title">İleri Teknoloji CNC Parkuru</h2>
-        <p class="ti-section-intro">
+        <h2 class="ti-machines-title" data-i18n="machining.machines.title">İleri Teknoloji CNC Parkuru</h2>
+        <p class="ti-section-intro" data-i18n="machining.machines.intro">
           Güvenilir üretim için düzenli bakımı yapılan modern CNC tezgahları ve ölçüm ekipmanları kullanıyoruz.
         </p>
 
@@ -177,48 +181,48 @@
           <article class="ti-machines-card" style="background-image: url('assets/talasli-imalat/9.jpeg')">
             <div class="ti-machines-overlay"></div>
             <div class="ti-machines-content">
-              <h3>3D CNC Programlama</h3>
-              <span>Simülasyon destekli, teknik görseller</span>
+              <h3 data-i18n="machining.machines.card1.title">3D CNC Programlama</h3>
+              <span data-i18n="machining.machines.card1.desc">Simülasyon destekli, teknik görseller</span>
             </div>
           </article>
 
           <article class="ti-machines-card" style="background-image: url('assets/talasli-imalat/5.png')">
             <div class="ti-machines-overlay"></div>
             <div class="ti-machines-content">
-              <h3>CNC Takımhane</h3>
-              <span>Kesici Takım Stok</span>
+              <h3 data-i18n="machining.machines.card2.title">CNC Takımhane</h3>
+              <span data-i18n="machining.machines.card2.desc">Kesici Takım Stok</span>
             </div>
           </article>
 
           <article class="ti-machines-card" style="background-image: url('assets/talasli-imalat/3.png')">
             <div class="ti-machines-overlay"></div>
             <div class="ti-machines-content">
-              <h3>Modern CNC Üretim Altyapısı</h3>
-              <span>Üretim Güvencesi</span>
+              <h3 data-i18n="machining.machines.card3.title">Modern CNC Üretim Altyapısı</h3>
+              <span data-i18n="machining.machines.card3.desc">Üretim Güvencesi</span>
             </div>
           </article>
 
           <article class="ti-machines-card" style="background-image: url('assets/talasli-imalat/4.png')">
             <div class="ti-machines-overlay"></div>
             <div class="ti-machines-content">
-              <h3>Kalite Kontorol Sistemleri</h3>
-              <span>İstatiksel Proses Kontrolü</span>
+              <h3 data-i18n="machining.machines.card4.title">Kalite Kontorol Sistemleri</h3>
+              <span data-i18n="machining.machines.card4.desc">İstatiksel Proses Kontrolü</span>
             </div>
           </article>
 
           <article class="ti-machines-card" style="background-image: url('assets/talasli-imalat/10.png')">
             <div class="ti-machines-overlay"></div>
             <div class="ti-machines-content">
-              <h3>Taşlama</h3>
-              <span>Yüzey Kalitesi Odaklılık</span>
+              <h3 data-i18n="machining.machines.card5.title">Taşlama</h3>
+              <span data-i18n="machining.machines.card5.desc">Yüzey Kalitesi Odaklılık</span>
             </div>
           </article>
 
           <article class="ti-machines-card" style="background-image: url('assets/talasli-imalat/11.jpeg')">
             <div class="ti-machines-overlay"></div>
             <div class="ti-machines-content">
-              <h3>Üretim Yürütme Sistemi / MES</h3>
-              <span>OEE / Verimlilik / Analiz /Raporlama</span>
+              <h3 data-i18n="machining.machines.card6.title">Üretim Yürütme Sistemi / MES</h3>
+              <span data-i18n="machining.machines.card6.desc">OEE / Verimlilik / Analiz /Raporlama</span>
             </div>
           </article>
         </div>
@@ -231,18 +235,18 @@
   <footer class="site-footer">
     <div class="container footer-inner">
       <div class="footer-contact">
-        <h3>İLETİŞİM</h3>
-        <p><strong>GİRESUN ADRES</strong><br>
-          Pazarsuyu Köyü II. OSB Mevki 5. Cadde No:12, 28300 Bulancak/Giresun<br>
-          <strong>Telefon:</strong> (0454) 333 20 20
+        <h3 data-i18n="machining.footer.contact_title">İLETİŞİM</h3>
+        <p><strong data-i18n="machining.footer.address_title">GİRESUN ADRES</strong><br>
+          <span data-i18n="machining.footer.address_text">Pazarsuyu Köyü II. OSB Mevki 5. Cadde No:12, 28300 Bulancak/Giresun</span><br>
+          <strong data-i18n="machining.footer.phone">Telefon:</strong> (0454) 333 20 20
         </p>
-        <p><strong>Mail:</strong> info@dronetech.com.tr</p>
+        <p><strong data-i18n="machining.footer.mail">Mail:</strong> info@dronetech.com.tr</p>
 
       </div>
     </div>
 
     <div class="footer-bottom">
-      <p>DRONE TECH © 2025, HER HAKKI SAKLIDIR </p>
+      <p data-i18n="machining.footer.copyright">DRONE TECH © 2025, HER HAKKI SAKLIDIR </p>
     </div>
   </footer>
 

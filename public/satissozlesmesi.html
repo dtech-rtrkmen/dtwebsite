@@ -1,0 +1,279 @@
+<!doctype html>
+<html lang="tr">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Drone Teknolojileri — DRONE TECH</title>
+    <meta name="description" content="Drone Tech ürün kategorileri" />
+    <link rel="stylesheet" href="css/styles.css" />
+    <!-- i18n Kütüphaneleri (CDN) -->
+    <script src="https://unpkg.com/i18next@23.7.11/dist/umd/i18next.min.js"></script>
+    <script src="https://unpkg.com/i18next-http-backend@2.4.2/i18nextHttpBackend.min.js"></script>
+    <script
+        src="https://unpkg.com/i18next-browser-languagedetector@7.2.0/i18nextBrowserLanguageDetector.min.js"></script>
+    <!-- Bizim i18n ayar dosyamız -->
+    <script src="js/i18n.js"></script>
+</head>
+
+<body>
+    <!-- KOYU ÜST BANT -->
+    <div class="header-band">
+        <header class="main-header">
+            <div class="header-left">
+                <a href="index.html" class="brand-link">
+                    <!-- koyu zemin için beyaz logo tercih et -->
+                    <img src="assets/logo-drak.png" alt="Drone Tech" class="brand-logo">
+                </a>
+            </div>
+            <!-- NAV -->
+            <button class="nav-toggle" type="button" aria-label="Menüyü Aç/Kapat" aria-expanded="false">
+                ☰
+            </button>
+            <nav class="main-nav" aria-label="Primary">
+                <a class="nav-item" href="drone-teknolojileri.html" data-i18n="nav.home">Anasayfa</a>
+                <a class="nav-item" href="drone-hakkimizda.html" data-i18n="nav.about">Hakkımızda</a>
+                <div class="nav-item has-dropdown">
+                    <a href="urunler.html" class="nav-link" id="urunlerLink" data-i18n="nav.products">Ürünler</a>
+                    <div class="dropdown" role="menu">
+                        <a href="fixed-wing-plane-vtol.html" class="dropdown-item"
+                            data-i18n="drone_tech.categories.fixed_wing">Fixed Wing Plane Vtol</a>
+                        <a href="multicopter.html" class="dropdown-item"
+                            data-i18n="drone_tech.categories.multicopter">Multicopter</a>
+                        <a href="gimbal-camera.html" class="dropdown-item"
+                            data-i18n="drone_tech.categories.gimbal_camera">Gimbal Camera</a>
+                        <a href="video-datalink.html" class="dropdown-item"
+                            data-i18n="drone_tech.categories.video_datalink">Video & Datalink</a>
+                        <a href="flight-controller.html" class="dropdown-item"
+                            data-i18n="drone_tech.categories.flight_controller">Flight Controller</a>
+                        <a href="battery-charger.html" class="dropdown-item"
+                            data-i18n="drone_tech.categories.battery_charger">Battery & Charger</a>
+                        <a href="ground-station.html" class="dropdown-item"
+                            data-i18n="drone_tech.categories.ground_station">Ground Station</a>
+                        <a href="uav-parts.html" class="dropdown-item" data-i18n="drone_tech.categories.uav_parts">UAV
+                            Parts</a>
+                    </div>
+                </div>
+                <a class="nav-item" href="drone-iletisim.html" data-i18n="nav.contact">İletişim</a>
+                <a class="nav-item" href="login.html" id="authLink" data-i18n="nav.login">Register/Login</a>
+            </nav>
+            <!-- SAĞ AKSİYONLAR -->
+            <div class="header-actions">
+                <div class="language-switch">
+                    <button onclick="changeLanguage('tr')" class="lang-btn">TR</button>
+                    <span class="separator">|</span>
+                    <button onclick="changeLanguage('en')" class="lang-btn">EN</button>
+                </div>
+                <!-- Sepet -->
+                <a href="sepet.html" class="icon-btn cart-btn" aria-label="Cart">
+                    🛒 <span class="cart-badge" id="cartBadge">0</span>
+                </a>
+            </div>
+        </header>
+    </div>
+
+
+    <main class="container categories">
+        <h1 data-i18n="sales_contract.title">SATIŞ SÖZLEŞMESİ</h1>
+        <h2 data-i18n="sales_contract.preliminary_info.title">ÖN BİLGİLENDİRME</h2>
+
+        <h3 data-i18n="sales_contract.seller_info.title">MADDE 1 SATICI BİLGİLERİ</h3>
+        <p><strong data-i18n="sales_contract.seller_info.seller.title">MADDE 1.1 – SATICI</strong> <span
+                data-i18n="sales_contract.seller_info.seller.content">Ticari Unvan: DRONETECH Adres: II.OSB Caddesi,
+                Maden, 28340 Piraziz/Giresun - BULANCAK / GİRESUN Telefon: 0 (454) 333 20 20 E-posta:
+                info@dronetech.com.tr</span></p>
+        <p><strong data-i18n="sales_contract.seller_info.buyer.title">MADDE 1.2 – ALICI</strong> <span
+                data-i18n="sales_contract.seller_info.buyer.content">www.dronetech.com.tr alışveriş sitesine üye olan
+                kişidir. Üyelik sırasında kullanılan adres ve iletişim bilgileri esas alınır.</span></p>
+
+        <h3 data-i18n="sales_contract.product_specs.title">MADDE 2 SATIŞA KONU ÜRÜN ÖZELLİKLERİ</h3>
+        <p data-i18n="sales_contract.product_specs.content">Mal veya hizmetin temel özellikleri www.dronetech.com.tr
+            adresinde yer almaktadır. Kampanya süresince ürünün temel özelliklerini inceleyebilirsiniz. Sitede
+            listelenen fiyatlar satış fiyatlarıdır. İlan edilen fiyatlar ve vaatler güncelleme yapılana ve değiştirilene
+            kadar geçerlidir. Süreli olarak ilan edilen fiyatlar ise belirtilen süre sonuna kadar geçerlidir. Ürünün
+            türü, miktarı, marka/modeli, rengi, adedi, satış bedeli, ödeme şekli ve siparişin sonlandığı andaki bilgiler
+            ürünün özelliklerini oluşturur. Ürünün sevkiyat masrafı olan kargo ücreti ALICI tarafından ödenecek olup,
+            iade durumunda da kargo ücreti ALICI tarafından karşılanacaktır.</p>
+
+        <h3 data-i18n="sales_contract.general_provisions.title">MADDE 3 GENEL HÜKÜMLER</h3>
+        <div class="contract-section" style="margin-bottom: 1em;">
+            <h4 data-i18n="sales_contract.general_provisions.civilian_use.title" style="margin-bottom: 0.5em;">Sivil
+                Kullanım Taahhüdü ve Kullanım Kısıtlamaları</h4>
+            <p data-i18n="sales_contract.general_provisions.civilian_use.content">"Alıcı, işbu sözleşme kapsamında satın
+                aldığı ürün/ürünlerin münhasıran sivil, ticari veya hobi amaçlı faaliyetlerde kullanılacağını; söz
+                konusu ürünlerin doğrudan veya dolaylı olarak askeri amaçlarla, savunma sanayii projelerinde, silah
+                sistemlerinde veya uluslararası hukukça yasaklanmış herhangi bir saldırı/savunma faaliyetinde
+                kullanılmayacağını beyan ve taahhüt eder. Ürünün bu taahhüde aykırı kullanımından doğabilecek tüm
+                hukuki, cezai ve idari sorumluluk münhasıran Alıcı’ya ait olup; Drone Tech (Satıcı), bu tür aykırılıklar
+                nedeniyle üçüncü kişilerin veya kamu kurumlarının uğrayacağı zararlardan hiçbir şekilde sorumlu
+                tutulamaz."</p>
+        </div>
+        <ul>
+            <li data-i18n="sales_contract.general_provisions.items.item1"><strong>3.1)</strong> ALICI,
+                www.dronetech.com.tr internet sitesinde sözleşme konusu ürünün temel nitelikleri, satış fiyatı ve ödeme
+                şekli ile teslimata ilişkin ön bilgileri okuyup bilgi sahibi olduğunu ve elektronik ortamda gerekli
+                teyidi verdiğini beyan eder. ALICI; bu Ön Bilgilendirmeyi elektronik ortamda teyit etmekle, mesafeli
+                sözleşmelerin akdinden önce, SATICI tarafından ALICI'ya verilmesi gereken adres, siparişi verilen
+                ürünlere ait temel özellikler, ürünlerin vergiler dahil fiyatı, ödeme ve teslimat bilgilerini de doğru
+                ve eksiksiz olarak edindiğini teyit etmiş olur.</li>
+            <li data-i18n="sales_contract.general_provisions.items.item2"><strong>3.2)</strong> Sözleşme konusu ürün,
+                yasal 30 günlük süreyi aşmamak koşuluyla her bir ürün için ALICI'nın yerleşim yerinin uzaklığına bağlı
+                olarak internet sitesindeki ön bilgiler kısmında belirtilen süre zarfında ALICI veya gösterdiği
+                adresteki kişi/kuruluşa teslim edilir.</li>
+            <li data-i18n="sales_contract.general_provisions.items.item3"><strong>3.3)</strong> Kargo firmasının, ürünü
+                ALICI’ya teslimi aşamasında karşılaşacağı her türlü sorun nedeniyle, siparişi verilen ürünün ALICI’ya
+                teslim edilememesinden veya herhangi bir nedenle teslim edilememesinden dolayı SATICI sorumlu tutulamaz.
+            </li>
+            <li data-i18n="sales_contract.general_provisions.items.item4"><strong>3.4)</strong> SATICI, sözleşme konusu
+                ürünün sağlam, eksiksiz, siparişte belirtilen niteliklere uygun ve varsa garanti belgeleri ve kullanım
+                kılavuzları ile teslim edilmesinden sorumludur.</li>
+            <li data-i18n="sales_contract.general_provisions.items.item5"><strong>3.5)</strong> SATICI, sözleşmeden
+                doğan ifa yükümlülüğünün süresi dolmadan ALICI’yı bilgilendirmek ve açıkça onayını almak suretiyle eşit
+                kalite ve fiyatta farklı bir ürün tedarik edebilir.</li>
+            <li data-i18n="sales_contract.general_provisions.items.item6"><strong>3.6)</strong> SATICI, sözleşme konusu
+                ürün veya hizmetin yerine getirilmesinin imkânsızlaşması halinde sözleşmeden doğan ifa yükümlülüğünü
+                yerine getiremezse, bu durumu, sözleşmeden doğan ifa yükümlülüğünün süresi dolmadan tüketiciye bildirir
+                ve 10 gün içinde toplam bedeli ALICI’ya iade eder.</li>
+            <li data-i18n="sales_contract.general_provisions.items.item7"><strong>3.7)</strong> Ürünün teslimatı için
+                işbu Ön Bilgilendirme Formunun elektronik ortamda teyit edilmesi şarttır. Herhangi bir nedenle ürün
+                bedeli ödenmez veya banka kayıtlarında iptal edilir ise, SATICI ürünün teslimi yükümlülüğünden kurtulmuş
+                kabul edilir.</li>
+            <li data-i18n="sales_contract.general_provisions.items.item8"><strong>3.8)</strong> Ürünün tesliminden sonra
+                ALICI'ya ait kredi kartının ALICI'nın kusurundan kaynaklanmayan bir şekilde yetkisiz kişilerce haksız
+                veya hukuka aykırı olarak kullanılması nedeni ile ilgili banka veya finans kuruluşunun ürün bedelini
+                SATICI'ya ödememesi halinde, ALICI kendisine teslim edilmiş olması kaydıyla ürünü 3 gün içinde SATICI'ya
+                iade etmek zorundadır. Bu takdirde nakliye giderleri ALICI'ya aittir.</li>
+            <li data-i18n="sales_contract.general_provisions.items.item9"><strong>3.9)</strong> SATICI mücbir sebepler
+                veya nakliyeyi engelleyen hava muhalefeti, ulaşımın kesilmesi gibi olağanüstü durumlar nedeni ile
+                sözleşme konusu ürünü süresi içinde teslim edemezse, durumu ALICI'ya bildirmekle yükümlüdür. Bu takdirde
+                ALICI siparişin iptal edilmesini, sözleşme konusu ürünün varsa emsali ile değiştirilmesini ve/veya
+                teslimat süresinin engelleyici durumun ortadan kalkmasına kadar ertelenmesi haklarından birini
+                kullanabilir. ALICI'nın siparişi iptal etmesi halinde ödediği tutar 10 gün içinde kendisine nakden ve
+                defaten ödenir. ALICI'nın kredi kartı ile yaptığı ödemelerde ise, ürün tutarı, siparişin ALICI
+                tarafından iptal edilmesinden sonra 7 gün içerisinde ilgili bankaya iade edilir. Bu tutarın bankaya
+                iadesinden sonra ALICI hesaplarına yansıması tamamen banka işlem süreci ile ilgili olduğundan, ALICI,
+                olası gecikmeler için SATICI’nın herhangi bir şekilde müdahalede bulunamayacağını ve SATICI tarafından
+                kredi kartına iade edilen tutarın banka tarafından ALICI hesabına yansıtılmasının ortalama 2 ile 3
+                haftayı bulabileceğini şimdiden kabul eder.</li>
+            <li data-i18n="sales_contract.general_provisions.items.item10"><strong>3.10)</strong> Kargo firmasının,
+                ürünü ALICI’ya teslimi aşamasında karşılaşacağı her türlü sorun nedeniyle, siparişi verilen ürünün
+                ALICI’ya teslim edilememesinden veya herhangi bir nedenle teslim edilememesinden dolayı SATICI sorumlu
+                tutulamaz.</li>
+        </ul>
+
+        <h3 data-i18n="sales_contract.withdrawal.title">MADDE 4 CAYMA HAKKI</h3>
+        <p data-i18n="sales_contract.withdrawal.content">ALICI; malın kendisine veya gösterdiği adresteki kişi/kuruluşa
+            tesliminden itibaren 14 (on dört) gün içerisinde cayma hakkına sahiptir. Cayma hakkının kullanılması için bu
+            14 günlük süre içinde SATICI'ya faks, e-posta veya telefon ile bildirimde bulunulması ve ürünün 6. madde
+            hükümleri çerçevesinde kullanılmamış olması şarttır. İade edilen ürünlerin faturası iade edilmelidir. Cayma
+            hakkının kullanılması için 14 (on dört) gün içinde SATICI'ya faks, e-posta veya telefon ile bildirimde
+            bulunulması ve ürünün 6. madde hükümleri çerçevesinde kullanılmamış olması zorunludur. İade edilen ürünlerin
+            faturası iade edilmelidir. Cayma hakkının kullanılması halinde, ürünün 10 (on) gün içinde SATICI'ya teslim
+            edilmesi gerekmektedir. Cayma hakkı nedeni ile iade edilen ürünün kargo bedeli ALICI tarafından karşılanır.
+        </p>
+
+        <h3 data-i18n="sales_contract.non_returnable.title">MADDE 5 KULLANILAMAYACAK ÜRÜNLER</h3>
+        <ul>
+            <li data-i18n="sales_contract.non_returnable.items.item1"><strong>MADDE 5.1 –</strong> Tüketicinin istekleri
+                veya açıkça kişisel ihtiyaçları doğrultusunda hazırlanan veya kişisel kullanıma uygun hale getirilen
+                mallar,</li>
+            <li data-i18n="sales_contract.non_returnable.items.item2"><strong>5.2 –</strong> Çabuk bozulabilen veya son
+                kullanma tarihi geçebilecek mallar,</li>
+            <li data-i18n="sales_contract.non_returnable.items.item3"><strong>5.3 –</strong> Teslimden sonra ambalaj,
+                bant, mühür, paket gibi koruyucu unsurları açılmış olan malların iadesi, sağlık ve hijyen açısından
+                uygun olmadığı takdirde kabul edilemez.</li>
+        </ul>
+
+        <h3 data-i18n="sales_contract.non_approved.title">MADDE 6 ONAYLANMAYAN DURUMLAR</h3>
+        <ul>
+            <li data-i18n="sales_contract.non_approved.items.item1"><strong>6.1)</strong> Ürünün tesliminden sonra
+                ALICI'ya ait kredi kartının yetkisiz kişilerce haksız veya hukuka aykırı olarak kullanılması nedeni ile
+                ilgili banka veya finans kuruluşunun ürün bedelini SATICI'ya ödememesi halinde, ALICI kendisine teslim
+                edilmiş olması kaydıyla ürünü 3 gün içinde SATICI'ya iade etmek zorundadır. Bu takdirde nakliye
+                giderleri ALICI'ya aittir.</li>
+            <li data-i18n="sales_contract.non_approved.items.item2"><strong>6.2)</strong> SATICI mücbir sebepler veya
+                nakliyeyi engelleyen hava muhalefeti, ulaşımın kesilmesi gibi olağanüstü durumlar nedeni ile sözleşme
+                konusu ürünü yasal 30 günlük süre içinde teslim edemezse, durumu ALICI'ya bildirmekle yükümlüdür. Bu
+                durumda ALICI siparişin iptal edilmesini, sözleşme konusu ürünün varsa emsali ile değiştirilmesini
+                ve/veya teslimat süresinin engelleyici durumun ortadan kalkmasına kadar ertelenmesi haklarından birini
+                kullanabilir. ALICI siparişi iptal ederse; ödenen tutar 10 gün içinde kendisine iade edilir.</li>
+            <li data-i18n="sales_contract.non_approved.items.item3"><strong>6.3)</strong> SATICI, www.dronetech.com.tr
+                adresinde duyurduğu kampanya bilgilerinde dilediği zaman değişiklik yapma hakkını saklı tutar. Bu
+                değişiklikler duyuru tarihinde yürürlüğe girer.</li>
+            <li data-i18n="sales_contract.non_approved.items.item4"><strong>6.4)</strong> SATICI, işbu Ön Bilgilendirme
+                Formu hükümlerini dilediği zaman sitede yayınlayarak veya kullanıcılara e-posta göndererek
+                güncelleyebilir.</li>
+        </ul>
+
+        <h3 data-i18n="sales_contract.international_warranty.title">MADDE 7 Uluslararası Garanti ve Mevzuat Uyumu</h3>
+        <p data-i18n="sales_contract.international_warranty.content">"Drone Tech tarafından sunulan garanti şartları,
+            süreleri ve kapsamı; ürünün satın alındığı, teslim edildiği veya nihai olarak kullanıldığı ülkenin yerel
+            tüketici kanunları ve emredici mevzuat hükümleri doğrultusunda farklılık gösterebilir. Alıcı, garanti
+            hizmetlerinden yararlanırken ürünün bulunduğu ülkenin yasal düzenlemelerinin ve yerel servis prosedürlerinin
+            geçerli olacağını kabul eder. Uluslararası satışlarda, garanti kapsamındaki onarım veya değişim süreçlerine
+            ilişkin gümrük, vergi ve uluslararası lojistik maliyetleri —ilgili ülkenin emredici yasaları aksini
+            öngörmedikçe— Alıcı’ya aittir."</p>
+
+        <h3 data-i18n="sales_contract.authorized_court.title">MADDE 8 YETKİLİ MAHKEME</h3>
+        <p data-i18n="sales_contract.authorized_court.content">İşbu ön bilgilendirmenin uygulanmasında, taraflar
+            arasında işbu Ön Bilgilendirmenin uygulanmasından ve yorumlanmasından doğabilecek her türlü uyuşmazlığın
+            çözümünde TÜRK HUKUKU ve İCRA MAHKEMELERİ yetkili olacaktır.</p>
+
+        <p data-i18n="sales_contract.conclusion">Tüketici, ürünün teslimine ilişkin tüm ön bilgileri, sipariş edilen
+            ürünün temel özelliklerini, ürünün fiyatını ve ödeme şeklini okuyup onaylamış ve web sitesi üzerinden ürünü
+            sipariş vererek elektronik onayı vermiştir.</p>
+
+        <div class="signature-section" style="margin-top: 2em;">
+            <p><span data-i18n="sales_contract.signature.seller">SATICI:</span> DRONETECH [İmza]</p>
+            <p><span data-i18n="sales_contract.signature.buyer">ALICI:</span> [İmza]</p>
+            <p><span data-i18n="sales_contract.signature.date">Tarih:</span></p>
+            <p><span data-i18n="sales_contract.signature.place">Yer:</span></p>
+        </div>
+    </main>
+
+
+    <!-- FOOTER -->
+    <footer class="site-footer">
+        <div class="container footer-inner">
+            <div class="footer-contact">
+                <h3 data-i18n="footer.contact_title">İLETİŞİM</h3>
+                <p><strong data-i18n="footer.address_title">GİRESUN ADRES</strong><br>
+                    <span data-i18n="footer.address_text">Pazarsuyu Köyü II. OSB Mevki 5. Cadde No:12, 28300
+                        Bulancak/Giresun</span><br>
+                    <strong data-i18n="footer.phone">Telefon:</strong> (0454) 333 20 20
+                </p>
+                <p><strong data-i18n="footer.mail">Mail:</strong> info@dronetech.com.tr</p>
+            </div>
+            <div class="footer-links">
+                <h3 data-i18n="footer.links_title">LINKLER</h3>
+                <ul>
+                    <li><a href="gizlilikpolitikasi.html" data-i18n="footer.privacy">Privacy Policy</a></li>
+                    <li><a href="garantiIade.html" data-i18n="footer.warranty">Warranty & Return Conditions</a></li>
+                    <li><a href="satisSozlesmesi.html" data-i18n="footer.sales_contract">Sales Contract</a></li>
+                    <li><a href="teslimatKosullari.html" data-i18n="footer.delivery">Delivery Terms</a></li>
+                </ul>
+                <div class="footer-pay">
+                    <img src="assets/logo_band_white.png" alt="iyzico">
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p data-i18n="footer.copyright">DRONE TECH © 2025, HER HAKKI SAKLIDIR</p>
+        </div>
+    </footer>
+
+    <script src="js/script.js"></script>
+    <button id="scrollTopBtn" class="scroll-top" aria-label="Yukarı Çık">↑</button>
+    <!-- WhatsApp Floating Button -->
+    <!-- WhatsApp Floating Button -->
+    <a href="https://wa.me/905528786230?text=Merhaba%20bilgi%20almak%20istiyorum" class="whatsapp-float" target="_blank"
+        aria-label="WhatsApp ile iletişime geç">
+        <svg viewBox="0 0 32 32" width="28" height="28" fill="#fff" aria-hidden="true">
+            <path
+                d="M19.11 17.57c-.3-.15-1.78-.88-2.05-.98s-.48-.15-.68.15-.78.98-.95 1.18-.35.22-.65.07a6.92 6.92 0 0 1-2-1.23 7.56 7.56 0 0 1-1.4-1.73c-.15-.26 0-.4.11-.55.11-.11.26-.3.37-.45s.15-.26.22-.44.04-.33-.02-.47c-.08-.15-.68-1.65-.93-2.26-.25-.59-.5-.52-.68-.53h-.59a1.13 1.13 0 0 0-.82.37 3.44 3.44 0 0 0-1.08 2.52c0 1.48 1.08 2.9 1.23 3.1s2.13 3.23 5.16 4.38c.72.31 1.28.5 1.72.63.72.23 1.38.2 1.9.12.58-.09 1.78-.73 2.03-1.43s.25-1.3.18-1.43c-.07-.11-.26-.18-.56-.33zM16 3.08a12.85 12.85 0 0 0-11.12 19.29l-1.31 4.78 4.9-1.29A12.87 12.87 0 1 0 16 3.08zm7.59 20.44a9.55 9.55 0 0 1-5.55 2.86 9.62 9.62 0 0 1-8.24-2.72 9.6 9.6 0 0 1-2.79-8.16 9.52 9.52 0 0 1 9.55-8.35 9.49 9.49 0 0 1 9.55 8.36 9.53 9.53 0 0 1-2.52 7.99z" />
+        </svg>
+    </a>
+    <button id="scrollTopBtn" class="scroll-top" aria-label="Yukarı Çık">↑</button>
+</body>
+
+</html>

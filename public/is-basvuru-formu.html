@@ -4,259 +4,251 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Talaşlı İmalat — DRONE TECH</title>
-    <!-- Talaşlı imalat sayfasına özel stiller -->
+    <title>İş Başvuru Formu — DRONE TECH</title>
     <link rel="stylesheet" href="css/is-basvuru.css" />
     <link rel="stylesheet" href="css/talasli-imalat.css" />
 </head>
 
 <body class="is-basvuru-page">
-    <!-- HEADER -->
     <header class="ti-header">
         <div class="ti-container ti-header-inner">
             <a href="index.html" class="ti-logo">
                 <img src="assets/logo-white.png" alt="Drone Tech">
             </a>
 
-            <!-- MOBİL HAMBURGER BUTONU -->
             <button class="ti-nav-toggle" aria-label="Menüyü Aç/Kapat">
-                <span></span>
-                <span></span>
-                <span></span>
+                <span></span><span></span><span></span>
             </button>
             <nav class="ti-nav">
                 <ul>
-                    <li><a href="talasli-imalat.html">Ana Sayfa</a></li>
-                    <li><a href="uretim.html">Üretim</a></li>
-                    <li><a href="kalite.html">Kalite</a></li>
-                    <li><a href="talasli-imalat-hakkimizda.html">Hakkımızda</a></li>
+                    <li><a href="talasli-imalat.html" data-i18n="machining.nav.home">Ana Sayfa</a></li>
+                    <li><a href="uretim.html" data-i18n="machining.nav.production">Üretim</a></li>
+                    <li><a href="kalite.html" data-i18n="machining.nav.quality">Kalite</a></li>
+                    <li><a href="talasli-imalat-hakkimizda.html" data-i18n="machining.nav.about">Hakkımızda</a></li>
                     <li class="ti-has-dropdown">
-                        <a href="talasli-imalat-iletisim.html">İletişim</a>
+                        <a href="talasli-imalat-iletisim.html" data-i18n="machining.nav.contact">İletişim</a>
                         <ul class="ti-dropdown">
-                            <li><a href="is-basvuru-formu.html">İş Başvuru Formu</a></li>
-                            <li><a href="talasli-imalat-iletisim.html">İletişim</a></li>
+                            <li><a href="is-basvuru-formu.html" data-i18n="machining.nav.job_application">İş Başvuru Formu</a></li>
+                            <li><a href="talasli-imalat-iletisim.html" data-i18n="machining.nav.contact">İletişim</a></li>
                         </ul>
                     </li>
                 </ul>
             </nav>
+            <div class="language-switch">
+                <button onclick="changeLanguage('tr')" class="lang-btn">TR</button>
+                <span class="separator">|</span>
+                <button onclick="changeLanguage('en')" class="lang-btn">EN</button>
+            </div>
         </div>
     </header>
+
     <main class="page-main page-main--job-application">
         <section class="job-intro">
-            <h1>İş Başvurusu Formu</h1>
-            <p>
+            <h1 data-i18n="careers.intro_title">İş Başvurusu Formu</h1>
+            <p data-i18n="careers.intro_desc">
                 Alttaki nitelikleri karşılayabilen kişiler öncelikli olarak değerlendirilecektir.
             </p>
 
             <div class="job-positions">
                 <article class="job-position">
-                    <h2>Kalite Kontrol Personeli</h2>
+                    <h2 data-i18n="careers.roles.quality_control.title">Kalite Kontrol Personeli</h2>
                     <ul>
-                        <li>En az lise mezunu</li>
-                        <li>Askerliğini tamamlamış</li>
-                        <li>Teknik resim bilgisine sahip</li>
-                        <li>Tercihen kalite kontrol alanında iş tecrübesine sahip</li>
-                        <li>Kumpas, mihengir gibi ölçüm araçlarını kullanabilen</li>
-                        <li>Tercihen iyi derecede İngilizce bilen</li>
+                        <li data-i18n="careers.roles.quality_control.items.1">En az lise mezunu</li>
+                        <li data-i18n="careers.roles.quality_control.items.2">Askerliğini tamamlamış</li>
+                        <li data-i18n="careers.roles.quality_control.items.3">Teknik resim bilgisine sahip</li>
+                        <li data-i18n="careers.roles.quality_control.items.4">Tercihen kalite kontrol alanında iş tecrübesine sahip</li>
+                        <li data-i18n="careers.roles.quality_control.items.5">Kumpas, mihengir gibi ölçüm araçlarını kullanabilen</li>
+                        <li data-i18n="careers.roles.quality_control.items.6">Tercihen iyi derecede İngilizce bilen</li>
                     </ul>
                 </article>
 
                 <article class="job-position">
-                    <h2>İmalat Operatörü</h2>
+                    <h2 data-i18n="careers.roles.operator.title">İmalat Operatörü</h2>
                     <ul>
-                        <li>Meslek lisesi mezunu</li>
-                        <li>Askerliğini tamamlamış</li>
-                        <li>Tercihen CNC operatörü olarak çalışmış</li>
-                        <li>Tercihen teknik resim okuma becerisine sahip</li>
+                        <li data-i18n="careers.roles.operator.items.1">Meslek lisesi mezunu</li>
+                        <li data-i18n="careers.roles.operator.items.2">Askerliğini tamamlamış</li>
+                        <li data-i18n="careers.roles.operator.items.3">Tercihen CNC operatörü olarak çalışmış</li>
+                        <li data-i18n="careers.roles.operator.items.4">Tercihen teknik resim okuma becerisine sahip</li>
                     </ul>
                 </article>
 
                 <article class="job-position">
-                    <h2>Teknik Ressam</h2>
+                    <h2 data-i18n="careers.roles.drafter.title">Teknik Ressam</h2>
                     <ul>
-                        <li>En az meslek lisesi mezunu, tercihen teknik üniversite mezunu</li>
-                        <li>Askerliğini tamamlamış</li>
-                        <li>Teknik resim kurallarını bilen ve çizebilen</li>
-                        <li>Tercihen imalat bilgisine sahip</li>
-                        <li>Tercihen iyi derecede İngilizce bilen</li>
+                        <li data-i18n="careers.roles.drafter.items.1">En az meslek lisesi mezunu, tercihen teknik üniversite mezunu</li>
+                        <li data-i18n="careers.roles.drafter.items.2">Askerliğini tamamlamış</li>
+                        <li data-i18n="careers.roles.drafter.items.3">Teknik resim kurallarını bilen ve çizebilen</li>
+                        <li data-i18n="careers.roles.drafter.items.4">Tercihen imalat bilgisine sahip</li>
+                        <li data-i18n="careers.roles.drafter.items.5">Tercihen iyi derecede İngilizce bilen</li>
                     </ul>
                 </article>
 
                 <article class="job-position">
-                    <h2>Elektrik ve Elektronik Mühendisi</h2>
+                    <h2 data-i18n="careers.roles.engineer.title">Elektrik ve Elektronik Mühendisi</h2>
                     <ul>
-                        <li>Gömülü mimaride yazılım geliştirebilen</li>
-                        <li>C ve C++ dillerine iyi derecede hakim</li>
-                        <li>Devre çizimi ve analizi üzerine tecrübeli</li>
-                        <li>Laboratuvar ekipmanları konusunda tecrübeli</li>
-                        <li>Tercihen ST ürün yelpazesi üzerinde tecrübeli</li>
-                        <li>Piezo ve MEMS tabanlı sensörler konusunda bilgili</li>
-                        <li>İyi derecede İngilizce bilen</li>
+                        <li data-i18n="careers.roles.engineer.items.1">Gömülü mimaride yazılım geliştirebilen</li>
+                        <li data-i18n="careers.roles.engineer.items.2">C ve C++ dillerine iyi derecede hakim</li>
+                        <li data-i18n="careers.roles.engineer.items.3">Devre çizimi ve analizi üzerine tecrübeli</li>
+                        <li data-i18n="careers.roles.engineer.items.4">Laboratuvar ekipmanları konusunda tecrübeli</li>
+                        <li data-i18n="careers.roles.engineer.items.5">Tercihen ST ürün yelpazesi üzerinde tecrübeli</li>
+                        <li data-i18n="careers.roles.engineer.items.6">Piezo ve MEMS tabanlı sensörler konusunda bilgili</li>
+                        <li data-i18n="careers.roles.engineer.items.7">İyi derecede İngilizce bilen</li>
                     </ul>
                 </article>
             </div>
         </section>
 
         <section class="job-form-section" aria-labelledby="job-form-title">
-            <h2 id="job-form-title">Başvuru Formu</h2>
+            <h2 id="job-form-title" data-i18n="careers.form_title">Başvuru Formu</h2>
             <p><small><span class="required">*</span> ile işaretli alanlar zorunludur.</small></p>
 
-            <form id="jobApplicationForm" class="job-form" method="post" action="/api/job-application"
-                enctype="multipart/form-data" novalidate>
-                <!-- Kişisel Bilgiler -->
+            <form id="jobApplicationForm" class="job-form" method="post" action="/api/job-application" enctype="multipart/form-data" novalidate>
+                
                 <fieldset class="form-group">
-                    <legend>Kişisel Bilgiler</legend>
+                    <legend data-i18n="careers.personal_info.title">Kişisel Bilgiler</legend>
 
                     <div class="form-row form-row--two-cols">
                         <div class="form-field">
-                            <label for="firstName">Adınız <span class="required">*</span></label>
-                            <input type="text" id="firstName" name="firstName" placeholder="Ad" required>
+                            <label for="firstName"><span data-i18n="careers.personal_info.first_name">Adınız</span> <span class="required">*</span></label>
+                            <input type="text" id="firstName" name="firstName" data-i18n="[placeholder]careers.personal_info.first_name" placeholder="Adınız" required>
                         </div>
 
                         <div class="form-field">
-                            <label for="lastName">Soyadınız <span class="required">*</span></label>
-                            <input type="text" id="lastName" name="lastName" placeholder="Soyad" required>
+                            <label for="lastName"><span data-i18n="careers.personal_info.last_name">Soyadınız</span> <span class="required">*</span></label>
+                            <input type="text" id="lastName" name="lastName" data-i18n="[placeholder]careers.personal_info.last_name" placeholder="Soyadınız" required>
                         </div>
                     </div>
 
                     <div class="form-field">
-                        <label for="email">E-Posta Adresiniz <span class="required">*</span></label>
-                        <input type="email" id="email" name="email" placeholder="ornek@eposta.com" required>
+                        <label for="email"><span data-i18n="careers.personal_info.email">E-Posta Adresiniz</span> <span class="required">*</span></label>
+                        <input type="email" id="email" name="email" data-i18n="[placeholder]careers.personal_info.email" placeholder="ornek@eposta.com" required>
                     </div>
 
                     <div class="form-row form-row--two-cols">
                         <div class="form-field">
-                            <label for="birthDate">Doğum Tarihiniz <span class="required">*</span></label>
+                            <label for="birthDate"><span data-i18n="careers.personal_info.birth_date">Doğum Tarihiniz</span> <span class="required">*</span></label>
                             <input type="date" id="birthDate" name="birthDate" required>
                         </div>
 
                         <div class="form-field">
-                            <label for="phone">Telefon Numaranız <span class="required">*</span></label>
+                            <label for="phone"><span data-i18n="careers.personal_info.phone">Telefon Numaranız</span> <span class="required">*</span></label>
                             <input type="tel" id="phone" name="phone" placeholder="+90 5__ ___ __ __" required>
                         </div>
                     </div>
 
                     <div class="form-field">
-                        <label for="address">Adresiniz <span class="required">*</span></label>
+                        <label for="address"><span data-i18n="careers.personal_info.address">Adresiniz</span> <span class="required">*</span></label>
                         <textarea id="address" name="address" rows="3" required></textarea>
                     </div>
                 </fieldset>
 
-                <!-- Eğitim ve Özgeçmiş -->
                 <fieldset class="form-group">
-                    <legend>Eğitim ve Özgeçmiş</legend>
+                    <legend data-i18n="careers.education_cv.title">Eğitim ve Özgeçmiş</legend>
                     <div class="form-row">
                         <div class="form-field">
-                            <label for="educationLevel">Öğrenim Durumu</label>
+                            <label for="educationLevel" data-i18n="careers.education_cv.education_level">Öğrenim Durumu</label>
                             <select id="educationLevel" name="educationLevel">
-                                <option value="">Seçiniz</option>
-                                <option value="ilkogretim">İlköğretim</option>
-                                <option value="lise">Lise</option>
-                                <option value="onlisans">Ön Lisans</option>
-                                <option value="lisans">Lisans</option>
-                                <option value="yukseklisans">Yüksek Lisans</option>
-                                <option value="doktora">Doktora</option>
+                                <option value="" data-i18n="careers.education_cv.levels.select">Seçiniz</option>
+                                <option value="ilkogretim" data-i18n="careers.education_cv.levels.primary">İlköğretim</option>
+                                <option value="lise" data-i18n="careers.education_cv.levels.high_school">Lise</option>
+                                <option value="onlisans" data-i18n="careers.education_cv.levels.associate">Ön Lisans</option>
+                                <option value="lisans" data-i18n="careers.education_cv.levels.bachelor">Lisans</option>
+                                <option value="yukseklisans" data-i18n="careers.education_cv.levels.master">Yüksek Lisans</option>
+                                <option value="doktora" data-i18n="careers.education_cv.levels.doctorate">Doktora</option>
                             </select>
                         </div>
                     </div>
 
                     <div class="form-field">
-                        <label for="lastSchool">Son Mezun Olunan Okul ve Bölüm <span class="required">*</span></label>
+                        <label for="lastSchool"><span data-i18n="careers.education_cv.last_school">Son Mezun Olunan Okul ve Bölüm</span> <span class="required">*</span></label>
                         <input type="text" id="lastSchool" name="lastSchool" required>
                     </div>
 
                     <div class="form-field">
-                        <label for="cvFile">Öz Geçmiş (CV) <span class="required">*</span></label>
+                        <label for="cvFile"><span data-i18n="careers.education_cv.cv_file">Öz Geçmiş (CV)</span> <span class="required">*</span></label>
                         <input type="file" id="cvFile" name="cvFile" accept=".pdf,.doc,.docx" required>
-                        <small>PDF veya Word formatında yükleyiniz (Maks. 10 MB)</small>
+                        <small data-i18n="careers.education_cv.cv_note">PDF veya Word formatında yükleyiniz (Maks. 10 MB)</small>
                     </div>
                 </fieldset>
 
-                <!-- Diğer Bilgiler -->
                 <fieldset class="form-group">
-                    <legend>Diğer Bilgiler</legend>
+                    <legend data-i18n="careers.other_info.title">Diğer Bilgiler</legend>
 
                     <div class="form-row form-row--two-cols">
                         <div class="form-field">
-                            <label for="militaryStatus">Askerlik Durumu (Erkek adaylar için)</label>
+                            <label for="militaryStatus" data-i18n="careers.other_info.military_status">Askerlik Durumu</label>
                             <select id="militaryStatus" name="militaryStatus">
-                                <option value="">Seçiniz</option>
-                                <option value="yapti">Yaptı</option>
-                                <option value="yapmadi">Yapmadı</option>
-                                <option value="tecilli">Tecilli</option>
-                                <option value="muaf">Muaf</option>
+                                <option value="" data-i18n="careers.other_info.military_options.select">Seçiniz</option>
+                                <option value="yapti" data-i18n="careers.other_info.military_options.done">Yaptı</option>
+                                <option value="yapmadi" data-i18n="careers.other_info.military_options.not_done">Yapmadı</option>
+                                <option value="tecilli" data-i18n="careers.other_info.military_options.postponed">Tecilli</option>
+                                <option value="muaf" data-i18n="careers.other_info.military_options.exempt">Muaf</option>
                             </select>
                         </div>
 
                         <div class="form-field">
-                            <label for="drivingLicense">Ehliyet (Sınıfıyla Birlikte)</label>
+                            <label for="drivingLicense" data-i18n="careers.other_info.driving_license">Ehliyet (Sınıfıyla Birlikte)</label>
                             <input type="text" id="drivingLicense" name="drivingLicense" placeholder="Örn: B, B+E">
                         </div>
                     </div>
 
                     <div class="form-field">
-                        <label for="languages">Yabancı Diller <span class="required">*</span></label>
-                        <textarea id="languages" name="languages" rows="2" placeholder="Dil ve seviye belirtiniz"
-                            required></textarea>
+                        <label for="languages"><span data-i18n="careers.other_info.languages">Yabancı Diller</span> <span class="required">*</span></label>
+                        <textarea id="languages" name="languages" rows="2" data-i18n="[placeholder]careers.other_info.languages_placeholder" placeholder="Dil ve seviye belirtiniz" required></textarea>
                     </div>
 
                     <div class="form-row form-row--two-cols">
                         <div class="form-field">
-                            <label for="desiredDepartment">Çalışmak İstediğiniz Bölüm <span
-                                    class="required">*</span></label>
+                            <label for="desiredDepartment"><span data-i18n="careers.other_info.desired_dept">Çalışmak İstediğiniz Bölüm</span> <span class="required">*</span></label>
                             <select id="desiredDepartment" name="desiredDepartment" required>
-                                <option value="">Seçiniz</option>
-                                <option value="kalite-kontrol">Kalite Kontrol Personeli</option>
-                                <option value="imalat-operatoru">İmalat Operatörü</option>
-                                <option value="teknik-ressam">Teknik Ressam</option>
-                                <option value="elektrik-elektronik-muhendisi">Elektrik ve Elektronik Mühendisi</option>
-                                <option value="bakim-onarim">Bakım ve Onarım</option>
-                                <option value="diger">Diğer</option>
+                                <option value="" data-i18n="careers.other_info.departments.select">Seçiniz</option>
+                                <option value="kalite-kontrol" data-i18n="careers.other_info.departments.quality">Kalite Kontrol Personeli</option>
+                                <option value="imalat-operatoru" data-i18n="careers.other_info.departments.operator">İmalat Operatörü</option>
+                                <option value="teknik-ressam" data-i18n="careers.other_info.departments.drafter">Teknik Ressam</option>
+                                <option value="elektrik-elektronik-muhendisi" data-i18n="careers.other_info.departments.engineer">Elektrik ve Elektronik Mühendisi</option>
+                                <option value="bakim-onarim" data-i18n="careers.other_info.departments.maintenance">Bakım ve Onarım</option>
+                                <option value="diger" data-i18n="careers.other_info.departments.other">Diğer</option>
                             </select>
                         </div>
 
                         <div class="form-field">
-                            <label for="desiredDepartmentOther">Diğer Çalışmak İstediğiniz Bölüm</label>
-                            <input type="text" id="desiredDepartmentOther" name="desiredDepartmentOther"
-                                placeholder="Diğer ise belirtiniz">
+                            <label for="desiredDepartmentOther" data-i18n="careers.other_info.other_dept">Diğer Çalışmak İstediğiniz Bölüm</label>
+                            <input type="text" id="desiredDepartmentOther" name="desiredDepartmentOther" data-i18n="[placeholder]careers.other_info.other_dept_placeholder" placeholder="Diğer ise belirtiniz">
                         </div>
                     </div>
 
                     <div class="form-field">
-                        <span class="form-label">Adli Sicil Kaydı</span>
+                        <span class="form-label" data-i18n="careers.other_info.criminal_record">Adli Sicil Kaydı</span>
                         <div class="form-options">
                             <label>
-                                <input type="radio" name="criminalRecord" value="yok" checked>
-                                Yok
+                                <input type="radio" name="criminalRecord" value="yok" checked> <span data-i18n="careers.other_info.criminal_options.no">Yok</span>
                             </label>
                             <label>
-                                <input type="radio" name="criminalRecord" value="var">
-                                Var
+                                <input type="radio" name="criminalRecord" value="var"> <span data-i18n="careers.other_info.criminal_options.yes">Var</span>
                             </label>
                         </div>
                     </div>
 
                     <div class="form-field">
-                        <label for="references">Referanslarınız (İletişim Bilgileriyle Birlikte)</label>
+                        <label for="references" data-i18n="careers.other_info.references">Referanslarınız</label>
                         <textarea id="references" name="references" rows="3"></textarea>
                     </div>
 
                     <div class="form-field">
-                        <label for="otherNotes">Belirtmek İstediğiniz Diğer Konular</label>
+                        <label for="otherNotes" data-i18n="careers.other_info.other_notes">Belirtmek İstediğiniz Diğer Konular</label>
                         <textarea id="otherNotes" name="otherNotes" rows="3"></textarea>
                     </div>
                 </fieldset>
 
-                <!-- Onay ve Gönder -->
                 <fieldset class="form-group form-group--submit">
                     <div class="form-field form-field--checkbox">
                         <label>
                             <input type="checkbox" id="approval" name="approval" required>
-                            Beyan ettiğim bilgilerin doğruluğunu onaylıyorum <span class="required">*</span>
+                            <span data-i18n="careers.submit.approval">Beyan ettiğim bilgilerin doğruluğunu onaylıyorum</span> <span class="required">*</span>
                         </label>
                     </div>
                     <div id="jobFormMessage" class="form-message" aria-live="polite"></div>
-                    <button type="submit" class="btn btn-primary">Başvuruyu Gönder</button>
+                    <button type="submit" class="btn btn-primary" data-i18n="careers.submit.btn">Başvuruyu Gönder</button>
                 </fieldset>
             </form>
         </section>
@@ -265,21 +257,27 @@
     <footer class="site-footer">
         <div class="container footer-inner">
             <div class="footer-contact">
-                <h3>İLETİŞİM</h3>
-                <p><strong>GİRESUN ADRES</strong><br>
-                    Pazarsuyu Köyü II. OSB Mevki 5. Cadde No:12, 28300 Bulancak/Giresun<br>
-                    <strong>Telefon:</strong> (0454) 333 20 20
+                <h3 data-i18n="machining.footer.contact_title">İLETİŞİM</h3>
+                <p><strong data-i18n="machining.footer.address_title">GİRESUN ADRES</strong><br>
+                    <span data-i18n="machining.footer.address_text">Pazarsuyu Köyü II. OSB Mevki 5. Cadde No:12, 28300 Bulancak/Giresun</span><br>
+                    <strong data-i18n="machining.footer.phone">Telefon:</strong> (0454) 333 20 20
                 </p>
-                <p><strong>Mail:</strong> info@dronetech.com.tr</p>
-
+                <p><strong data-i18n="machining.footer.mail">Mail:</strong> info@dronetech.com.tr</p>
             </div>
         </div>
 
         <div class="footer-bottom">
-            <p>DRONE TECH © 2025, HER HAKKI SAKLIDIR </p>
+            <p data-i18n="machining.footer.copyright">DRONE TECH © 2025, HER HAKKI SAKLIDIR </p>
         </div>
     </footer>
-    <script src="/js/is-basvuru.js"></script>
+
+    <script src="https://unpkg.com/i18next@23.7.11/dist/umd/i18next.min.js"></script>
+    <script src="https://unpkg.com/i18next-http-backend@2.4.2/i18nextHttpBackend.min.js"></script>
+    <script src="https://unpkg.com/i18next-browser-languagedetector@7.2.0/i18nextBrowserLanguageDetector.min.js"></script>
+    
+    <script src="js/i18n.js"></script>
+    <script src="js/is-basvuru.js"></script>
+    
     <button id="scrollTopBtn" aria-label="Yukarı çık">
         ↑
     </button>

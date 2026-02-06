@@ -12,12 +12,23 @@
     href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Playfair+Display:wght@700;900&display=swap"
     rel="stylesheet">
   <link rel="stylesheet" href="css/styles.css" />
+  <!-- i18n Kütüphaneleri (CDN) -->
+  <script src="https://unpkg.com/i18next@23.7.11/dist/umd/i18next.min.js"></script>
+  <script src="https://unpkg.com/i18next-http-backend@2.4.2/i18nextHttpBackend.min.js"></script>
+  <script src="https://unpkg.com/i18next-browser-languagedetector@7.2.0/i18nextBrowserLanguageDetector.min.js"></script>
+  <!-- Bizim i18n ayar dosyamız -->
+  <script src="js/i18n.js"></script>
 </head>
 
 <body class="home-page">
   <header class="dt-header container">
     <!-- DİKKAT: klasör ismi assets mi Assets mi? Sunucuda büyük/küçük harfe dikkat et -->
     <img src="assets/logo.png" alt="Drone Tech logosu" class="logo-image">
+    <div class="language-switch language-switch-home dtx-lang">
+      <button onclick="changeLanguage('tr')" class="lang-btn dtx-lang__btn" type="button">TR</button>
+      <span class="separator dtx-lang__sep" aria-hidden="true">|</span>
+      <button onclick="changeLanguage('en')" class="lang-btn dtx-lang__btn" type="button">EN</button>
+    </div>
   </header>
 
   <main class="home-main">
@@ -26,14 +37,14 @@
         <div class="tile-icon" aria-hidden="true">
           <img src="assets/talasli.png" alt="Talaşlı imalat" class="icon-img">
         </div>
-        <div class="tile-title">TALAŞLI İMALAT</div>
+        <div class="tile-title" data-i18n="home_page.machining_link">TALAŞLI İMALAT</div>
       </a>
 
       <a class="tile" href="drone-teknolojileri.html">
         <div class="tile-icon" aria-hidden="true">
           <img src="assets/dronee.png" alt="Drone teknolojileri" class="icon-img">
         </div>
-        <div class="tile-title">DRONE TEKNOLOJİLERİ</div>
+        <div class="tile-title" data-i18n="home_page.drone_tech_link">DRONE TEKNOLOJİLERİ</div>
       </a>
     </section>
   </main>

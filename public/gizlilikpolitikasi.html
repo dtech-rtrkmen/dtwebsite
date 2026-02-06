@@ -5,7 +5,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Drone Teknolojileri — DRONE TECH</title>
-    <link rel="stylesheet" href="css/shop.css" />
+    <meta name="description" content="Drone Tech ürün kategorileri" />
     <link rel="stylesheet" href="css/styles.css" />
     <!-- i18n Kütüphaneleri (CDN) -->
     <script src="https://unpkg.com/i18next@23.7.11/dist/umd/i18next.min.js"></script>
@@ -17,22 +17,23 @@
 </head>
 
 <body>
-
+    <!-- KOYU ÜST BANT -->
     <div class="header-band">
         <header class="main-header">
             <div class="header-left">
                 <a href="index.html" class="brand-link">
+                    <!-- koyu zemin için beyaz logo tercih et -->
                     <img src="assets/logo-drak.png" alt="Drone Tech" class="brand-logo">
                 </a>
             </div>
+            <!-- NAV -->
             <button class="nav-toggle" type="button" aria-label="Menüyü Aç/Kapat" aria-expanded="false">
                 ☰
             </button>
             <nav class="main-nav" aria-label="Primary">
                 <a class="nav-item" href="drone-teknolojileri.html" data-i18n="nav.home">Anasayfa</a>
                 <a class="nav-item" href="drone-hakkimizda.html" data-i18n="nav.about">Hakkımızda</a>
-
-                <div class="nav-item has-dropdown" aria-haspopup="true">
+                <div class="nav-item has-dropdown">
                     <a href="urunler.html" class="nav-link" id="urunlerLink" data-i18n="nav.products">Ürünler</a>
                     <div class="dropdown" role="menu">
                         <a href="fixed-wing-plane-vtol.html" class="dropdown-item"
@@ -53,39 +54,64 @@
                             Parts</a>
                     </div>
                 </div>
-
                 <a class="nav-item" href="drone-iletisim.html" data-i18n="nav.contact">İletişim</a>
                 <a class="nav-item" href="login.html" id="authLink" data-i18n="nav.login">Register/Login</a>
             </nav>
-
+            <!-- SAĞ AKSİYONLAR -->
             <div class="header-actions">
-                <div class="header-actions">
-                    <div class="language-switch language-switch-home dtx-lang">
-                        <button onclick="changeLanguage('tr')" class="lang-btn dtx-lang__btn" type="button">TR</button>
-                        <span class="separator dtx-lang__sep" aria-hidden="true">|</span>
-                        <button onclick="changeLanguage('en')" class="lang-btn dtx-lang__btn" type="button">EN</button>
-                    </div>
-                    <!-- sepet ikonunu çekmeceyi açacak hale getirdik -->
-                    <a href="sepet.html" id="openCartBtn" class="icon-btn cart-btn" aria-label="Cart">
-                        🛒 <span class="cart-badge" id="cartBadge">0</span>
-                    </a>
+                <div class="language-switch">
+                    <button onclick="changeLanguage('tr')" class="lang-btn">TR</button>
+                    <span class="separator">|</span>
+                    <button onclick="changeLanguage('en')" class="lang-btn">EN</button>
                 </div>
+                <!-- Sepet -->
+                <a href="sepet.html" class="icon-btn cart-btn" aria-label="Cart">
+                    🛒 <span class="cart-badge" id="cartBadge">0</span>
+                </a>
+            </div>
         </header>
     </div>
-    <!-- SAYFA BAŞLIĞI + BREADCRUMB -->
-    <section class="about-hero">
-        <div class="container about-hero-inner">
-            <h1 class="about-title" data-i18n="products_detail.micropilot.title">Micropilot</h1>
-            <nav class="breadcrumb" aria-label="breadcrumb">
-                <a href="drone-teknolojileri.html" data-i18n="nav.home">Home</a> <span>/</span> <span
-                    data-i18n="products_detail.micropilot.title">MİCROPİLOT</span>
-            </nav>
-        </div>
-    </section>
 
-    <main class="container shop" data-category="micropilot">
-        <section id="productGrid" class="product-grid" aria-live="polite"></section><!--Burası ürünler-->
+    <!-- KATEGORİ GRID -->
+    <main class="container categories">
+        <h1 data-i18n="privacy.title">Gizlilik Politikası</h1>
+        
+        <p data-i18n="privacy.intro">Bu gizlilik politikası, DRONETECH tarafından işletilen dronetech.com.tr (bundan böyle “Platform” olarak anılacaktır) üzerinden toplanan bilgilerin nasıl kullanılacağını, paylaşılacağını ve korunacağını açıklar. Lütfen bu politikayı dikkatlice okuyunuz.</p>
+
+        <h3 data-i18n="privacy.section1.title">1. Toplanan Bilgiler</h3>
+        <p data-i18n="privacy.section1.text">Platform, kullanıcı bilgisi toplanmasını en aza indirmeyi amaçlar. Ancak, Platforma erişim sırasında aşağıdaki türde bilgiler otomatik olarak toplanabilir:</p>
+        
+        <ul>
+            <li><strong data-i18n="privacy.section1.sub1.title">1.1. Kişisel Bilgiler:</strong> <span data-i18n="privacy.section1.sub1.text">Sizinle iletişim kurmak veya Platform üzerinde hizmet sağlamak amacıyla adınız, e-posta adresiniz, telefon numaranız gibi kişisel detaylar toplanabilir.</span></li>
+            <li><strong data-i18n="privacy.section1.sub2.title">1.2. Kullanım Bilgileri:</strong> <span data-i18n="privacy.section1.sub2.text">Platform üzerindeki etkileşimleriniz, ziyaret edilen sayfalar ve kullanım süresi gibi veriler otomatik olarak kaydedilebilir. Bu bilgiler kullanıcı deneyimini geliştirmek, hizmetleri optimize etmek ve güvenliği sağlamak amacıyla kullanılır.</span></li>
+        </ul>
+
+        <h3 data-i18n="privacy.section2.title">2. Bilgilerin Kullanımı ve Paylaşımı</h3>
+        <ul>
+            <li><strong data-i18n="privacy.section2.sub1.title">2.1. Hizmet Sağlama:</strong> <span data-i18n="privacy.section2.sub1.text">Toplanan bilgiler, Platform üzerinde hizmet sağlamak, kullanıcı taleplerine yanıt vermek ve sorunları çözmek amacıyla kullanılabilir.</span></li>
+            <li><strong data-i18n="privacy.section2.sub2.title">2.2. İletişim:</strong> <span data-i18n="privacy.section2.sub2.text">Toplanan iletişim bilgileri kullanıcılarla iletişim kurmak; güncellemeler, bildirimler veya pazarlama materyalleri göndermek için kullanılabilir.</span></li>
+            <li><strong data-i18n="privacy.section2.sub3.title">2.3. Üçüncü Taraflarla Paylaşım:</strong> <span data-i18n="privacy.section2.sub3.text">Platform, kullanıcı bilgilerini üçüncü taraflarla paylaşmayacak, satmayacak veya kiralamayacaktır. Ancak, yasal gereklilikler uyarınca yetkili makamlara bilgi sağlama hakkı saklı tutulabilir.</span></li>
+        </ul>
+
+        <h3 data-i18n="privacy.section3.title">3. Çerezler ve Benzer Teknolojiler</h3>
+        <p data-i18n="privacy.section3.text">Platform, çerezler ve benzer teknolojileri kullanarak kullanıcı deneyimini geliştirmeyi amaçlar. Kullanıcılar tarayıcı ayarları aracılığıyla çerezleri yönetebilir veya reddedebilir.</p>
+
+        <h3 data-i18n="privacy.section4.title">4. Güvenlik</h3>
+        <p data-i18n="privacy.section4.text">Platform, toplanan bilgileri güvende tutmak için uygun güvenlik önlemlerini almayı taahhüt eder. Ancak, internet üzerinden iletişim veya veri depolama her zaman risk taşır ve tam güvenlik garanti edilemez.</p>
+
+        <h3 data-i18n="privacy.section5.title">5. Gizlilik Politikası Güncellemeleri</h3>
+        <p data-i18n="privacy.section5.text">Bu gizlilik politikası zaman zaman güncellenebilir. Güncellemeleri takip etmek kullanıcıların sorumluluğundadır. Önemli değişiklikler kullanıcılara bildirilecektir.</p>
+
+        <p data-i18n="privacy.contact_intro">Bu gizlilik politikası hakkında herhangi bir sorunuz varsa, lütfen bizimle iletişime geçin.</p>
+
+        <div class="privacy-contact" style="margin-top: 20px;">
+            <strong data-i18n="footer.address_title">GİRESUN ADRES</strong><br>
+            <span data-i18n="footer.address_text">II.OSB Caddesi, Maden, 28340 Piraziz/Giresun BULANCAK / GİRESUN</span><br>
+            <strong data-i18n="footer.phone">Telefon:</strong> 0 530 000 00 00<br>
+            <strong data-i18n="footer.mail">Mail:</strong> info@dronetech.com.tr
+        </div>
     </main>
+
 
     <!-- FOOTER -->
     <footer class="site-footer">
@@ -117,8 +143,9 @@
         </div>
     </footer>
 
-    <script src="js/shop.js"></script>
     <script src="js/script.js"></script>
+    <button id="scrollTopBtn" class="scroll-top" aria-label="Yukarı Çık">↑</button>
+    <!-- WhatsApp Floating Button -->
     <!-- WhatsApp Floating Button -->
     <a href="https://wa.me/905528786230?text=Merhaba%20bilgi%20almak%20istiyorum" class="whatsapp-float" target="_blank"
         aria-label="WhatsApp ile iletişime geç">

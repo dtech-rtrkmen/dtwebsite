@@ -5,76 +5,85 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Drone Teknolojileri — DRONE TECH</title>
-    <link rel="stylesheet" href="css/shop.css" />
+    <meta name="description" content="Drone Tech ürün kategorileri" />
     <link rel="stylesheet" href="css/styles.css" />
     <!-- i18n Kütüphaneleri (CDN) -->
     <script src="https://unpkg.com/i18next@23.7.11/dist/umd/i18next.min.js"></script>
     <script src="https://unpkg.com/i18next-http-backend@2.4.2/i18nextHttpBackend.min.js"></script>
-    <script src="https://unpkg.com/i18next-browser-languagedetector@7.2.0/i18nextBrowserLanguageDetector.min.js"></script>
+    <script
+        src="https://unpkg.com/i18next-browser-languagedetector@7.2.0/i18nextBrowserLanguageDetector.min.js"></script>
     <!-- Bizim i18n ayar dosyamız -->
     <script src="js/i18n.js"></script>
 </head>
 
 <body>
-
+    <!-- KOYU ÜST BANT -->
     <div class="header-band">
         <header class="main-header">
             <div class="header-left">
                 <a href="index.html" class="brand-link">
+                    <!-- koyu zemin için beyaz logo tercih et -->
                     <img src="assets/logo-drak.png" alt="Drone Tech" class="brand-logo">
                 </a>
             </div>
+            <!-- NAV -->
             <button class="nav-toggle" type="button" aria-label="Menüyü Aç/Kapat" aria-expanded="false">
                 ☰
             </button>
             <nav class="main-nav" aria-label="Primary">
                 <a class="nav-item" href="drone-teknolojileri.html" data-i18n="nav.home">Anasayfa</a>
                 <a class="nav-item" href="drone-hakkimizda.html" data-i18n="nav.about">Hakkımızda</a>
-
-                <div class="nav-item has-dropdown" aria-haspopup="true">
+                <div class="nav-item has-dropdown">
                     <a href="urunler.html" class="nav-link" id="urunlerLink" data-i18n="nav.products">Ürünler</a>
                     <div class="dropdown" role="menu">
-                        <a href="fixed-wing-plane-vtol.html" class="dropdown-item" data-i18n="drone_tech.categories.fixed_wing">Fixed Wing Plane Vtol</a>
-                        <a href="multicopter.html" class="dropdown-item" data-i18n="drone_tech.categories.multicopter">Multicopter</a>
-                        <a href="gimbal-camera.html" class="dropdown-item" data-i18n="drone_tech.categories.gimbal_camera">Gimbal Camera</a>
-                        <a href="video-datalink.html" class="dropdown-item" data-i18n="drone_tech.categories.video_datalink">Video & Datalink</a>
-                        <a href="flight-controller.html" class="dropdown-item" data-i18n="drone_tech.categories.flight_controller">Flight Controller</a>
-                        <a href="battery-charger.html" class="dropdown-item" data-i18n="drone_tech.categories.battery_charger">Battery & Charger</a>
-                        <a href="ground-station.html" class="dropdown-item" data-i18n="drone_tech.categories.ground_station">Ground Station</a>
-                        <a href="uav-parts.html" class="dropdown-item" data-i18n="drone_tech.categories.uav_parts">UAV Parts</a>
+                        <a href="fixed-wing-plane-vtol.html" class="dropdown-item"
+                            data-i18n="drone_tech.categories.fixed_wing">Fixed Wing Plane Vtol</a>
+                        <a href="multicopter.html" class="dropdown-item"
+                            data-i18n="drone_tech.categories.multicopter">Multicopter</a>
+                        <a href="gimbal-camera.html" class="dropdown-item"
+                            data-i18n="drone_tech.categories.gimbal_camera">Gimbal Camera</a>
+                        <a href="video-datalink.html" class="dropdown-item"
+                            data-i18n="drone_tech.categories.video_datalink">Video & Datalink</a>
+                        <a href="flight-controller.html" class="dropdown-item"
+                            data-i18n="drone_tech.categories.flight_controller">Flight Controller</a>
+                        <a href="battery-charger.html" class="dropdown-item"
+                            data-i18n="drone_tech.categories.battery_charger">Battery & Charger</a>
+                        <a href="ground-station.html" class="dropdown-item"
+                            data-i18n="drone_tech.categories.ground_station">Ground Station</a>
+                        <a href="uav-parts.html" class="dropdown-item" data-i18n="drone_tech.categories.uav_parts">UAV
+                            Parts</a>
                     </div>
                 </div>
-
                 <a class="nav-item" href="drone-iletisim.html" data-i18n="nav.contact">İletişim</a>
                 <a class="nav-item" href="login.html" id="authLink" data-i18n="nav.login">Register/Login</a>
             </nav>
-
+            <!-- SAĞ AKSİYONLAR -->
             <div class="header-actions">
                 <div class="language-switch">
                     <button onclick="changeLanguage('tr')" class="lang-btn">TR</button>
                     <span class="separator">|</span>
                     <button onclick="changeLanguage('en')" class="lang-btn">EN</button>
                 </div>
-                <!-- sepet ikonunu çekmeceyi açacak hale getirdik -->
-                <a href="sepet.html" id="openCartBtn" class="icon-btn cart-btn" aria-label="Cart">
+                <!-- Sepet -->
+                <a href="sepet.html" class="icon-btn cart-btn" aria-label="Cart">
                     🛒 <span class="cart-badge" id="cartBadge">0</span>
                 </a>
             </div>
         </header>
     </div>
-    <!-- SAYFA BAŞLIĞI + BREADCRUMB -->
-    <section class="about-hero">
-        <div class="container about-hero-inner">
-            <h1 class="about-title" data-i18n="products_detail.pixhawk.title">Pixhawk</h1>
-            <nav class="breadcrumb" aria-label="breadcrumb">
-                <a href="drone-teknolojileri.html" data-i18n="nav.home">Home</a> <span>/</span> <span data-i18n="products_detail.pixhawk.title">Pixhawk</span>
-            </nav>
-        </div>
-    </section>
 
-    <main class="container shop" data-category="pixhawk">
-        <section id="productGrid" class="product-grid" aria-live="polite"></section><!--Burası ürünler-->
+
+    <main class="container categories">
+        <h1 data-i18n="delivery.title">TESLİMAT KOŞULLARI</h1>
+        <h3 data-i18n="delivery.orders.title">SİPARİŞLER</h3>
+        
+        <p data-i18n="delivery.orders.text1">Siparişleriniz, banka onayı alındıktan sonra 40 iş günü (Pazartesi-Cuma) içerisinde kargoya teslim edilir. Özel üretim ürünlerin teslimat süreleri, üretim zamanına göre farklılık gösterebilir. Bu tür ürünlerin teslimat bilgileri ve süreleri ürün sayfalarında belirtilmiştir.</p>
+        <p data-i18n="delivery.orders.text2">Tarafımızdan kaynaklanan herhangi bir aksaklık durumunda, üyelik bilgileriniz üzerinden size bilgi verilecektir. Bu nedenle üyelik bilgilerinizin eksiksiz ve doğru olması önemlidir. Bayram ve tatil günlerinde teslimat yapılmamaktadır.</p>
+        <p data-i18n="delivery.orders.text3">Seçtiğiniz tüm ürünler, anlaşmalı olduğumuz kargo şirketleri aracılığıyla DRONETECH garantisi ile size teslim edilecektir.</p>
+        <p data-i18n="delivery.orders.text4">Satın aldığınız ürünlerle ilgili olarak size bir onay e-postası gönderilecektir. Seçilen ürünlerden herhangi birinin stokta bulunmaması durumunda, konuyla ilgili size bir e-posta gönderilecek ve ürünün stokta gireceği ilk tarih bildirilecektir.</p>
+        <p data-i18n="delivery.orders.text5">www.dronetech.com.tr, aynı anda birden fazla kullanıcının alışveriş yapmasına olanak tanıyan bir çevrimiçi alışveriş sitesidir. Nadir de olsa, başka bir tüketicinin aynı ürünü alması ve ürünün stokta tükenmesi ihtimali bulunmaktadır; bu durumda ödemeniz koşulsuz olarak iade edilecektir.</p>
     </main>
+
 
     <!-- FOOTER -->
     <footer class="site-footer">
@@ -82,7 +91,8 @@
             <div class="footer-contact">
                 <h3 data-i18n="footer.contact_title">İLETİŞİM</h3>
                 <p><strong data-i18n="footer.address_title">GİRESUN ADRES</strong><br>
-                    <span data-i18n="footer.address_text">Pazarsuyu Köyü II. OSB Mevki 5. Cadde No:12, 28300 Bulancak/Giresun</span><br>
+                    <span data-i18n="footer.address_text">Pazarsuyu Köyü II. OSB Mevki 5. Cadde No:12, 28300
+                        Bulancak/Giresun</span><br>
                     <strong data-i18n="footer.phone">Telefon:</strong> (0454) 333 20 20
                 </p>
                 <p><strong data-i18n="footer.mail">Mail:</strong> info@dronetech.com.tr</p>
@@ -90,10 +100,10 @@
             <div class="footer-links">
                 <h3 data-i18n="footer.links_title">LINKLER</h3>
                 <ul>
-                    <li><a href="#" data-i18n="footer.privacy">Privacy Policy</a></li>
-                    <li><a href="#" data-i18n="footer.warranty">Warranty & Return Conditions</a></li>
-                    <li><a href="#" data-i18n="footer.sales_contract">Sales Contract</a></li>
-                    <li><a href="#" data-i18n="footer.delivery">Delivery Terms</a></li>
+                    <li><a href="gizlilikpolitikasi.html" data-i18n="footer.privacy">Privacy Policy</a></li>
+                    <li><a href="garantiIade.html" data-i18n="footer.warranty">Warranty & Return Conditions</a></li>
+                    <li><a href="satisSozlesmesi.html" data-i18n="footer.sales_contract">Sales Contract</a></li>
+                    <li><a href="teslimatKosullari.html" data-i18n="footer.delivery">Delivery Terms</a></li>
                 </ul>
                 <div class="footer-pay">
                     <img src="assets/logo_band_white.png" alt="iyzico">
@@ -105,9 +115,9 @@
         </div>
     </footer>
 
-    <script src="js/shop.js"></script>
     <script src="js/script.js"></script>
-
+    <button id="scrollTopBtn" class="scroll-top" aria-label="Yukarı Çık">↑</button>
+    <!-- WhatsApp Floating Button -->
     <!-- WhatsApp Floating Button -->
     <a href="https://wa.me/905528786230?text=Merhaba%20bilgi%20almak%20istiyorum" class="whatsapp-float" target="_blank"
         aria-label="WhatsApp ile iletişime geç">

@@ -164,10 +164,15 @@
     if (!grid) return;
 
     if (!list.length) {
-      grid.innerHTML =
-        '<p class="small">Şu anda listelenecek ürün bulunamadı.</p>';
-      return;
-    }
+    // i18next kütüphanesi yüklenmişse çeviriyi al, yoksa varsayılan Türkçe metni göster
+    const noProductMsg = (typeof i18next !== 'undefined') 
+        ? i18next.t('messages.no_product') 
+        : 'Şu anda listelenecek ürün bulunamadı.';
+
+    // Hem metni basıyoruz hem de 'data-i18n' etiketini ekliyoruz (Dil değişince otomatik güncellensin diye)
+    grid.innerHTML = `<p class="small" data-i18n="messages.no_product">${noProductMsg}</p>`;
+    return;
+}
 
     grid.innerHTML = list
       .map(

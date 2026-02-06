@@ -14,6 +14,7 @@ dotenv.config();
 import soap from "soap";
 import multer from "multer";
 import nodemailer from "nodemailer";
+import puppeteer from "puppeteer";
 
 const iyzipay = new Iyzipay({
   apiKey: "sandbox-eI51Rj7CHjWCLrtxy58lwmYRkMH492sq",
@@ -448,92 +449,134 @@ app.post(
         ]
       );
 
-      // 🔹 Mail kısmı aynen devam
+      // 2) PDF Oluşturma ve Mail Gönderimi
       try {
-        const notifyTo = process.env.JOB_APP_NOTIFY_TO || process.env.SMTP_USER;
-
-        const subject = `Yeni İş Başvurusu (CV): ${firstName} ${lastName}`;
-
-        const textBody = `
-Yeni bir iş başvurusu alındı.
-
-Ad Soyad: ${firstName} ${lastName}
-E-posta: ${email}
-Telefon: ${phone}
-Doğum Tarihi: ${birthDateStr}
-Adres: ${address}
-
-Öğrenim Durumu: ${educationLevel || "-"}
-Son Mezun Olunan Okul / Bölüm: ${lastSchool}
-
-Askerlik Durumu: ${militaryStatus || "-"}
-Ehliyet: ${drivingLicense || "-"}
-
-Yabancı Diller: ${languages}
-Çalışmak İstediği Bölüm: ${desiredDepartment}
-Diğer Bölüm: ${desiredDepartmentOther || "-"}
-
-Adli Sicil Kaydı: ${criminalRecord}
-
-Referanslar:
-${referencesText || "-"}
-
-Diğer Notlar:
-${otherNotes || "-"}
-
-Bu mail web sitesi iş başvuru formundan otomatik olarak gönderilmiştir.
-`;
-
-        const htmlBody = `
-    <h2>Yeni İş Başvurusu (CV)</h2>
-    <p><strong>Ad Soyad:</strong> ${firstName} ${lastName}</p>
-    <p><strong>E-posta:</strong> ${email}</p>
-    <p><strong>Telefon:</strong> ${phone}</p>
-    <p><strong>Doğum Tarihi:</strong> ${birthDateStr}</p>
-    <p><strong>Adres:</strong> ${address}</p>
-    <hr>
-    <p><strong>Öğrenim Durumu:</strong> ${educationLevel || "-"}</p>
-    <p><strong>Son Mezun Olunan Okul / Bölüm:</strong> ${lastSchool}</p>
-    <p><strong>Askerlik Durumu:</strong> ${militaryStatus || "-"}</p>
-    <p><strong>Ehliyet:</strong> ${drivingLicense || "-"}</p>
-    <p><strong>Yabancı Diller:</strong> ${languages}</p>
-    <p><strong>Çalışmak İstediği Bölüm:</strong> ${desiredDepartment}</p>
-    <p><strong>Diğer Bölüm:</strong> ${desiredDepartmentOther || "-"}</p>
-    <p><strong>Adli Sicil Kaydı:</strong> ${criminalRecord}</p>
-    <hr>
-    <p><strong>Referanslar:</strong><br>${(referencesText || "-").replace(
-          /\n/g,
-          "<br>"
-        )}</p>
-    <p><strong>Diğer Notlar:</strong><br>${(otherNotes || "-").replace(
-          /\n/g,
-          "<br>"
-        )}</p>
-    <hr>
-    <p style="font-size:12px;color:#666;">Bu mail web sitesi iş başvuru formundan otomatik olarak gönderilmiştir.</p>
-  `;
-
-        const mailOptions = {
-          from: `"Web İş Başvurusu" <${process.env.SMTP_USER}>`,
-          to: notifyTo,
-          subject,
-          text: textBody,
-          html: htmlBody,
-          attachments: [],
-        };
-
-        if (cvFilePath && cvFileName) {
-          mailOptions.attachments.push({
-            filename: cvFileName,
-            path: cvFilePath,
-          });
+        // CSS dosyasını oku
+        const cssPath = path.join(__dirname, "..", "public", "css", "is-basvuru.css");
+        let cssContent = "";
+        if (fs.existsSync(cssPath)) {
+            cssContent = fs.readFileSync(cssPath, "utf8");
         }
 
-        mailTransporter.sendMail(mailOptions).catch((err) => {
-          console.error("Başvuru maili gönderilemedi:", err);
+        // HTML Şablonu
+        const htmlTemplate = `
+        <html>
+        <head>
+            <style>
+                ${cssContent}
+                body { background: #fff !important; font-family: sans-serif; padding: 40px; }
+                .job-form-section { border: 1px solid #ddd; padding: 20px; box-shadow: none; margin-top: 20px; }
+                .label { font-weight: bold; color: #333; display: inline-block; width: 180px; }
+                .value { display: inline-block; color: #555; }
+                .row { margin-bottom: 12px; border-bottom: 1px solid #eee; padding-bottom: 8px; }
+                h1 { border-bottom: 2px solid #2563eb; padding-bottom: 10px; margin-bottom: 20px; color: #333; }
+                h2 { margin-top: 30px; font-size: 18px; background: #f4f5f7; padding: 10px; border-left: 5px solid #2563eb; }
+                .header { text-align: center; margin-bottom: 30px; }
+            </style>
+        </head>
+        <body>
+            <div class="header">
+                <img src="https://www.dronetech.com.tr/assets/logo-white.png" style="background:#000; padding:15px; width:200px; border-radius: 5px;">
+            </div>
+            
+            <h1>İş Başvuru Formu</h1>
+            <p><strong>Başvuru Tarihi:</strong> ${new Date().toLocaleDateString("tr-TR")}</p>
+
+            <h2>Kişisel Bilgiler</h2>
+            <div class="job-form-section">
+                <div class="row"><span class="label">Ad Soyad:</span> <span class="value">${firstName} ${lastName}</span></div>
+                <div class="row"><span class="label">Doğum Tarihi:</span> <span class="value">${birthDateStr}</span></div>
+                <div class="row"><span class="label">Telefon:</span> <span class="value">${phone}</span></div>
+                <div class="row"><span class="label">E-Posta:</span> <span class="value">${email}</span></div>
+                <div class="row"><span class="label">Adres:</span> <span class="value">${address}</span></div>
+            </div>
+
+            <h2>Eğitim ve Nitelikler</h2>
+            <div class="job-form-section">
+                <div class="row"><span class="label">Öğrenim Durumu:</span> <span class="value">${educationLevel || "-"}</span></div>
+                <div class="row"><span class="label">Son Okul / Bölüm:</span> <span class="value">${lastSchool}</span></div>
+                <div class="row"><span class="label">Yabancı Diller:</span> <span class="value">${languages}</span></div>
+            </div>
+
+            <h2>Başvuru Detayları</h2>
+            <div class="job-form-section">
+                <div class="row"><span class="label">Başvurulan Bölüm:</span> <span class="value">${desiredDepartment} ${desiredDepartmentOther ? `(${desiredDepartmentOther})` : ""}</span></div>
+                <div class="row"><span class="label">Askerlik Durumu:</span> <span class="value">${militaryStatus || "-"}</span></div>
+                <div class="row"><span class="label">Ehliyet:</span> <span class="value">${drivingLicense || "-"}</span></div>
+                <div class="row"><span class="label">Adli Sicil Kaydı:</span> <span class="value">${criminalRecord}</span></div>
+            </div>
+            
+            <h2>Ek Bilgiler</h2>
+            <div class="job-form-section">
+                <div class="row" style="display:block;">
+                    <div class="label" style="margin-bottom:5px;">Referanslar:</div>
+                    <div class="value" style="display:block; white-space: pre-wrap;">${referencesText || "-"}</div>
+                </div>
+                <div class="row" style="display:block;">
+                    <div class="label" style="margin-bottom:5px;">Diğer Notlar:</div>
+                    <div class="value" style="display:block; white-space: pre-wrap;">${otherNotes || "-"}</div>
+                </div>
+            </div>
+            
+            <div style="margin-top:50px; font-size:12px; color:#999; text-align:center; border-top: 1px solid #eee; padding-top: 20px;">
+                Bu belge Dronetech Web Sitesi üzerinden otomatik oluşturulmuştur.<br>
+                IP Adresi: ${req.ip || "-"}
+            </div>
+        </body>
+        </html>
+        `;
+
+        // Puppeteer Başlat ve PDF'e Çevir
+        const browser = await puppeteer.launch({ 
+            headless: true, 
+            args: ["--no-sandbox", "--disable-setuid-sandbox"] 
         });
-      } catch (mailErr) {
-        console.error("Mail hazırlarken hata:", mailErr);
+        const page = await browser.newPage();
+        await page.setContent(htmlTemplate, { waitUntil: "networkidle0" });
+        const pdfBuffer = await page.pdf({
+            format: "A4",
+            printBackground: true,
+            margin: { top: "20px", bottom: "20px", left: "20px", right: "20px" }
+        });
+        await browser.close();
+
+        // Mail Gönderimi
+        const notifyTo = process.env.JOB_APP_NOTIFY_TO || process.env.SMTP_USER;
+        const subject = `Yeni İş Başvurusu: ${firstName} ${lastName} - ${desiredDepartment}`;
+
+        // Mail Eklentilerini Hazırla
+        const attachments = [
+            {
+                filename: `Basvuru_Formu_${firstName}_${lastName}.pdf`,
+                content: pdfBuffer,
+                contentType: "application/pdf"
+            }
+        ];
+
+        // Kullanıcı kendi CV'sini yüklediyse onu da ekle
+        if (cvFilePath && cvFileName) {
+            attachments.push({
+                filename: `Orijinal_CV_${cvFileName}`,
+                path: cvFilePath
+            });
+        }
+
+        await mailTransporter.sendMail({
+            from: `"Dronetech İK" <${process.env.SMTP_USER}>`,
+            to: notifyTo,
+            subject: subject,
+            html: `
+                <h3>Yeni bir iş başvurusu alındı.</h3>
+                <p><strong>Aday:</strong> ${firstName} ${lastName}</p>
+                <p><strong>Bölüm:</strong> ${desiredDepartment}</p>
+                <p>Başvuru formu PDF formatında oluşturulmuş ve ekte sunulmuştur.</p>
+                <p>Adayın yüklediği orijinal CV (varsa) ayrıca ektedir.</p>
+            `,
+            attachments: attachments
+        });
+
+      } catch (pdfErr) {
+        console.error("PDF/Mail İşlemleri Hatası:", pdfErr);
       }
 
       return res.status(201).json({
@@ -2798,6 +2841,6 @@ app.get("/admin", (req, res) => {
 });
 
 /* ---------------- Start ---------------- */
-app.listen(PORT, () => {
-  console.log(`✅ Server çalışıyor: http://localhost:${PORT}`);
+app.listen(PORT, "127.0.0.1", () => {
+  console.log(`✅ Server çalışıyor: http://127.0.0.1:${PORT}`);
 });

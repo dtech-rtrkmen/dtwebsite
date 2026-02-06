@@ -46,6 +46,7 @@ body {
 
 /* Logo ile kutular arası boşluğu CSS ile verelim */
 .dt-header {
+  position: relative;
   text-align: center;
   padding: 32px 0 10px;
 }
@@ -2053,5 +2054,196 @@ YUKARI ÇIK
   /* Ürünler satırına basınca highlight çok grimsi olmasın */
   .main-header .main-nav .nav-link{
     color: #e5e7eb;
+  }
+}
+
+/* Anasayfa için dil değiştirici pozisyonu */
+.language-switch-home {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  z-index: 10;
+}
+
+/* Anasayfadaki dil butonlarının rengi (koyu) */
+.language-switch-home .lang-btn {
+  color: #374151;
+}
+
+/* Anasayfadaki ayıracın rengi */
+.language-switch-home .separator {
+  color: #9ca3af;
+}
+
+/* =========================
+   Modern language switch (scoped)
+   Only affects: .dtx-lang ...
+   ========================= */
+/* =========================
+   dtx language switch (strong override)
+   ========================= */
+
+.language-switch-home.dtx-lang{
+  position: absolute;             /* üstte sağa sabitlemek için */
+  top: 18px;
+  right: 18px;
+  z-index: 10;
+
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+
+  padding: 8px 10px;
+  border-radius: 999px;
+
+  background: rgba(255,255,255,.92);
+  border: 1px solid rgba(2, 6, 23, .10);
+  box-shadow: 0 10px 24px rgba(2, 6, 23, .10);
+}
+
+/* Buton: ince/modern */
+.language-switch-home.dtx-lang .dtx-lang__btn{
+  appearance: none;
+  border: 1px solid rgba(2, 6, 23, .12) !important;
+  background: transparent !important;
+
+  color: #0f172a !important;
+  font-weight: 600 !important;     /* <<< KALINLIK BURADA DÜŞTÜ */
+  letter-spacing: .04em;
+  font-size: 12px;
+
+  border-radius: 999px;
+  padding: 8px 12px;
+
+  cursor: pointer;
+  transition: transform .15s ease, background .15s ease, border-color .15s ease, box-shadow .15s ease;
+}
+
+.language-switch-home.dtx-lang .dtx-lang__btn:hover{
+  transform: translateY(-1px);
+  background: rgba(2, 6, 23, .05) !important;
+  border-color: rgba(2, 6, 23, .20) !important;
+  box-shadow: 0 8px 16px rgba(2, 6, 23, .08);
+}
+
+.language-switch-home.dtx-lang .dtx-lang__btn:active{
+  transform: translateY(0);
+}
+
+.language-switch-home.dtx-lang .dtx-lang__btn:focus-visible{
+  outline: none;
+  box-shadow: 0 0 0 4px rgba(99, 102, 241, .18);
+}
+
+/* Ayraç */
+.language-switch-home.dtx-lang .dtx-lang__sep{
+  opacity: .35;
+  user-select: none;
+  font-weight: 500;
+}
+
+/* Mobilde biraz küçült */
+@media (max-width: 420px){
+  .language-switch-home.dtx-lang{
+    top: 12px;
+    right: 12px;
+    padding: 7px 9px;
+    gap: 8px;
+  }
+  .language-switch-home.dtx-lang .dtx-lang__btn{
+    padding: 7px 10px;
+    font-size: 11px;
+  }
+}
+
+
+/* =========================
+   FIX: Dil seçici logo ile çakışmasın
+   ========================= */
+
+/* Dil seçici absolute olduğu için header'a üstten boşluk aç */
+.home-page .dt-header{
+  padding-top: 78px;   /* switch yüksekliği kadar alan */
+}
+
+/* Switch biraz daha derli toplu dursun */
+.home-page .language-switch-home.dtx-lang{
+  top: 18px;
+  right: 18px;
+}
+
+/* Mobilde daha da sıkıştığı için boşluğu artır/konumu düzelt */
+@media (max-width: 520px){
+  .home-page .dt-header{
+    padding-top: 86px;
+  }
+  .home-page .language-switch-home.dtx-lang{
+    top: 12px;
+    right: 12px;
+  }
+}
+
+/* =========================
+   FIX: Top bar overlap (nav + actions)
+   ========================= */
+
+/* 1) Üst barı gerçek flex layout yap */
+.header-band .main-header{
+  width: min(1200px, 94%);
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 12px 0;
+}
+
+/* Sol logo alanı */
+.header-band .header-left{
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+}
+
+/* 2) Menü ortada kalsın, taşarsa kırılmasın */
+.header-band .main-nav{
+  flex: 1 1 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 22px;
+
+  min-width: 0;           /* taşma kontrolü */
+  white-space: nowrap;    /* tek satır */
+}
+
+/* 3) Sağ aksiyonlar: her zaman sağda */
+.header-band .header-actions{
+  flex: 0 0 auto;
+  margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* Dil seçici artık absolute olmasın; actions içinde düzgün hizalansın */
+.header-band .language-switch-home.dtx-lang{
+  position: static;      /* <-- önemli: binişin ana sebebi absolute */
+  top: auto;
+  right: auto;
+}
+
+/* 4) Dar ekranda: nav gizlenecek (senin mevcut sistem), actions sağda kalsın */
+@media (max-width: 900px){
+  .header-band .nav-toggle{
+    display: block;
+    margin-left: auto;
+  }
+
+  /* nav zaten senin css’te open ile açılıyor; burada sadece üst satır çakışmasın diye */
+  .header-band .main-nav{
+    display: none;
+  }
+  .header-band .main-nav.open{
+    display: flex;
   }
 }

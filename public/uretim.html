@@ -8,6 +8,12 @@
     <link rel="stylesheet" href="css/talasli-imalat-uretim.css" />
     <link rel="stylesheet" href="css/uretim.css" />
     <link rel="stylesheet" href="css/talasli-imalat.css" />
+    <!-- i18n Kütüphaneleri (CDN) -->
+    <script src="https://unpkg.com/i18next@23.7.11/dist/umd/i18next.min.js"></script>
+    <script src="https://unpkg.com/i18next-http-backend@2.4.2/i18nextHttpBackend.min.js"></script>
+    <script src="https://unpkg.com/i18next-browser-languagedetector@7.2.0/i18nextBrowserLanguageDetector.min.js"></script>
+    <!-- Bizim i18n ayar dosyamız -->
+    <script src="js/i18n.js"></script>
 </head>
 
 <body class="is-basvuru-page">
@@ -24,31 +30,36 @@
             </button>
             <nav class="ti-nav">
                 <ul>
-                    <li><a href="talasli-imalat.html">Ana Sayfa</a></li>
-                    <li><a href="uretim.html">Üretim</a></li>
-                    <li><a href="kalite.html">Kalite</a></li>
-                    <li><a href="talasli-imalat-hakkimizda.html">Hakkımızda</a></li>
+                    <li><a href="talasli-imalat.html" data-i18n="machining.nav.home">Ana Sayfa</a></li>
+                    <li><a href="uretim.html" data-i18n="machining.nav.production">Üretim</a></li>
+                    <li><a href="kalite.html" data-i18n="machining.nav.quality">Kalite</a></li>
+                    <li><a href="talasli-imalat-hakkimizda.html" data-i18n="machining.nav.about">Hakkımızda</a></li>
                     <li class="ti-has-dropdown">
-                        <a href="talasli-imalat-iletisim.html">İletişim</a>
+                        <a href="talasli-imalat-iletisim.html" data-i18n="machining.nav.contact">İletişim</a>
                         <ul class="ti-dropdown">
-                            <li><a href="is-basvuru-formu.html">İş Başvuru Formu</a></li>
-                            <li><a href="talasli-imalat-iletisim.html">İletişim</a></li>
+                            <li><a href="is-basvuru-formu.html" data-i18n="machining.nav.job_application">İş Başvuru Formu</a></li>
+                            <li><a href="talasli-imalat-iletisim.html" data-i18n="machining.nav.contact">İletişim</a></li>
                         </ul>
                     </li>
                 </ul>
             </nav>
+            <div class="language-switch">
+                <button onclick="changeLanguage('tr')" class="lang-btn">TR</button>
+                <span class="separator">|</span>
+                <button onclick="changeLanguage('en')" class="lang-btn">EN</button>
+            </div>
         </div>
     </header>
     <main>
         <!-- HIZLI MENÜ (Görseldeki kutular) -->
         <section class="quick-nav">
             <div class="quick-nav-container">
-                <a class="quick-card" href="#cnc-1">3 EKSEN CNC</a>
-                <a class="quick-card" href="#cnc-2">4 EKSEN CNC</a>
-                <a class="quick-card" href="#cnc-3">5 EKSEN CNC</a>
-                <a class="quick-card" href="#cnc-4">HONLAMA</a>
-                <a class="quick-card" href="#cnc-5">YİV SET</a>
-                <a class="quick-card" href="#cnc-6">BROŞ</a>
+                <a class="quick-card" href="#cnc-1" data-i18n="machining.production.quick_nav.axis3">3 EKSEN CNC</a>
+                <a class="quick-card" href="#cnc-2" data-i18n="machining.production.quick_nav.axis4">4 EKSEN CNC</a>
+                <a class="quick-card" href="#cnc-3" data-i18n="machining.production.quick_nav.axis5">5 EKSEN CNC</a>
+                <a class="quick-card" href="#cnc-4" data-i18n="machining.production.quick_nav.honing">HONLAMA</a>
+                <a class="quick-card" href="#cnc-5" data-i18n="machining.production.quick_nav.rifling">YİV SET</a>
+                <a class="quick-card" href="#cnc-6" data-i18n="machining.production.quick_nav.broaching">BROŞ</a>
             </div>
         </section>
         <!-- CNC MAKİNE PARKURU -->
@@ -56,10 +67,9 @@
             <div class="cnc-container">
                 <!-- Başlık -->
                 <div class="cnc-page-header">
-                    <h1>3 EKSEN CNC</h1>
-                    <p>
-                        3 eksen CNC tezgahlarımız ile prizmatik parçaların yüksek hassasiyet ve tekrarlanabilirlik ile
-                        işlenmesi sağlanmaktadır.
+                    <h1 data-i18n="machining.production.sections.axis3.title">3 EKSEN CNC</h1>
+                    <p data-i18n="machining.production.sections.axis3.desc">
+                        3 eksen CNC tezgahlarımız ile prizmatik parçaların yüksek hassasiyet ve tekrarlanabilirlik ile işlenmesi sağlanmaktadır.
                     </p>
                 </div>
                 <!-- Kartlar -->
@@ -67,20 +77,19 @@
                     <!-- 3 Eksen -->
                     <article class="cnc-machine-card">
                         <div class="cnc-machine-image" style="background-image:url('assets/talasli-imalat/12.png')">
-                            <span class="cnc-badge">3 EKSEN</span>
+                            <span class="cnc-badge" data-i18n="machining.production.quick_nav.axis3">3 EKSEN</span>
                         </div>
 
                         <div class="cnc-machine-content">
-                            <h2>3 Eksen CNC İşleme Merkezleri</h2>
-                            <p>
-                                Modern 3 eksen CNC tezgahlarımız, ölçüsel doğruluk ve proses kararlılığı sağlayarak seri
-                                ve prototip üretimde güvenilir çözümler sunar.
+                            <h2 data-i18n="machining.production.sections.axis3.card_title">3 Eksen CNC İşleme Merkezleri</h2>
+                            <p data-i18n="machining.production.sections.axis3.card_desc">
+                                Modern 3 eksen CNC tezgahlarımız, ölçüsel doğruluk ve proses kararlılığı sağlayarak seri ve prototip üretimde güvenilir çözümler sunar.
                             </p>
 
                             <ul>
-                                <li>± tolerans odaklı hassas işleme</li>
-                                <li>Tekrarlanabilir CNC üretim</li>
-                                <li>Kaliteli mastar sonuçları</li>
+                                <li data-i18n="machining.production.sections.axis3.list.item1">± tolerans odaklı hassas işleme</li>
+                                <li data-i18n="machining.production.sections.axis3.list.item2">Tekrarlanabilir CNC üretim</li>
+                                <li data-i18n="machining.production.sections.axis3.list.item3">Kaliteli mastar sonuçları</li>
                             </ul>
                         </div>
                     </article>
@@ -95,8 +104,8 @@
             <div class="cnc-container">
                 <!-- Başlık -->
                 <div class="cnc-page-header">
-                    <h1>4 EKSEN CNC</h1>
-                    <p>
+                    <h1 data-i18n="machining.production.sections.axis4.title">4 EKSEN CNC</h1>
+                    <p data-i18n="machining.production.sections.axis4.desc">
                         4 eksen CNC işleme ile çok yüzeyli ve kritik toleranslı parçalar için güvenilir üretim
                     </p>
                 </div>
@@ -105,21 +114,19 @@
                     <!-- 3 Eksen -->
                     <article class="cnc-machine-card">
                         <div class="cnc-machine-image" style="background-image:url('assets/talasli-imalat/14.jpeg')">
-                            <span class="cnc-badge">4 EKSEN</span>
+                            <span class="cnc-badge" data-i18n="machining.production.quick_nav.axis4">4 EKSEN</span>
                         </div>
 
                         <div class="cnc-machine-content">
-                            <h2>4 Eksen CNC İşleme Merkezleri</h2>
-                            <p>
-                                Modern 4 eksen CNC işleme altyapımız; karmaşık geometrilere sahip parçaların, yüksek
-                                hassasiyet ve tekrarlanabilirlik ile üretilmesine olanak tanır. Tek bağlamada işleme ile
-                                zaman ve kalite avantajı sağlar.
+                            <h2 data-i18n="machining.production.sections.axis4.card_title">4 Eksen CNC İşleme Merkezleri</h2>
+                            <p data-i18n="machining.production.sections.axis4.card_desc">
+                                Modern 4 eksen CNC işleme altyapımız; karmaşık geometrilere sahip parçaların, yüksek hassasiyet ve tekrarlanabilirlik ile üretilmesine olanak tanır. Tek bağlamada işleme ile zaman ve kalite avantajı sağlar.
                             </p>
 
                             <ul>
-                                <li>Döner eksen (A) destekli işleme</li>
-                                <li>Tek bağlamada çok yüzeyli üretim</li>
-                                <li>Yüksek ölçüsel doğruluk</li>
+                                <li data-i18n="machining.production.sections.axis4.list.item1">Döner eksen (A) destekli işleme</li>
+                                <li data-i18n="machining.production.sections.axis4.list.item2">Tek bağlamada çok yüzeyli üretim</li>
+                                <li data-i18n="machining.production.sections.axis4.list.item3">Yüksek ölçüsel doğruluk</li>
                             </ul>
                         </div>
                     </article>
@@ -132,10 +139,9 @@
             <div class="cnc-container">
                 <!-- Başlık -->
                 <div class="cnc-page-header">
-                    <h1>5 EKSEN CNC</h1>
-                    <p>
-                        5 eksen CNC tezgahlarımız; eşzamanlı interpolasyon kabiliyeti sayesinde karmaşık geometrilerin,
-                        yüksek yüzey kalitesi ve dar toleranslarla tek bağlamada işlenmesini sağlar.
+                    <h1 data-i18n="machining.production.sections.axis5.title">5 EKSEN CNC</h1>
+                    <p data-i18n="machining.production.sections.axis5.desc">
+                        5 eksen CNC tezgahlarımız; eşzamanlı interpolasyon kabiliyeti sayesinde karmaşık geometrilerin, yüksek yüzey kalitesi ve dar toleranslarla tek bağlamada işlenmesini sağlar.
                     </p>
                 </div>
 
@@ -145,21 +151,19 @@
                     <!-- 3 Eksen -->
                     <article class="cnc-machine-card">
                         <div class="cnc-machine-image" style="background-image:url('assets/talasli-imalat/13.jpeg')">
-                            <span class="cnc-badge">5 EKSEN</span>
+                            <span class="cnc-badge" data-i18n="machining.production.quick_nav.axis5">5 EKSEN</span>
                         </div>
 
                         <div class="cnc-machine-content">
-                            <h2>5 Eksen CNC İşleme Merkezleri</h2>
-                            <p>
-                                Eşzamanlı 5 eksen CNC işleme teknolojimiz; A/B veya B/C döner eksen kombinasyonları ile
-                                takım erişimini optimize eder, bağlama hatalarını minimize eder ve kompleks parçalar
-                                için üstün yüzey kalitesi ile ölçüsel doğruluk sağlar.
+                            <h2 data-i18n="machining.production.sections.axis5.card_title">5 Eksen CNC İşleme Merkezleri</h2>
+                            <p data-i18n="machining.production.sections.axis5.card_desc">
+                                Eşzamanlı 5 eksen CNC işleme teknolojimiz; A/B veya B/C döner eksen kombinasyonları ile takım erişimini optimize eder, bağlama hatalarını minimize eder ve kompleks parçalar için üstün yüzey kalitesi ile ölçüsel doğruluk sağlar.
                             </p>
 
                             <ul>
-                                <li>Dar toleranslar (µm seviyesinde)</li>
-                                <li>Eşzamanlı interpolasyon</li>
-                                <li>Yüksek yüzey kalitesi</li>
+                                <li data-i18n="machining.production.sections.axis5.list.item1">Dar toleranslar (µm seviyesinde)</li>
+                                <li data-i18n="machining.production.sections.axis5.list.item2">Eşzamanlı interpolasyon</li>
+                                <li data-i18n="machining.production.sections.axis5.list.item3">Yüksek yüzey kalitesi</li>
                             </ul>
                         </div>
                     </article>
@@ -172,10 +176,9 @@
             <div class="cnc-container">
                 <!-- Başlık -->
                 <div class="cnc-page-header">
-                    <h1>Honlama Tezgahı</h1>
-                    <p>
-                        Honlama tezgahlarımız ile iç çap ve yüzey geometrilerinde mikron toleranslarda hassas işleme
-                        sağlanmaktadır.
+                    <h1 data-i18n="machining.production.sections.honing.title">Honlama Tezgahı</h1>
+                    <p data-i18n="machining.production.sections.honing.desc">
+                        Honlama tezgahlarımız ile iç çap ve yüzey geometrilerinde mikron toleranslarda hassas işleme sağlanmaktadır.
                     </p>
                 </div>
                 <!-- Kartlar -->
@@ -183,19 +186,17 @@
                     <!-- 3 Eksen -->
                     <article class="cnc-machine-card">
                         <div class="cnc-machine-image" style="background-image:url('assets/talasli-imalat/15.jpeg')">
-                            <span class="cnc-badge">Honlama</span>
+                            <span class="cnc-badge" data-i18n="machining.production.quick_nav.honing">Honlama</span>
                         </div>
                         <div class="cnc-machine-content">
-                            <h2>Honlama İşlemi</h2>
-                            <p>
-                                Honlama tezgahı kullanılarak gerçekleştirilen işlemler; iç çaplarda ölçüsel doğruluk,
-                                düşük pürüzlülük (Ra) ve geometrik hassasiyet gerektiren uygulamalar için ideal çözümler
-                                sunar.
+                            <h2 data-i18n="machining.production.sections.honing.card_title">Honlama İşlemi</h2>
+                            <p data-i18n="machining.production.sections.honing.card_desc">
+                                Honlama tezgahı kullanılarak gerçekleştirilen işlemler; iç çaplarda ölçüsel doğruluk, düşük pürüzlülük (Ra) ve geometrik hassasiyet gerektiren uygulamalar için ideal çözümler sunar.
                             </p>
                             <ul>
-                                <li>İç çap honlama</li>
-                                <li>Mikron toleranslar</li>
-                                <li>Geometrik doğruluk (silindiriklik, yuvarlaklık)</li>
+                                <li data-i18n="machining.production.sections.honing.list.item1">İç çap honlama</li>
+                                <li data-i18n="machining.production.sections.honing.list.item2">Mikron toleranslar</li>
+                                <li data-i18n="machining.production.sections.honing.list.item3">Geometrik doğruluk (silindiriklik, yuvarlaklık)</li>
                             </ul>
                         </div>
                     </article>
@@ -206,10 +207,9 @@
             <div class="cnc-container">
                 <!-- Başlık -->
                 <div class="cnc-page-header">
-                    <h1>Yiv Set İşlemi</h1>
-                    <p>
-                        Yiv set işlemleri, belirlenen adım, derinlik ve profil toleranslarında, yüksek
-                        tekrarlanabilirlik ile gerçekleştirilmektedir.
+                    <h1 data-i18n="machining.production.sections.rifling.title">Yiv Set İşlemi</h1>
+                    <p data-i18n="machining.production.sections.rifling.desc">
+                        Yiv set işlemleri, belirlenen adım, derinlik ve profil toleranslarında, yüksek tekrarlanabilirlik ile gerçekleştirilmektedir.
                     </p>
                 </div>
                 <!-- Kartlar -->
@@ -217,19 +217,17 @@
                     <!-- 3 Eksen -->
                     <article class="cnc-machine-card">
                         <div class="cnc-machine-image" style="background-image:url('assets/talasli-imalat/15.jpeg')">
-                            <span class="cnc-badge">Yiv Set İşlemi</span>
+                            <span class="cnc-badge" data-i18n="machining.production.quick_nav.rifling">Yiv Set İşlemi</span>
                         </div>
                         <div class="cnc-machine-content">
-                            <h2>Yiv Set İşlemi</h2>
-                            <p>
-                                Yiv set tezgahı kullanılarak yapılan işlemler; yiv adımı, yiv derinliği ve profil
-                                geometrisinin hassas kontrolünü sağlar. Bu yöntem, iç yüzeylerde fonksiyonel performans
-                                ve proses güvenilirliği açısından kritik öneme sahiptir.
+                            <h2 data-i18n="machining.production.sections.rifling.card_title">Yiv Set İşlemi</h2>
+                            <p data-i18n="machining.production.sections.rifling.card_desc">
+                                Yiv set tezgahı kullanılarak yapılan işlemler; yiv adımı, yiv derinliği ve profil geometrisinin hassas kontrolünü sağlar. Bu yöntem, iç yüzeylerde fonksiyonel performans ve proses güvenilirliği açısından kritik öneme sahiptir.
                             </p>
                             <ul>
-                                <li>Yiv adımı (pitch) kontrolü</li>
-                                <li>Profil geometrisi</li>
-                                <li>Fonksiyonel iç yüzey işleme</li>
+                                <li data-i18n="machining.production.sections.rifling.list.item1">Yiv adımı (pitch) kontrolü</li>
+                                <li data-i18n="machining.production.sections.rifling.list.item2">Profil geometrisi</li>
+                                <li data-i18n="machining.production.sections.rifling.list.item3">Fonksiyonel iç yüzey işleme</li>
                             </ul>
                         </div>
                     </article>
@@ -240,10 +238,9 @@
             <div class="cnc-container">
                 <!-- Başlık -->
                 <div class="cnc-page-header">
-                    <h1>Broş İşleme</h1>
-                    <p>
-                        Broş işlemi, iç ve dış profillerin tek geçişte, yüksek ölçüsel doğruluk ve yüzey kalitesi ile
-                        işlenmesini sağlar.
+                    <h1 data-i18n="machining.production.sections.broaching.title">Broş İşleme</h1>
+                    <p data-i18n="machining.production.sections.broaching.desc">
+                        Broş işlemi, iç ve dış profillerin tek geçişte, yüksek ölçüsel doğruluk ve yüzey kalitesi ile işlenmesini sağlar.
                     </p>
                 </div>
                 <!-- Kartlar -->
@@ -251,19 +248,17 @@
                     <!-- 3 Eksen -->
                     <article class="cnc-machine-card">
                         <div class="cnc-machine-image" style="background-image:url('assets/talasli-imalat/15.jpeg')">
-                            <span class="cnc-badge">Broş İşleme</span>
+                            <span class="cnc-badge" data-i18n="machining.production.quick_nav.broaching">Broş İşleme</span>
                         </div>
                         <div class="cnc-machine-content">
-                            <h2>Broş İşleme</h2>
-                            <p>
-                                Broş tezgahı kullanılarak gerçekleştirilen işlemler; kama kanalı, spline ve özel profil
-                                geometrilerinin dar toleranslarda, tekrarlanabilir ve proses güvenli şekilde
-                                üretilmesine olanak tanır.
+                            <h2 data-i18n="machining.production.sections.broaching.card_title">Broş İşleme</h2>
+                            <p data-i18n="machining.production.sections.broaching.card_desc">
+                                Broş tezgahı kullanılarak gerçekleştirilen işlemler; kama kanalı, spline ve özel profil geometrilerinin dar toleranslarda, tekrarlanabilir ve proses güvenli şekilde üretilmesine olanak tanır.
                             </p>
                             <ul>
-                                <li>Spline ve özel profiller</li>
-                                <li>Kama kanalı broşlama</li>
-                                <li>Dar toleranslar</li>
+                                <li data-i18n="machining.production.sections.broaching.list.item1">Spline ve özel profiller</li>
+                                <li data-i18n="machining.production.sections.broaching.list.item2">Kama kanalı broşlama</li>
+                                <li data-i18n="machining.production.sections.broaching.list.item3">Dar toleranslar</li>
                             </ul>
                         </div>
                     </article>
@@ -274,17 +269,17 @@
     <footer class="site-footer">
         <div class="container footer-inner">
             <div class="footer-contact">
-                <h3>İLETİŞİM</h3>
-                <p><strong>GİRESUN ADRES</strong><br>
-                    Pazarsuyu Köyü II. OSB Mevki 5. Cadde No:12, 28300 Bulancak/Giresun<br>
-                    <strong>Telefon:</strong> (0454) 333 20 20
+                <h3 data-i18n="machining.footer.contact_title">İLETİŞİM</h3>
+                <p><strong data-i18n="machining.footer.address_title">GİRESUN ADRES</strong><br>
+                    <span data-i18n="machining.footer.address_text">Pazarsuyu Köyü II. OSB Mevki 5. Cadde No:12, 28300 Bulancak/Giresun</span><br>
+                    <strong data-i18n="machining.footer.phone">Telefon:</strong> (0454) 333 20 20
                 </p>
-                <p><strong>Mail:</strong> info@dronetech.com.tr</p>
+                <p><strong data-i18n="machining.footer.mail">Mail:</strong> info@dronetech.com.tr</p>
 
             </div>
         </div>
         <div class="footer-bottom">
-            <p>DRONE TECH © 2025, HER HAKKI SAKLIDIR </p>
+            <p data-i18n="machining.footer.copyright">DRONE TECH © 2025, HER HAKKI SAKLIDIR </p>
         </div>
     </footer>
     <script src="js/talasli-imalat.js"></script>
